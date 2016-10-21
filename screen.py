@@ -30,8 +30,18 @@ class   Screen:
     # Variables
     stdscr = {}
     modules = {}
-    screens = {}
+    screens = []
     curr_screen = {}
+    title = "  __  __                  _                \n\
+ |  \\/  |                | |               \n\
+ | \\  / | ___  _ __ _ __ | |__  _   ___  __\n\
+ | |\\/| |/ _ \\| '__| '_ \\| '_ \\| | | \ \\/ /\n\
+ | |  | | (_) | |  | |_) | | | | |_| |>  < \n\
+ |_|  |_|\\___/|_|  | .__/|_| |_|\\__,_/_/\\_\\\n\
+                   | |                     \n\
+                   |_|                     \n\
+"
+
 
     # Construct function
     def     __init__(self):
@@ -72,28 +82,58 @@ class   Screen:
     def     get_screens_infos(self):
         config = {}
         for name, klass in self.modules.items():
-            print("Reading"+ name +"module...")
+            print("Reading "+ name +" module...")
             klass = klass()
             config = klass.init()
-            self.screens[name] = klass
-            if config["title"] == "Main":
+            self.screens.append(klass)
+            if config["id"] == 0:
                 self.curr_screen = klass
             print("Done !")
 
+    # Colors init
     def     init_colors(self):
         curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLACK)
         curses.init_pair(2, curses.COLOR_BLUE, curses.COLOR_BLACK)
+
+    # Print morphux title and installer version
+    def     print_title(self, win):
+        size = win.getmaxyx()
+        y = size[0] / 7;
+        x = (size[1] / 2) - (44 / 2)
+        for c in self.title:
+            win.addstr(y, x, c, curses.color_pair(2) | curses.A_BOLD)
+            x = x + 1
+            if c == '\n':
+                y = y + 1
+                x = (size[1] / 2) - (44 / 2)
+        win.addstr(y + 1, (size[1] / 2) - 8, "__Installer v1__", curses.A_REVERSE)
+        return y
+
+    def     change_screen(self, id):
+        for s in self.screens:
+            if s.config["id"] == id:
+                self.curr_screen = s
 
     # Main Loop
     def     loop(self):
         quit = 0
         key = 0
-        self.curr_screen.refresh(self.stdscr)
+        size = self.stdscr.getmaxyx()
+        win = curses.newwin(size[0] / 4, int(size[1] * 0.75), self.print_title(self.stdscr) + 2, int(size[1] * 0.25 / 2))
+        win.border()
+        win.addstr(0, (int(size[1] * 0.75) / 2) - (len(self.curr_screen.config["title"]) / 2), self.curr_screen.config["title"])
+        self.curr_screen.refresh(win)
         self.stdscr.refresh()
+        win.refresh()
         while quit != -1:
             if self.curr_screen.config["type"] == "menu":
                 key = self.stdscr.getch()
                 self.curr_screen.input(key)
-            self.stdscr.clear()
-            quit = self.curr_screen.refresh(self.stdscr)
+            win.erase()
+            quit = self.curr_screen.refresh(win)
+            if (quit != self.curr_screen.config["id"]):
+                self.change_screen(quit)
+            win.border()
+            win.addstr(0, (int(size[1] * 0.75) / 2) - (len(self.curr_screen.config["title"]) / 2), self.curr_screen.config["title"])
             self.stdscr.refresh()
+            win.refresh()
