@@ -26,6 +26,8 @@ class Config:
 
     key = 0
     quit = 1
+    is_input = 0
+    current_string = ""
 
     def     init(self):
         self.config = {
@@ -37,7 +39,30 @@ class Config:
 
     def     input(self, key):
         self.key = key
+        if (key == curses.KEY_BACKSPACE or key == 127 or key == 0x7f):
+            self.current_string = self.current_string[:-1]
+        elif (key > 31 and key < 127):
+            self.current_string += str(chr(key))
+
+    def     center(self, win, y, x, string, attr = 0):
+        win.addstr(y, (x / 2) - len(string) / 2, string, attr)
+
+    def     input_s(self, win, y, x, default):
+        if self.is_input == 0:
+            self.current_string = default
+            self.is_input = 1
+            curses.curs_set(1)
+        start_x = int((x * 0.25) / 2)
+        win.addstr(y, start_x, self.current_string, curses.A_REVERSE)
+        j = start_x + len(self.current_string)
+        while j < x - start_x:
+            win.addstr(y, j, " ", curses.A_REVERSE)
+            j += 1
+        win.move(y, start_x + len(self.current_string))
+
 
     def     refresh(self, win):
-        win.addstr(10, 10, "Coucou !");
+        size = win.getmaxyx()
+        self.center(win, 2, size[1], "SET YOUR HOSTNAME", curses.A_BOLD)
+        self.input_s(win, 4, size[1], "morphux")
         return self.quit

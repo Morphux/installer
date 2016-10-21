@@ -1,3 +1,4 @@
+#!/usr/bin/python
 ################################### LICENSE ####################################
 # Copyright 2016 Louis Solofrizzo                                              #
 #                                                                              #
@@ -119,21 +120,27 @@ class   Screen:
         quit = 0
         key = 0
         size = self.stdscr.getmaxyx()
-        win = curses.newwin(size[0] / 4, int(size[1] * 0.75), self.print_title(self.stdscr) + 2, int(size[1] * 0.25 / 2))
+        height =  size[0] / 4
+        if height < 10:
+            height = 10
+        win = curses.newwin(height, int(size[1] * 0.75), self.print_title(self.stdscr) + 2, int(size[1] * 0.25 / 2))
         win.border()
         win.addstr(0, (int(size[1] * 0.75) / 2) - (len(self.curr_screen.config["title"]) / 2), self.curr_screen.config["title"])
         self.curr_screen.refresh(win)
+        self.stdscr.leaveok(1)
         self.stdscr.refresh()
         win.refresh()
         while quit != -1:
-            if self.curr_screen.config["type"] == "menu":
+            if self.curr_screen.config["type"] == "menu" or self.curr_screen.config["type"] == "inputs":
                 key = self.stdscr.getch()
                 self.curr_screen.input(key)
             win.erase()
+            win.addstr(0, (int(size[1] * 0.75) / 2) - (len(self.curr_screen.config["title"]) / 2), self.curr_screen.config["title"])
             quit = self.curr_screen.refresh(win)
             if (quit != self.curr_screen.config["id"]):
+                win.erase()
                 self.change_screen(quit)
+                self.curr_screen.refresh(win)
             win.border()
-            win.addstr(0, (int(size[1] * 0.75) / 2) - (len(self.curr_screen.config["title"]) / 2), self.curr_screen.config["title"])
             self.stdscr.refresh()
             win.refresh()

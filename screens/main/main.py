@@ -59,12 +59,14 @@ class Main:
                 win.addstr(y, (size[1] / 2) - (len(string) / 2), string, curses.A_BOLD)
             if (lines and string != "QUIT"):
                 win.addstr(y + 1, (size[1] / 2) - (20 / 2), "--------------------")
-            y += 2
+                y += 2
+            else:
+                y += 1
             i += 1
 
     def     refresh(self, win):
         size = win.getmaxyx()
-        if (size[0] > 8):
+        if (size[0] > 10):
             self.menu((size[0] / 2) - (len(self.menu_s) / 2), win, 1);
         else:
             self.menu((size[0] / 2) - (len(self.menu_s) / 2), win, 0);
