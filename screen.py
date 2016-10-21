@@ -95,6 +95,8 @@ class   Screen:
     def     init_colors(self):
         curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLACK)
         curses.init_pair(2, curses.COLOR_BLUE, curses.COLOR_BLACK)
+        curses.init_pair(3, curses.COLOR_GREEN, curses.COLOR_BLACK)
+        curses.init_pair(4, curses.COLOR_BLUE, curses.COLOR_WHITE)
 
     # Print morphux title and installer version
     def     print_title(self, win):
@@ -125,7 +127,6 @@ class   Screen:
             height = 10
         win = curses.newwin(height, int(size[1] * 0.75), self.print_title(self.stdscr) + 2, int(size[1] * 0.25 / 2))
         win.border()
-        win.addstr(0, (int(size[1] * 0.75) / 2) - (len(self.curr_screen.config["title"]) / 2), self.curr_screen.config["title"])
         self.curr_screen.refresh(win)
         self.stdscr.leaveok(1)
         self.stdscr.refresh()
@@ -135,7 +136,6 @@ class   Screen:
                 key = self.stdscr.getch()
                 self.curr_screen.input(key)
             win.erase()
-            win.addstr(0, (int(size[1] * 0.75) / 2) - (len(self.curr_screen.config["title"]) / 2), self.curr_screen.config["title"])
             quit = self.curr_screen.refresh(win)
             if (quit != self.curr_screen.config["id"]):
                 win.erase()
