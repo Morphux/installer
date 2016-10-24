@@ -1,3 +1,4 @@
+#!/usr/bin/python
 ################################### LICENSE ####################################
 # Copyright 2016 Louis Solofrizzo                                              #
 #                                                                              #

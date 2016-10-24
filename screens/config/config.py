@@ -15,7 +15,7 @@
 ################################################################################
 
 ##
-# main.py
+# config.py
 # Created: 21/10/2016
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
@@ -35,7 +35,16 @@ class Config:
         self.config = {
             "id": 1,
             "title": "Config",
-            "type": "inputs"
+            "type": "inputs",
+            "inputs": [
+                {
+                    "name": "hostname",
+                    "title": "SET YOUR HOSTNAME",
+                    "default": "morphux",
+                    "config": "system.hostname",
+                    "type": "text"
+                },
+            ]
         }
         return self.config
 
