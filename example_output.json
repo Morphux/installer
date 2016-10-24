@@ -1,0 +1,43 @@
+{
+	"system": {
+		"hostname": "morphux",
+		"root_p": "password",
+		"users": [
+			{
+				"name": "louis",
+				"group": "louis",
+				"password": "password"
+			}
+		]
+	},
+	"partitions": {
+		"disk": "/dev/sda",
+		"root": {
+			"size": 10,
+			"mntpoint": "/"
+		},
+		"grub": {
+			"size": 10
+		},
+		"swap": {
+			"size": 10
+		},
+		"boot": {
+			"size": 10,
+			"mntpoint": "/boot"
+		},
+		"home": {
+			"size": 10,
+			"mntpoint": "/home"
+		}
+	},
+	"network": {
+		"IP": "",
+		"Gateway": "",
+		"DNS": ""
+	},
+	"packages": [
+		"zsh",
+		"htop"
+	]
+}
