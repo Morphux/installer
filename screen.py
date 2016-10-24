@@ -1,18 +1,17 @@
-#!/usr/bin/python
 ################################### LICENSE ####################################
-# Copyright 2016 Louis Solofrizzo                                              #
+#                      Copyright 2016 Louis Solofrizzo                         #
 #                                                                              #
-# Licensed under the Apache License, Version 2.0 (the "License");              #
-# you may not use this file except in compliance with the License.             #
-# You may obtain a copy of the License at                                      #
+#        Licensed under the Apache License, Version 2.0 (the "License");       #
+#        you may not use this file except in compliance with the License.      #
+#                  You may obtain a copy of the License at                     #
 #                                                                              #
-#     http://www.apache.org/licenses/LICENSE-2.0                               #
+#                 http://www.apache.org/licenses/LICENSE-2.0                   #
 #                                                                              #
-# Unless required by applicable law or agreed to in writing, software          #
-# distributed under the License is distributed on an "AS IS" BASIS,            #
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.     #
-# See the License for the specific language governing permissions and          #
-# limitations under the License.                                               #
+#      Unless required by applicable law or agreed to in writing, software     #
+#       distributed under the License is distributed on an "AS IS" BASIS,      #
+#    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  #
+#        See the License for the specific language governing permissions and   #
+#                       limitations under the License.                         #
 ################################################################################
 
 ##
@@ -25,6 +24,7 @@
 
 import  curses
 import  os
+from input import Input
 
 class   Screen:
 
@@ -121,6 +121,7 @@ class   Screen:
     def     loop(self):
         quit = 0
         key = 0
+        input = Input()
         size = self.stdscr.getmaxyx()
         height =  size[0] / 4
         if height < 10:
@@ -132,14 +133,22 @@ class   Screen:
         self.stdscr.refresh()
         win.refresh()
         while quit != -1:
-            if self.curr_screen.config["type"] == "menu" or self.curr_screen.config["type"] == "inputs":
-                key = self.stdscr.getch()
+            key = self.stdscr.getch()
+            if self.curr_screen.config["type"] == "menu":
                 self.curr_screen.input(key)
+            elif self.curr_screen.config["type"] == "input":
+                input.input(key)
             win.erase()
+            if self.curr_screen.config["type"] == "input":
+                conf = self.curr_screen.config["input"][0]
+                input.s_input(win, conf["title"], conf["default"], conf["function"])
             quit = self.curr_screen.refresh(win)
             if (quit != self.curr_screen.config["id"]):
                 win.erase()
                 self.change_screen(quit)
+                if self.curr_screen.config["type"] == "input":
+                    conf = self.curr_screen.config["input"][0]
+                    input.s_input(win, conf["title"], conf["default"], conf["function"])
                 self.curr_screen.refresh(win)
             win.border()
             self.stdscr.refresh()
