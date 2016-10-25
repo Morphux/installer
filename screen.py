@@ -32,6 +32,7 @@ class   Screen:
     stdscr = {}
     modules = {}
     screens = []
+    prev_id = 0
     curr_screen = {}
     title = "  __  __                  _                \n\
  |  \\/  |                | |               \n\
@@ -115,12 +116,15 @@ class   Screen:
     def     change_screen(self, id):
         for s in self.screens:
             if s.config["id"] == id:
+                self.prev_id = self.curr_screen.config["id"]
                 self.curr_screen = s
+                s.reset()
 
     # Main Loop
     def     loop(self):
         quit = 0
         key = 0
+        c_input = 0
         input = Input()
         size = self.stdscr.getmaxyx()
         height =  size[0] / 4
@@ -137,18 +141,25 @@ class   Screen:
             if self.curr_screen.config["type"] == "menu":
                 self.curr_screen.input(key)
             elif self.curr_screen.config["type"] == "input":
-                input.input(key)
+                c_input += input.input(key)
+                if c_input >= len(self.curr_screen.config["input"]):
+                    c_input = -1
+                elif c_input < 0:
+                    self.change_screen(self.prev_id)
+                    c_input = 0
             win.erase()
-            if self.curr_screen.config["type"] == "input":
-                conf = self.curr_screen.config["input"][0]
-                input.s_input(win, conf["title"], conf["default"], conf["function"])
+            if self.curr_screen.config["type"] == "input" and c_input >= 0:
+                conf = self.curr_screen.config["input"][c_input]
+                input.s_input(win, conf["title"], conf["default"], conf["function"], conf["type"])
             quit = self.curr_screen.refresh(win)
             if (quit != self.curr_screen.config["id"]):
                 win.erase()
                 self.change_screen(quit)
                 if self.curr_screen.config["type"] == "input":
-                    conf = self.curr_screen.config["input"][0]
-                    input.s_input(win, conf["title"], conf["default"], conf["function"])
+                    conf = self.curr_screen.config["input"][c_input]
+                    input.s_input(win, conf["title"], conf["default"], conf["function"], conf["type"])
+                else:
+                    c_input = 0
                 self.curr_screen.refresh(win)
             win.border()
             self.stdscr.refresh()

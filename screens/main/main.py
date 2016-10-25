@@ -64,6 +64,10 @@ class Main:
                 y += 1
             i += 1
 
+    def     reset(self):
+        self.menu_choice = 0
+        self.quit = 0
+
     def     refresh(self, win):
         size = win.getmaxyx()
         if (size[0] > 10):

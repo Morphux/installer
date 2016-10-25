@@ -29,14 +29,16 @@ class Input:
     current_string = ""
     current_f_callback = 0
     in_input = 0
+    entry_type = ""
 
-    def     s_input(self, win, title, s_def, f_callback):
+    def     s_input(self, win, title, s_def, f_callback, type):
         size = win.getmaxyx()
         if self.in_input == 0:
             self.current_f_callback = f_callback
             self.current_string = s_def
             self.in_input = 1
             self.current_choice = 0
+            self.entry_type = type
         if self.current_choice == 0:
             curses.curs_set(1)
         self.center(win, 2, size[1], title, curses.A_BOLD)
@@ -73,7 +75,10 @@ class Input:
         start_x = int((x * 0.25) / 2)
         if (self.current_choice == 0):
             flag |= curses.color_pair(4)
-        win.addstr(y, start_x, self.current_string, curses.A_REVERSE | flag)
+        if self.entry_type == "text":
+            win.addstr(y, start_x, self.current_string, curses.A_REVERSE | flag)
+        elif self.entry_type == "password":
+            win.addstr(y, start_x, '*' * len(self.current_string), curses.A_REVERSE | flag)
         j = start_x + len(self.current_string)
         while j < x - start_x:
             win.addstr(y, j, " ", curses.A_REVERSE | flag)
@@ -98,4 +103,11 @@ class Input:
                 self.current_choice = 0;
         elif (key == curses.KEY_ENTER or key == 10 or key == 13):
             if (self.current_choice == 1):
-                self.current_f_callback(self.current_string)
+                self.in_input = 0
+                curses.curs_set(0)
+                return self.current_f_callback(self.current_string)
+            elif (self.current_choice == 2):
+                curses.curs_set(0)
+                self.in_input = 0
+                return -1
+        return 0

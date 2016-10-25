@@ -26,6 +26,7 @@ class Config:
 
     key = 0
     quit = 1
+    root_p = ""
 
     def     init(self):
         self.config = {
@@ -37,10 +38,24 @@ class Config:
                     "name": "hostname",
                     "title": "SET YOUR HOSTNAME",
                     "default": "morphux",
-                    "config": "system.hostname",
                     "type": "text",
                     "function": self.hostname
                 },
+                {
+                    "name": "root1",
+                    "title": "ROOT PASSWORD",
+                    "default": "",
+                    "type": "password",
+                    "function": self.root_p1
+                },
+                {
+                    "name": "root2",
+                    "title": "CONFIRM ROOT PASSWORD",
+                    "default": "",
+                    "type": "password",
+                    "function": self.root_p2
+                }
+
             ]
         }
         return self.config
@@ -49,7 +64,20 @@ class Config:
         self.key = key
 
     def     hostname(self, string):
-        print "Okay !"
+        return 1
+
+    def     root_p1(self, string):
+        self.root_p = string
+        return 1
+    
+    def     root_p2(self, string):
+        if string != self.root_p:
+            return -1
+        self.quit = 0
+        return 1
+
+    def     reset(self):
+        self.quit = 1
 
     def     refresh(self, win):
         return self.quit
