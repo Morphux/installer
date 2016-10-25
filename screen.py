@@ -209,11 +209,10 @@ class   Screen:
             if (quit != self.curr_screen.config["id"]):
                 win.erase()
                 self.change_screen(quit)
+                c_input = 0
                 if self.curr_screen.config["type"] == "input":
                     conf = self.curr_screen.config["input"][c_input]
                     input.s_input(win, conf["title"], conf["default"], conf["function"], conf["type"])
-                else:
-                    c_input = 0
                 self.curr_screen.refresh(win)
             win.border()
             self.stdscr.refresh()

@@ -56,7 +56,29 @@ class Config:
                     "default": "",
                     "type": "password",
                     "function": self.root_p2
-                }
+                },
+                {
+                    "name": "user",
+                    "title": "SET YOUR USERNAME",
+                    "default": "user",
+                    "type": "text",
+                    "function": self.username
+                },
+                {
+                    "name": "userp1",
+                    "title": "USER PASSWORD",
+                    "default": "",
+                    "type": "password",
+                    "function": self.user_p1
+                },
+                {
+                    "name": "root2",
+                    "title": "CONFIRM USER PASSWORD",
+                    "default": "",
+                    "type": "password",
+                    "function": self.user_p2
+                },
+
 
             ]
         }
@@ -78,14 +100,36 @@ class Config:
             return 0
         self.root_p = string
         return 1
-    
+
     def     root_p2(self, string):
         if string != self.root_p:
             self.main.error("Passwords did not match !");
             return -1
-        self.quit = 0
         self.main.config("system.root_p", string)
         return 1
+
+    def     username(self, string):
+        if len(string) == 0:
+            self.main.error("Username cannot be empty.");
+            return 0
+        self.main.config("system.username", string)
+        return 1
+
+    def     user_p1(self, string):
+        if len(string) == 0:
+            self.main.error("Password cannot be empty.");
+            return 0
+        self.root_p = string
+        return 1
+
+    def     user_p2(self, string):
+        if string != self.root_p:
+            self.main.error("Passwords did not match !");
+            return -1
+        self.quit = 2
+        self.main.config("system.user_p", string)
+        return 1
+
 
     def     reset(self):
         self.quit = 1

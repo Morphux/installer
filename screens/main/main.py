@@ -25,7 +25,7 @@ import curses
 class Main:
 
     key = 0
-    menu_s = ["INSTALL", "INSTALL 64BITS", "OPTIONS", "QUIT"]
+    menu_s = ["INSTALL", "BOOT", "LAUNCH SHELL", "OPTIONS", "QUIT"]
     menu_choice = 0
     quit = 0
     main = 0
@@ -73,7 +73,7 @@ class Main:
     def     refresh(self, win):
         size = win.getmaxyx()
         if (size[0] > 10):
-            self.menu((size[0] / 2) - (len(self.menu_s) / 2) - 1, win, 1);
+            self.menu((size[0] / 2) - (len(self.menu_s) / 2) - 2, win, 1);
         else:
-            self.menu((size[0] / 2) - (len(self.menu_s) / 2) - 1, win, 0);
+            self.menu((size[0] / 2) - (len(self.menu_s) / 2) - 2, win, 0);
         return self.quit
