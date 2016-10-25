@@ -220,3 +220,4 @@ class   Screen:
             if (self.in_error):
                 self.error("", self.in_error - 1)
                 self.error_win.refresh()
+        self.__del__()

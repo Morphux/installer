@@ -21,14 +21,18 @@
 ##
 
 import curses
+from subprocess import call
+from subprocess import Popen, PIPE
+import os
 
 class Main:
 
     key = 0
-    menu_s = ["INSTALL", "BOOT", "LAUNCH SHELL", "OPTIONS", "QUIT"]
+    menu_s = ["INSTALL", "CUSTOM INSTALL", "LAUNCH SHELL", "OPTIONS", "QUIT"]
     menu_choice = 0
     quit = 0
     main = 0
+    win = 0
 
     def     init(self, main):
         self.main = main
@@ -48,8 +52,28 @@ class Main:
         elif (key == curses.KEY_ENTER or key == 10 or key == 13):
             if (self.menu_s[self.menu_choice] == "QUIT"):
                 self.quit = -1
+            elif (self.menu_s[self.menu_choice] == "LAUNCH SHELL"):
+                self.l_shell()
             else:
                 self.quit = self.menu_choice + 1
+
+    def     l_shell(self):
+        curses.nocbreak()
+        curses.echo()
+        curses.curs_set(1)
+        os.system('stty sane')
+        os.system('clear')
+        sh = Popen(['/bin/sh'])
+        sh.wait()
+        curses.noecho()
+        curses.cbreak()
+        curses.curs_set(0)
+        self.main.stdscr.clear()
+        self.main.print_title(self.main.stdscr)
+        self.refresh(self.win)
+        self.win.border()
+        self.main.stdscr.refresh()
+        self.win.refresh()
 
     def     menu(self, y, win, lines):
         size = win.getmaxyx()
@@ -72,6 +96,8 @@ class Main:
 
     def     refresh(self, win):
         size = win.getmaxyx()
+        if self.win == 0:
+            self.win = win
         if (size[0] > 10):
             self.menu((size[0] / 2) - (len(self.menu_s) / 2) - 2, win, 1);
         else:
