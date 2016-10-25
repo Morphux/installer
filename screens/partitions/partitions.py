@@ -131,9 +131,9 @@ class Partitions:
 
     def     home(self, string):
         if self.exist(string):
+            self.quit = 3
             self.main.config("partitions.home", string)
             return 1
-        self.quit = 0
         self.main.error("Partition " + string + " cannot be found")
         return 0
 
