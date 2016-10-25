@@ -36,6 +36,8 @@ class   Screen:
     curr_screen = {}
     in_error = 0
     error_win = 0
+    error_string = ""
+    input = 0
     title = "  __  __                  _                \n\
  |  \\/  |                | |               \n\
  | \\  / | ___  _ __ _ __ | |__  _   ___  __\n\
@@ -125,16 +127,23 @@ class   Screen:
                 self.curr_screen = s
                 s.reset()
 
-    def     error(self, string):
+    def     error(self, string, choice = 0):
+        if self.error_string == "":
+            self.error_string = string
         size = self.stdscr.getmaxyx()
         self.error_win = curses.newwin(10, int(size[1] * 0.5), self.print_title(self.stdscr) + 5, int(size[1] * 0.5 / 2))
         self.error_win.attrset(curses.color_pair(1) | curses.A_BOLD);
         self.error_win.border()
         size = self.error_win.getmaxyx()
-        self.center(self.error_win, 0, size[1], "ERROR", curses.color_pair(1) | curses.A_BOLD)
-        self.center(self.error_win, 4, size[1], string)
-        self.center(self.error_win, 7, size[1], "<OK>", curses.A_REVERSE)
-        self.in_error = 1
+        self.center(self.error_win, 0, size[1], " ERROR ", curses.color_pair(1) | curses.A_BOLD)
+        self.center(self.error_win, 4, size[1], self.error_string)
+        if (choice):
+            self.in_error = 2
+            self.input.show_choices(self.error_win, size[1], 6)
+        else:
+            self.center(self.error_win, 7, size[1], "<OK>", curses.A_REVERSE)
+            self.in_error = 1
+        curses.curs_set(0)
 
     # Main Loop
     def     loop(self):
@@ -142,6 +151,7 @@ class   Screen:
         key = 0
         c_input = 0
         input = Input()
+        self.input = input
         size = self.stdscr.getmaxyx()
         height =  size[0] / 4
         if height < 10:
@@ -157,7 +167,23 @@ class   Screen:
             if key == 10 and self.in_error == 1:
                 self.error_win.erase()
                 self.error_win.refresh()
+                self.error_string = ""
                 self.in_error = 0
+            elif key == curses.KEY_DC:
+               if self.curr_screen.config["id"] == 0:
+                   self.__del__()
+                   exit(0)
+               else:
+                self.error("You press delete. Wanna quit ?", 1)
+                self.input.current_choice = 1
+            elif self.in_error == 2:
+                ret = input.input(key, 1)
+                if ret == 1:
+                   self.__del__()
+                   exit(0)
+                elif ret == 2:
+                    self.in_error = 0
+                    self.error_string = ""
             elif self.curr_screen.config["type"] == "menu":
                 self.curr_screen.input(key)
             elif self.curr_screen.config["type"] == "input":
@@ -185,4 +211,5 @@ class   Screen:
             self.stdscr.refresh()
             win.refresh()
             if (self.in_error):
+                self.error("", self.in_error - 1)
                 self.error_win.refresh()

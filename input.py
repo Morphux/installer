@@ -88,7 +88,7 @@ class Input:
     def     center(self, win, y, x, string, attr = 0):
         win.addstr(y, (x / 2) - len(string) / 2, string, attr)
 
-    def     input(self, key):
+    def     input(self, key, error = 0):
         if (self.current_choice == 0):
             if (key == curses.KEY_BACKSPACE or key == 127 or key == 0x7f):
                 self.current_string = self.current_string[:-1]
@@ -99,15 +99,24 @@ class Input:
                 curses.curs_set(0)
                 self.current_choice += 1
             else:
-                curses.curs_set(1)
-                self.current_choice = 0;
+                if error == 0:
+                    curses.curs_set(1)
+                    self.current_choice = 0;
+                else:
+                    self.current_choice = 1;
         elif (key == curses.KEY_ENTER or key == 10 or key == 13):
             if (self.current_choice == 1):
-                self.in_input = 0
-                curses.curs_set(0)
-                return self.current_f_callback(self.current_string)
+                if error == 0:
+                    self.in_input = 0
+                    curses.curs_set(0)
+                    return self.current_f_callback(self.current_string)
+                else:
+                    return 1
             elif (self.current_choice == 2):
-                curses.curs_set(0)
-                self.in_input = 0
-                return -1
+                if error == 0:
+                    curses.curs_set(0)
+                    self.in_input = 0
+                    return -1
+                else:
+                    return 2
         return 0
