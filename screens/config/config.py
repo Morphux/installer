@@ -69,6 +69,7 @@ class Config:
         if len(string) == 0:
             self.main.error("Hostname cannot be empty.");
             return 0
+        self.main.config("system.hostname", string)
         return 1
 
     def     root_p1(self, string):
@@ -83,6 +84,7 @@ class Config:
             self.main.error("Passwords did not match !");
             return -1
         self.quit = 0
+        self.main.config("system.root_p", string)
         return 1
 
     def     reset(self):

@@ -34,6 +34,7 @@ class   Screen:
     screens = []
     prev_id = 0
     curr_screen = {}
+    o_config = {"version": "1.0"}
     in_error = 0
     error_win = 0
     error_string = ""
@@ -68,6 +69,8 @@ class   Screen:
         curses.curs_set(1)
         os.system('stty sane')
         os.system('clear')
+        print self.o_config
+        exit(0)
 
     # Load differents modules in the path screens/
     def     load_screens(self, path = "screens"):
@@ -117,9 +120,11 @@ class   Screen:
         win.addstr(y + 1, (size[1] / 2) - 8, "__Installer v1__", curses.A_REVERSE)
         return y
 
+    # Print text centered
     def     center(self, win, y, x, string, attr = 0):
         win.addstr(y, (x / 2) - len(string) / 2, string, attr)
 
+    # Change the current screen
     def     change_screen(self, id):
         for s in self.screens:
             if s.config["id"] == id:
@@ -127,6 +132,11 @@ class   Screen:
                 self.curr_screen = s
                 s.reset()
 
+    # Configuration set
+    def     config(self, key, val):
+        self.o_config[key] = val
+
+    # Error Pop Up
     def     error(self, string, choice = 0):
         if self.error_string == "":
             self.error_string = string
@@ -172,7 +182,6 @@ class   Screen:
             elif key == curses.KEY_DC:
                if self.curr_screen.config["id"] == 0:
                    self.__del__()
-                   exit(0)
                else:
                 self.error("You press delete. Wanna quit ?", 1)
                 self.input.current_choice = 1
@@ -180,7 +189,6 @@ class   Screen:
                 ret = input.input(key, 1)
                 if ret == 1:
                    self.__del__()
-                   exit(0)
                 elif ret == 2:
                     self.in_error = 0
                     self.error_string = ""
