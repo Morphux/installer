@@ -34,6 +34,8 @@ class   Screen:
     screens = []
     prev_id = 0
     curr_screen = {}
+    in_error = 0
+    error_win = 0
     title = "  __  __                  _                \n\
  |  \\/  |                | |               \n\
  | \\  / | ___  _ __ _ __ | |__  _   ___  __\n\
@@ -86,7 +88,7 @@ class   Screen:
         for name, klass in self.modules.items():
             print("Reading "+ name +" module...")
             klass = klass()
-            config = klass.init()
+            config = klass.init(self)
             self.screens.append(klass)
             if config["id"] == 0:
                 self.curr_screen = klass
@@ -113,12 +115,26 @@ class   Screen:
         win.addstr(y + 1, (size[1] / 2) - 8, "__Installer v1__", curses.A_REVERSE)
         return y
 
+    def     center(self, win, y, x, string, attr = 0):
+        win.addstr(y, (x / 2) - len(string) / 2, string, attr)
+
     def     change_screen(self, id):
         for s in self.screens:
             if s.config["id"] == id:
                 self.prev_id = self.curr_screen.config["id"]
                 self.curr_screen = s
                 s.reset()
+
+    def     error(self, string):
+        size = self.stdscr.getmaxyx()
+        self.error_win = curses.newwin(10, int(size[1] * 0.5), self.print_title(self.stdscr) + 5, int(size[1] * 0.5 / 2))
+        self.error_win.attrset(curses.color_pair(1) | curses.A_BOLD);
+        self.error_win.border()
+        size = self.error_win.getmaxyx()
+        self.center(self.error_win, 0, size[1], "ERROR", curses.color_pair(1) | curses.A_BOLD)
+        self.center(self.error_win, 4, size[1], string)
+        self.center(self.error_win, 7, size[1], "<OK>", curses.A_REVERSE)
+        self.in_error = 1
 
     # Main Loop
     def     loop(self):
@@ -138,7 +154,11 @@ class   Screen:
         win.refresh()
         while quit != -1:
             key = self.stdscr.getch()
-            if self.curr_screen.config["type"] == "menu":
+            if key == 10 and self.in_error == 1:
+                self.error_win.erase()
+                self.error_win.refresh()
+                self.in_error = 0
+            elif self.curr_screen.config["type"] == "menu":
                 self.curr_screen.input(key)
             elif self.curr_screen.config["type"] == "input":
                 c_input += input.input(key)
@@ -164,3 +184,5 @@ class   Screen:
             win.border()
             self.stdscr.refresh()
             win.refresh()
+            if (self.in_error):
+                self.error_win.refresh()

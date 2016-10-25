@@ -27,8 +27,10 @@ class Config:
     key = 0
     quit = 1
     root_p = ""
+    main = 0
 
-    def     init(self):
+    def     init(self, main):
+        self.main = main
         self.config = {
             "id": 1,
             "title": "Config",
@@ -64,14 +66,21 @@ class Config:
         self.key = key
 
     def     hostname(self, string):
+        if len(string) == 0:
+            self.main.error("Hostname cannot be empty.");
+            return 0
         return 1
 
     def     root_p1(self, string):
+        if len(string) == 0:
+            self.main.error("Password cannot be empty.");
+            return 0
         self.root_p = string
         return 1
     
     def     root_p2(self, string):
         if string != self.root_p:
+            self.main.error("Passwords did not match !");
             return -1
         self.quit = 0
         return 1

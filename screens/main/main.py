@@ -28,8 +28,10 @@ class Main:
     menu_s = ["INSTALL", "INSTALL 64BITS", "OPTIONS", "QUIT"]
     menu_choice = 0
     quit = 0
+    main = 0
 
-    def     init(self):
+    def     init(self, main):
+        self.main = main
         self.config = {
             "id": 0,
             "title": "MENU",
@@ -71,7 +73,7 @@ class Main:
     def     refresh(self, win):
         size = win.getmaxyx()
         if (size[0] > 10):
-            self.menu((size[0] / 2) - (len(self.menu_s) / 2), win, 1);
+            self.menu((size[0] / 2) - (len(self.menu_s) / 2) - 1, win, 1);
         else:
-            self.menu((size[0] / 2) - (len(self.menu_s) / 2), win, 0);
+            self.menu((size[0] / 2) - (len(self.menu_s) / 2) - 1, win, 0);
         return self.quit
