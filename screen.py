@@ -168,6 +168,8 @@ class   Screen:
             height = 10
         win = curses.newwin(height, int(size[1] * 0.75), self.print_title(self.stdscr) + 2, int(size[1] * 0.25 / 2))
         win.border()
+        size = win.getmaxyx()
+        self.center(win, 0, size[1], self.curr_screen.config["title"], curses.A_BOLD)
         self.curr_screen.refresh(win)
         self.stdscr.leaveok(1)
         self.stdscr.refresh()
@@ -202,19 +204,24 @@ class   Screen:
                     self.change_screen(self.prev_id)
                     c_input = 0
             win.erase()
+            win.border()
+            size = win.getmaxyx()
+            self.center(win, 0, size[1], self.curr_screen.config["title"], curses.A_BOLD)
             if self.curr_screen.config["type"] == "input" and c_input >= 0:
                 conf = self.curr_screen.config["input"][c_input]
                 input.s_input(win, conf["title"], conf["default"], conf["function"], conf["type"])
             quit = self.curr_screen.refresh(win)
             if (quit != self.curr_screen.config["id"]):
                 win.erase()
+                win.border()
+                size = win.getmaxyx()
                 self.change_screen(quit)
+                self.center(win, 0, size[1], self.curr_screen.config["title"], curses.A_BOLD)
                 c_input = 0
                 if self.curr_screen.config["type"] == "input":
                     conf = self.curr_screen.config["input"][c_input]
                     input.s_input(win, conf["title"], conf["default"], conf["function"], conf["type"])
                 self.curr_screen.refresh(win)
-            win.border()
             self.stdscr.refresh()
             win.refresh()
             if (self.in_error):
