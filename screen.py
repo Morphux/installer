@@ -145,7 +145,6 @@ class   Screen:
         self.error_win.attrset(curses.color_pair(1) | curses.A_BOLD);
         self.error_win.border()
         size = self.error_win.getmaxyx()
-        self.center(self.error_win, 0, size[1], " ERROR ", curses.color_pair(1) | curses.A_BOLD)
         self.center(self.error_win, 4, size[1], self.error_string)
         if (choice):
             self.in_error = 2

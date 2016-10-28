@@ -41,9 +41,10 @@ class Input:
             self.entry_type = type
         if self.current_choice == 0:
             curses.curs_set(1)
-        self.center(win, 2, size[1], title, curses.A_BOLD)
-        self.show_choices(win, size[1], 6)
-        self.input_string(win, 4, size[1])
+        if type == "text" or type == "password":
+            self.center(win, 2, size[1], title, curses.A_BOLD)
+            self.show_choices(win, size[1], 6)
+            self.input_string(win, 4, size[1])
 
     def     title(self, x, y, title, win):
         size = win.getmaxyx()
