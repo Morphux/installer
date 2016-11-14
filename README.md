@@ -1,2 +1,4 @@
-# installer
-Morphux Installer
+# Morphux Installer
+
+
+![Presentation pic](pic.png)
