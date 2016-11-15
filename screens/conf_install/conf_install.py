@@ -28,6 +28,7 @@ class   Conf_Install:
 
     dlg = 0
     conf_lst = {}
+    users_l = []
    
 ##
 # Functions
@@ -42,6 +43,7 @@ class   Conf_Install:
         self.inst_step = [
             {"Hostname": [self.hostname, "Set machine hostname"]},
             {"Root password": [self.root_password, "Set root password"]},
+            {"Users": [self.users, "Setup users account"]},
             {"Abort": [False, "Return to menu, reset configuration"]}
         ]
         return self.config
@@ -51,6 +53,10 @@ class   Conf_Install:
             return 0
         if (self.root_password()):
             return self.step_by_step()
+        code = self.dlg.yesno("Do you want to setup other user accounts now ?")
+        if code == "ok":
+            if (self.users()):
+                return self.step_by_step()
         return 2
 
     def     step_by_step(self):
@@ -76,6 +82,7 @@ class   Conf_Install:
                 self.dlg.msgbox("Cannot be blank")
             elif (code == "cancel"):
                 return 1
+        self.conf_lst["system.hostname"] = string
         return 0
 
     def     root_password(self):
@@ -98,4 +105,67 @@ class   Conf_Install:
         if (pass1 != string):
                 self.dlg.msgbox("Passwords do not match.")
                 return self.root_password()
+        self.conf_lst["system.root_p"] = string
         return 0
+
+    def     users(self):
+        while 1:
+            choices = [("Save", "Save the users and resume the installation"), ("New User", "Add a new user in the system")]
+            if len(self.users_l):
+                for e in self.users_l:
+                    choices.append((e["username"], "Edit "+ e["username"] + " account"));
+            code, tag = self.dlg.menu("Edit / Add Users", title="Users Settings", choices=choices)
+            if (code == "ok" and tag == "New User"):
+                self.add_new_user()
+            elif (code == "cancel"):
+                return 1
+            elif (code == "ok" and tag == "Save"):
+                return 0
+
+    def     add_new_user(self):
+        list = ["", "", "/bin/false", "/home/$USER"]
+        while list[0] == "":
+            code, list = self.dlg.form("Please provide the following informations:", [
+                ("Username", 1, 1, list[0], 1, 20, 30, 30),
+                ("Groups", 2, 1, list[1], 2, 20, 30, 30),
+                ("Default shell", 3, 1, list[2], 3, 20, 30, 30),
+                ("Home directory", 4, 1, list[3], 4, 20, 30, 30),
+            ])
+            if (code == "cancel"):
+                return 1
+            if (list[0] == ""):
+                self.dlg.msgbox("Username cannot be blank")
+                return self.add_new_user()
+            password = self.add_new_user_password(list[0])
+            if (type(password) == type(1)):
+                return 1
+            self.users_l.append({
+                "username": list[0],
+                "groups": list[1],
+                "shell": list[2],
+                "home": list[3],
+                "passw": password
+            })
+        return 0
+
+    def     add_new_user_password(self, username):
+        string = ""
+        pass1 = ""
+        while string == "":
+            code, string = self.dlg.passwordbox("Please enter "+ username +" password's:", insecure=True)
+            if (string == "" and code != "cancel"):
+                self.dlg.msgbox("Cannot be blank")
+            elif (code == "cancel"):
+                return 1
+        pass1 = string
+        string = ""
+        while string == "":
+            code, string = self.dlg.passwordbox("Please re-enter the password:", insecure=True)
+            if (string == "" and code != "cancel"):
+                self.dlg.msgbox("Cannot be blank")
+            elif (code == "cancel"):
+                return 1
+        if (pass1 != string):
+                self.dlg.msgbox("Passwords do not match.")
+                return self.add_new_user_password()
+        return string
