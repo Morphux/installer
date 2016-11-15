@@ -28,7 +28,7 @@ class   Conf_Install:
 
     dlg = 0
     conf_lst = {}
-
+   
 ##
 # Functions
 ##
@@ -39,14 +39,34 @@ class   Conf_Install:
             "id": 1,
             "name": "Installation"
         }
+        self.inst_step = [
+            {"Hostname": [self.hostname, "Set machine hostname"]},
+            {"Root password": [self.root_password, "Set root password"]},
+            {"Abort": [False, "Return to menu, reset configuration"]}
+        ]
         return self.config
 
     def     main(self):
         if (self.hostname()):
             return 0
         if (self.root_password()):
-            return 0
+            return self.step_by_step()
         return 2
+
+    def     step_by_step(self):
+        choices = []
+        for c in self.inst_step:
+            for k, v in c.items():
+                choices.append((k, v[1]))
+        code, tag = self.dlg.menu("Choose a step in the installation", choices=choices, title="Step by Step")
+        if (tag != "Abort" and code != "cancel"):
+            for c in self.inst_step:
+                for k, v in c.items():
+                    if k == tag:
+                        v[0]()
+                        return self.step_by_step()
+        else:
+            return 0
 
     def     hostname(self):
         string = ""
