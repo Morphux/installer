@@ -84,7 +84,7 @@ For more information about the menu entries, See <Help> button";
             self.dlg.msgbox(self.choices_ref[tag]["help"])
             return 0
         elif (code == "cancel"):
-            return -1
+            return -2
         else:
             return self.choices_ref[tag]["t_id"]
 

@@ -23,6 +23,7 @@
 
 import locale
 from pythondialog.dialog import *
+import time
 
 ##
 # Global configuration
@@ -46,7 +47,6 @@ class   Main:
     # Construct function
     def     __init__(self):
         self.load_screens()
-        self.get_screens_infos()
         locale.setlocale(locale.LC_ALL, '')
         self.d.set_background_title(title + ", version " + version)
         self.main()
@@ -70,22 +70,23 @@ class   Main:
     # Get infos on screens
     def     get_screens_infos(self):
         config = {}
+        m_done = []
         for name, klass in self.modules.items():
             print("Reading "+ name +" module ...  ", end="")
             klass = klass()
             config = klass.init(self.d, self.conf_lst)
-            self.screens.append(klass)
+            self.screens.insert(config["id"], klass)
             print("Done !")
 
     def     main(self):
-        id = 0
+        nm = 0
         t_id = 0
         while 1:
-            t_id = self.screens[id].main()
-            if (t_id == -2 or (t_id == -1 and id == 0)):
+            t_id = self.screens[nm].main()
+            if (t_id == -2):
                 return 0
-            elif (t_id != id):
-                id = t_id
+            elif (t_id != nm):
+                nm = t_id
 
 
 main = Main()
