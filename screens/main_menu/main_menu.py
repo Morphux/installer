@@ -55,7 +55,7 @@ For more information about the menu entries, See <Help> button";
             "help": "Launch the full, assisted, Morphux system installation"
         },
         "Custom Install": {
-            "t_id": 0,
+            "t_id": 2,
             "help": "Launch an automated install from a previous generated configuration file"
         },
         "Boot": {
