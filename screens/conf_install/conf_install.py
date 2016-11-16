@@ -20,6 +20,8 @@
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
+import time
+
 class   Conf_Install:
 
 ##
@@ -121,10 +123,16 @@ class   Conf_Install:
                 return 1
             elif (code == "ok" and tag == "Save"):
                 return 0
+            elif (code == "ok"):
+                self.add_new_user(tag)
 
-    def     add_new_user(self):
+    def     add_new_user(self, user = ""):
         list = ["", "", "/bin/false", "/home/$USER"]
-        while list[0] == "":
+        if (user != ""):
+            for o in self.users_l:
+                if o["username"] == user:
+                    list = [o["username"], o["groups"], o["shell"], o["home"]]
+        while list[0] == "" or user != "":
             code, list = self.dlg.form("Please provide the following informations:", [
                 ("Username", 1, 1, list[0], 1, 20, 30, 30),
                 ("Groups", 2, 1, list[1], 2, 20, 30, 30),
@@ -136,16 +144,34 @@ class   Conf_Install:
             if (list[0] == ""):
                 self.dlg.msgbox("Username cannot be blank")
                 return self.add_new_user()
+            if user == "" or user != list[0]:
+                for o in self.users_l:
+                    if (o["username"] == list[0]):
+                        self.dlg.msgbox("Username '"+ list[0] +"' already exist.")
+                        return self.add_new_user(user)
             password = self.add_new_user_password(list[0])
             if (type(password) == type(1)):
                 return 1
-            self.users_l.append({
-                "username": list[0],
-                "groups": list[1],
-                "shell": list[2],
-                "home": list[3],
-                "passw": password
-            })
+            if user == "":
+                self.users_l.append({
+                    "username": list[0],
+                    "groups": list[1],
+                    "shell": list[2],
+                    "home": list[3],
+                    "passw": password
+               })
+            else:
+                for o in self.users_l:
+                    if o["username"] == user:
+                        self.users_l.remove(o)
+                        self.users_l.append({
+                            "username": list[0],
+                            "groups": list[1],
+                            "shell": list[2],
+                            "home": list[3],
+                            "passw": password
+                        })
+                user = ""
         return 0
 
     def     add_new_user_password(self, username):
