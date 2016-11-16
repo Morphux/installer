@@ -46,6 +46,7 @@ class   Conf_Install:
             {"Hostname": [self.hostname, "Set machine hostname"]},
             {"Root password": [self.root_password, "Set root password"]},
             {"Users": [self.users, "Setup users account"]},
+            {"Networking": [self.network, "Configure Networking"]},
             {"Abort": [False, "Return to menu, reset configuration"]}
         ]
         return self.config
@@ -59,6 +60,8 @@ class   Conf_Install:
         if code == "ok":
             if (self.users()):
                 return self.step_by_step()
+        if (self.network()):
+            return self.step_by_step()
         return 2
 
     def     step_by_step(self):
@@ -74,6 +77,7 @@ class   Conf_Install:
                         v[0]()
                         return self.step_by_step()
         else:
+            self.conf_lst = {}
             return 0
 
     def     hostname(self):
@@ -196,3 +200,47 @@ class   Conf_Install:
                 self.dlg.msgbox("Passwords do not match.")
                 return self.add_new_user_password()
         return string
+
+    def     network(self):
+        choices = [("DHCP", "Automatically attribute IP address, no configuration to do"),
+                    ("Manual", "Configure network manually"),
+                    ("Pass", "Will not configure network for install")]
+        code, tag = self.dlg.menu("Choose your method for configuring networking.\nIf you don't know, choose DHCP.",
+                        choices=choices, title="Configure Network")
+        if (code == "cancel"):
+            return 1
+        if (code == "ok" and tag == "DHCP"):
+            self.conf_lst["network"] = "DHCP"
+            return 0
+        if (code == "ok" and tag == "Manual"):
+            return self.manual_networking()
+        if (code == "ok" and tag == "Pass"):
+            code = self.dlg.yesno("Are you SURE ?\nNetwork will NOT be\
+                configured for installation, additionnal packages will not be downloaded,\
+                The installed system will be very minimal.");
+            if code == "cancel":
+                return self.network()
+            self.conf_lst["network"] = "None"
+        return 0
+
+    def     manual_networking(self, list = False):
+        if (type(list) == type(False)):
+            list = ["", "255.255.255.255", "", "8.8.8.8,4.4.4.4"]
+        code, list = self.dlg.form("Informations required:", [
+            ("IP", 1, 1, list[0], 1, 20, 30, 30),
+            ("Netmask", 2, 1, list[1], 2, 20, 30, 30),
+            ("Gateway", 3, 1, list[2], 3, 20, 30, 30),
+            ("DNS", 4, 1, list[3], 4, 20, 30, 30)
+        ])
+        if (code == "cancel"):
+            return 1
+        if (list[0] == "" or list[1] == "" or list[2] == "" or list[3] == ""):
+            self.dlg.msgbox("All fields must be filled.")
+            return self.manual_networking(list)
+        self.conf_lst["network"] = {
+            "IP": list[0],
+            "NM": list[1],
+            "GW": list[2],
+            "DNS": list[3]
+        }
+        return 0
