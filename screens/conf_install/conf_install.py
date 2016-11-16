@@ -117,12 +117,13 @@ class   Conf_Install:
                 for e in self.users_l:
                     choices.append((e["username"], "Edit "+ e["username"] + " account"));
             code, tag = self.dlg.menu("Edit / Add Users", title="Users Settings", choices=choices)
+            if (code == "ok" and tag == "Save"):
+                self.conf_lst["system.users"] = self.users_l
+                return 0
             if (code == "ok" and tag == "New User"):
                 self.add_new_user()
             elif (code == "cancel"):
                 return 1
-            elif (code == "ok" and tag == "Save"):
-                return 0
             elif (code == "ok"):
                 self.add_new_user(tag)
 

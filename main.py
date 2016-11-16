@@ -82,6 +82,7 @@ class   Main:
         nm = 0
         t_id = 0
         while 1:
+            print(self.conf_lst)
             t_id = self.screens[nm].main()
             if (t_id == -2):
                 return 0
