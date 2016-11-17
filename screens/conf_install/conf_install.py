@@ -20,6 +20,8 @@
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
+import subprocess
+
 class   Conf_Install:
 
 ##
@@ -29,6 +31,7 @@ class   Conf_Install:
     dlg = 0 # Dialog Object
     conf_lst = {} # List object for configuration
     users_l = [] # List of users, used internally
+    disks = {} # Disk and partitions object
 
 ##
 # Functions
@@ -50,6 +53,7 @@ class   Conf_Install:
             {"Root password": [self.root_password, "Set root password"]},
             {"Users": [self.users, "Setup users account"]},
             {"Networking": [self.network, "Configure Networking"]},
+            {"Partitionning": [self.partitionning, "Configure Partitionning for the Installation"]},
             {"Abort": [False, "Return to menu, reset configuration"]}
         ]
         return self.config
@@ -73,6 +77,9 @@ class   Conf_Install:
                 return self.step_by_step()
 
         if (self.network()):
+            return self.step_by_step()
+
+        if (self.partitionning()):
             return self.step_by_step()
         return 2
 
@@ -397,3 +404,181 @@ class   Conf_Install:
             "DNS": list[3]
         }
         return 0
+
+    # Partitionning handling function
+    # This function _does not_ get the informations about the disks / partitions
+    # See: get_partitions_info
+    def     partitionning(self):
+        # Choices for the menu
+        choices = [
+            ("Entire Disk", "Use entire disk for the system"),
+            ("Entire Disk, Encrypted", "Use entire encrypted disk for the system"),
+            ("Manual", "Manual configuration of the partitions (Advanced users only !)")
+        ]
+
+        # Execute fdisk, parse the result
+        self.get_partitions_info()
+
+        # Actual call to the menu display
+        code, tag = self.dlg.menu("Choose a partitionning option", choices=choices, title="Partitionning")
+
+        # If the user hit cancel, we return him to the step-by-step menu
+        if code == "cancel":
+            return 1
+
+        # If the user choose entire disk option
+        if tag == "Entire Disk":
+            self.guided_partitionning()
+        if tag == "Entire Disk, Encrypted":
+            self.guided_partitionning(1)
+
+    # Disk / Partitions parsing function
+    # This function _does not_ handle the partitionning menu, just the parsing
+    # See: partitionning
+    def     get_partitions_info(self):
+        # Units used for parsing fdisk output
+        # M = Mb, G = Gb, etc
+        units = ["M", "G", "T", "P", "E", "Z", "Y"]
+        i = 0
+
+        # Execute fdisk -l command
+        fdisk = subprocess.check_output(["fdisk", "-l"]).splitlines()
+        #####
+        # Example output of the fdisk -l command:
+        #
+        # Disk /dev/sda: 931.5 GiB, 1000204886016 bytes, 1953525168 sectors
+        # Units: sectors of 1 * 512 = 512 bytes
+        # Sector size (logical/physical): 512 bytes / 4096 bytes
+        # I/O size (minimum/optimal): 4096 bytes / 4096 bytes
+        # Disklabel type: dos
+        # Disk identifier: 0xe47332bc
+        # 
+        # Device     Boot      Start        End    Sectors   Size Id Type
+        # /dev/sda1  *          2048     206847     204800   100M  7 HPFS/NTFS/exFAT
+        # /dev/sda2           206848 1245001727 1244794880 593.6G  7 HPFS/NTFS/exFAT
+        # /dev/sda3       1245001728 1953523711  708521984 337.9G  5 Extended
+        # /dev/sda5       1245003776 1945131007  700127232 333.9G 83 Linux
+        # /dev/sda6       1945133056 1953523711    8390656     4G 82 Linux swap / Solaris
+        # 
+        # Disk /dev/sdb: 7.5 GiB, 8019509248 bytes, 15663104 sectors
+        # Units: sectors of 1 * 512 = 512 bytes
+        # Sector size (logical/physical): 512 bytes / 512 bytes
+        # I/O size (minimum/optimal): 512 bytes / 512 bytes
+        # Disklabel type: dos
+        # Disk identifier: 0x2d031adc
+        # 
+        # Device     Boot  Start    End Sectors  Size Id Type
+        # /dev/sdb1            0 542719  542720  265M  0 Empty
+        # /dev/sdb2  *    526968 533231    6264  3.1M  1 FAT12
+        #####
+
+        # Iterating over each line of the result
+        while i < len(fdisk):
+
+            # Transform the line in a string, and remove the "b'" at the
+            # beginning of the string
+            s = str(fdisk[i])[2:]
+
+            # If the line contain the disk info
+            # Disk /dev/sda: 931.5 GiB, 1000204886016 bytes, 1953525168 sectors
+            if s[:4] == "Disk":
+                # We split the line over space
+                infos = s.split(" ")
+
+                # Set the basic informations about the disk
+                self.disks[infos[1][:-1]] = {
+                    "size": infos[2],
+                    "unit": infos[3][:-1],
+                    "part": []
+                }
+
+                # Iterate over the lines under the 'Disk' one
+                while i < len(fdisk) and str(fdisk[i])[2:] != "'":
+                    i = i + 1
+
+                i = i + 1
+                # Read information about the partitions
+                while i < len(fdisk) and str(fdisk[i])[2:] != "'":
+
+                    # Split the line in order to read it
+                    d_part = str(fdisk[i])[2:].split()
+
+                    # If it's not the 'Device ...' Line
+                    if d_part[0] != "Device":
+
+                        # Initialize the partition object
+                        part_info = {}
+
+                        # Get the partition name (/dev/sdX1 like)
+                        part_info["part"] = d_part[0]
+
+                        # If the partition marked as a boot one
+                        if d_part[1] == "*":
+                            part_info["boot"] = True
+                        j = 2
+
+                        # Iterate over the information, stop over the size column
+                        while j < len(d_part) and d_part[j][-1:] not in units:
+                            j = j + 1
+
+                        # Get the size info (100M like)
+                        part_info["size"] = d_part[j]
+
+                        # Skip the id column
+                        j = j + 2
+
+                        type = ""
+                        # Get the type of the partition
+                        # Can be one word, or many, hence the while.
+                        while j < len(d_part):
+                            if j == len(d_part) - 1:
+                                d_part[j] = d_part[j][:-1]
+                            if type != "":
+                                type += " " + d_part[j]
+                            else:
+                                type = d_part[j]
+                            j = j + 1
+
+                        # Add the type of the partition
+                        part_info["type"] = type
+
+                        # Add the partition object to the disk one
+                        self.disks[infos[1][:-1]]["part"].append(part_info)
+                    i = i + 1
+            i = i + 1
+
+    # Guided Partitionning handling Function
+    # Note: Guided Partitionning is called 'Use an entire disk' in the installer
+    def     guided_partitionning(self, encrypted = 0):
+        # Choices for the menu
+        choices = []
+
+        # Fill the menu choices with disk informations
+        for k, d in self.disks.items():
+            choices.append((k, "Use the disk "+ k +" for the system ("+ d["size"] + d["unit"] +")"))
+
+        # Actual call to the menu
+        code, tag = self.dlg.menu("Choose a disk", choices=choices, title="Partitionning")
+
+        # If the user hit the 'cancel' button
+        if code == "cancel":
+            return 1
+
+        # Save the choosen disk
+        self.conf_lst["partitionning.disk"] = tag
+
+        # Choices for guided partitionning
+        choices = [
+            ("One partition", "Use one partition for everything. Strongly advised for unexperienced users"),
+            ("Three partitions", "Root, boot and swap partition"),
+            ("Four partitions", "Root, boot, /home and swap partition"),
+            ("Five partitions", "Root, boot, /home, /tmp and swap partition"),
+            ("Eight partitions", "Root, boot, /home, /usr, /opt, /tmp, /usr/src and swap partition"),
+        ]
+
+        # Actual call to the menu
+        code, tag = self.dlg.menu("Choose a partitionning method", choices=choices, title="Partitionning")
+
+        # If the user hit cancel, we recall this function.
+        if code == "cancel":
+            self.guided_partitionning(encrypted)
