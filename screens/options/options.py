@@ -32,12 +32,14 @@ class   Options:
     # Options used for the checklist. Format is:
     # (REAL_OPTION_NAME, English descripion, default)
     # default describe if the options is activated or not (boolean)
+    # By default, the following options are activated:
+    # MAKE_KERN, KEEP_SRC, BIN_INSTALL
     options = [
         ("INSTALL_DOC", "Install documentation when available", 0),
         ("KEEP_SRC", "Keep sources after compilation", 0),
         ("MAKE_KERN", "Compile Kernel", 1),
         ("KEEP_KSRC", "Keep Kernel sources", 1),
-        ("BIN_INSTALL", "Install system with binaries only (FASTER)", 1),
+        ("BIN_INSTALL", "Install system with binaries only, do not compile anything (FASTER)", 1),
         ("LOG", "Log Install", 0),
         ("AUTO_REBOOT", "Reboot automatically after sucessfull install", 0),
         ("TMP_INSTALL", "Use a temporary system build (LFS-like, SLOWER)", 0),
@@ -64,14 +66,25 @@ class   Options:
         code, tag = self.dlg.checklist("Use Space to select options", choices = self.options, title="Options Menu")
         if code == "cancel":
             return 0
+
+        # Empty the choices in the options
+        for i, opt in enumerate(self.options):
+            # Tuple can't handle writing on-the-fly
+            # So we convert it into a list, make the change,
+            # and convert it back into a tuple
+            tmp = list(opt)
+            tmp[2] = 0
+            self.options[i] = tuple(tmp)
+            # Empty the internal table too
+            res_opt[tmp[0]] = False
+
+        # Fill the chosen options in the list
         for s in tag:
-            # This list is used for an internal used only
+            # This list is used for an internal use only
             # Format is list[REAL_OPTION_NAME] = True
             res_opt[s] = True
             for i, opt in enumerate(self.options):
-                if opt[0] == s and opt[2] == 0:
-                    # Safe removing of the old tuple
-                    self.options.remove(opt)
+                if opt[0] == s:
                     tmp = list(opt)
                     tmp[2] = 1
                     # We put the new tuple in place
