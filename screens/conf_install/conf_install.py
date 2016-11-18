@@ -494,6 +494,32 @@ class   Conf_Install:
                     "part": []
                 }
 
+                # Iterate over the lines to the 'Disklabel' one
+                while i < len(fdisk) and str(fdisk[i])[2:][:9] != "Disklabel":
+                    print(str(fdisk[i])[2:][:9])
+                    i = i + 1
+
+                # We split the line in order to get the information
+                # Disklabel type: dos
+                label_infos = str(fdisk[i]).split(" ")
+
+                # Let's check if the line is correct
+                if (len(label_infos) >= 2):
+                    # Stock the label information
+                    self.disks[infos[1][:-1]]["label"] = label_infos[2][:-1]
+
+                # Iterate over the lines to the 'Disk identifier' one
+                # Disk identifier: 0x2d031adc
+                while i < len(fdisk) and str(fdisk[i])[2:][:15] != "Disk identifier":
+                    i = i + 1
+
+                disk_name = str(fdisk[i]).split(" ")
+
+                # Let's check if the line is correct
+                if (len(disk_name) >= 2):
+                    # Stock the label information
+                    self.disks[infos[1][:-1]]["name"] = disk_name[2][:-1]
+
                 # Iterate over the lines under the 'Disk' one
                 while i < len(fdisk) and str(fdisk[i])[2:] != "'":
                     i = i + 1
@@ -526,8 +552,11 @@ class   Conf_Install:
                         # Get the size info (100M like)
                         part_info["size"] = d_part[j]
 
-                        # Skip the id column
-                        j = j + 1
+                        # Skip the id column, only on dos type disks
+                        if (self.disks[infos[1][:-1]]["label"] == "dos"):
+                            j = j + 2
+                        else:
+                            j = j + 1
 
                         type = ""
                         # Get the type of the partition
@@ -588,23 +617,58 @@ class   Conf_Install:
     # Manual Partitionning function handler
     # Note: This function does not any change to the disk
     def     manual_partitionning(self):
-        # Choices list
-        choices = []
+        # Choices list, default to Menu helper
+        choices = [("", "   ID Name\t\tSize\tType")]
 
         # Fill the choices list with disks and partitions
         for k, d in self.disks.items():
-            choices.append((k, k.replace("/dev/", "") +" "+ d["size"] + d["unit"]))
+            choices.append((k, k.replace("/dev/", "") +": "+ d["name"] +" "+ d["size"] + d["unit"] + " (" + d["label"] +")"))
             i = 0
+            # Size used, in MB
+            size_used = 0
             for p in d["part"]:
-                choices.append((p["part"], "    "+ str(i) +" "+ p["part"].replace("/dev/", "") +"\t"+ p["size"] +"\t"+ p["type"]))
+                size_used += self.size_to_mb(float(p["size"][:-1]), p["size"][-1:])
+                choices.append((p["part"], "   "+ str(i) +"  "+ p["part"].replace("/dev/", "") +"\t\t"+ p["size"] +"\t"+ p["type"]))
                 i = i + 1
+
+            # Get the size of the disk, in MB
+            disk_size = self.size_to_mb(d["size"], d["unit"])
+
+            # If we got more than 10MB of free space (Less is very likely to be padding) we print it.
+            if size_used - disk_size > 10:
+                choices.append(("FS:"+d["name"], "    FREE SPACE\t\t"+ str(int(size_used) - int(disk_size)) + "M"))
+
 
         # Actual call to the menu
         # Arguments:
         # no_tags=True, Do not display tags
         # extra_button=True, Activate extra button
         # extra_label="", Override the default label for the extra button
-        self.dlg.menu("Edit the partitions\nWARNING: The change will be applied at install, not here",
+        code, tag = self.dlg.menu("Edit the partitions\nWARNING: The change will be applied at install, not here",
             choices=choices, title="Manual Partitionning", no_tags=True,
             extra_label="Edit", extra_button=True)
+
+        # If the user hit cancel
+        if code == "cancel":
+            return 1
+        # If the user hit the menu helper, we recall this very function
+        elif tag == "":
+            return self.manual_partitionning()
+        # If the user press edit, launch the screen partition edit function, then recall this function
+        elif code == "extra":
+            self.part_edit(tag)
+            return self.manual_partitionning()
         return 1
+
+    def     part_edit(self, part_name):
+        self.dlg.msgbox(part_name)
+        return 0
+
+    # Function that does the conversion from anything to MB
+    def     size_to_mb(self, size, unit):
+        # The size is already in MB
+        if unit[0] == "M":
+            return float(size)
+        elif unit[0] == "G":
+            return float(size) * 1024
+        return 0
