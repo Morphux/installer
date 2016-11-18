@@ -429,8 +429,10 @@ class   Conf_Install:
         # If the user choose entire disk option
         if tag == "Entire Disk":
             self.guided_partitionning()
-        if tag == "Entire Disk, Encrypted":
+        elif tag == "Entire Disk, Encrypted":
             self.guided_partitionning(1)
+        elif tag == "Manual":
+            self.manual_partitionning()
 
     # Disk / Partitions parsing function
     # This function _does not_ handle the partitionning menu, just the parsing
@@ -525,7 +527,7 @@ class   Conf_Install:
                         part_info["size"] = d_part[j]
 
                         # Skip the id column
-                        j = j + 2
+                        j = j + 1
 
                         type = ""
                         # Get the type of the partition
@@ -582,3 +584,27 @@ class   Conf_Install:
         # If the user hit cancel, we recall this function.
         if code == "cancel":
             self.guided_partitionning(encrypted)
+
+    # Manual Partitionning function handler
+    # Note: This function does not any change to the disk
+    def     manual_partitionning(self):
+        # Choices list
+        choices = []
+
+        # Fill the choices list with disks and partitions
+        for k, d in self.disks.items():
+            choices.append((k, k.replace("/dev/", "") +" "+ d["size"] + d["unit"]))
+            i = 0
+            for p in d["part"]:
+                choices.append((p["part"], "    "+ str(i) +" "+ p["part"].replace("/dev/", "") +"\t"+ p["size"] +"\t"+ p["type"]))
+                i = i + 1
+
+        # Actual call to the menu
+        # Arguments:
+        # no_tags=True, Do not display tags
+        # extra_button=True, Activate extra button
+        # extra_label="", Override the default label for the extra button
+        self.dlg.menu("Edit the partitions\nWARNING: The change will be applied at install, not here",
+            choices=choices, title="Manual Partitionning", no_tags=True,
+            extra_label="Edit", extra_button=True)
+        return 1
