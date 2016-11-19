@@ -645,7 +645,7 @@ class   Conf_Install:
             disk_size = self.size_to_mb(d["size"], d["unit"])
 
             # If we got more than 100MB of free space (Less is very likely to be padding) we print it.
-            if size_used - disk_size > 100:
+            if size_used - disk_size > 10:
                 choices.append(("FS:"+d["name"], "    FREE SPACE\t\t"+ str(int(size_used) - int(disk_size)) + "M"))
 
 
