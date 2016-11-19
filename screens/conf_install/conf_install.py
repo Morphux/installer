@@ -626,16 +626,26 @@ class   Conf_Install:
             i = 0
             # Size used, in MB
             size_used = 0
+            in_extended = 0
             for p in d["part"]:
-                size_used += self.size_to_mb(float(p["size"][:-1]), p["size"][-1:])
-                choices.append((p["part"], "   "+ str(i) +"  "+ p["part"].replace("/dev/", "") +"\t\t"+ p["size"] +"\t"+ p["type"]))
+                # If the partition type is Extended, we don't wanna count it
+                if p["type"] != "Extended":
+                    size_used += self.size_to_mb(float(p["size"][:-1]), p["size"][-1:])
+
+                if in_extended == 0:
+                    part_name = p["part"].replace("/dev/", "")
+                else:
+                    part_name = "└─ " + p["part"].replace("/dev/", "")
+                choices.append((p["part"], "   "+ str(i) +"  "+ part_name +"\t\t"+ p["size"] +"\t"+ p["type"]))
+                if p["type"] == "Extended":
+                    in_extended = 1
                 i = i + 1
 
             # Get the size of the disk, in MB
             disk_size = self.size_to_mb(d["size"], d["unit"])
 
-            # If we got more than 10MB of free space (Less is very likely to be padding) we print it.
-            if size_used - disk_size > 10:
+            # If we got more than 100MB of free space (Less is very likely to be padding) we print it.
+            if size_used - disk_size > 100:
                 choices.append(("FS:"+d["name"], "    FREE SPACE\t\t"+ str(int(size_used) - int(disk_size)) + "M"))
 
 
