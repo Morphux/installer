@@ -593,7 +593,7 @@ class   Conf_Install:
 
         # If the user hit the 'cancel' button
         if code == "cancel":
-            return 1
+            return self.partitionning()
 
         # Save the choosen disk
         self.conf_lst["partitionning.disk"] = tag
