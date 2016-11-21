@@ -597,20 +597,29 @@ class   Conf_Install:
         if code == "cancel":
             return self.partitionning()
 
+        # If the choosen disk has partitions, we warn the user
+        if len(self.disks[tag]["part"]):
+            code = self.dlg.yesno("This disk already have partitions.\n\
+They will be totally wiped with the install.\n\
+YOU WILL LOOSE ANY DATA THAT'S ON THE DISK.\n\
+Are you sure to continue?")
+            # If the user hit 'No', we recall this very function
+            if code == "cancel":
+                self.guided_partitionning(encrypted)
+
         # Save the choosen disk
         self.conf_lst["partitionning.disk"] = tag
 
         # Choices for guided partitionning
         choices = [
-            ("One partition", "Use one partition for everything. Strongly advised for unexperienced users"),
-            ("Three partitions", "Root, boot and swap partition"),
-            ("Four partitions", "Root, boot, /home and swap partition"),
-            ("Five partitions", "Root, boot, /home, /tmp and swap partition"),
-            ("Eight partitions", "Root, boot, /home, /usr, /opt, /tmp, /usr/src and swap partition"),
+            ("Three partitions", "Root, boot and swap partitions. Strongly advised for unexperienced users."),
+            ("Four partitions", "Root, boot, /home and swap partitions"),
+            ("Five partitions", "Root, boot, /home, /tmp and swap partitions"),
+            ("Eight partitions", "Root, boot, /home, /usr, /opt, /tmp, /usr/src and swap partitions"),
         ]
 
         # Actual call to the menu
-        code, tag = self.dlg.menu("Choose a partitionning method", choices=choices, title="Partitionning")
+        code, tag = self.dlg.menu("Choose a partitionning method:", choices=choices, title="Partitionning")
 
         # If the user hit cancel, we recall this function.
         if code == "cancel":
