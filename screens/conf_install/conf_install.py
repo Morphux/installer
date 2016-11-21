@@ -619,18 +619,21 @@ class   Conf_Install:
     # Manual Partitionning function handler
     # Note: This function does not any change to the disk
     def     manual_partitionning(self):
-        # Choices list, default to Menu helper
+        # Choices list
         choices = []
 
         # Fill the choices list with disks and partitions
         for k, d in self.disks.items():
+            # Disk top line
             choices.append(("", "|-------------------------------------------------------"))
+
             choices.append((k, "| "+ k.replace("/dev/", "") +": "+ d["name"] +" "+ d["size"] + d["unit"] + " (" + d["label"] +")"))
             i = 0
             # Size used, in MB
             size_used = 0
             in_extended = 0
 
+            # If the disk contain any partition, we shom a column helper
             if len(d["part"]):
                 choices.append(("", "|   ID Name\t\tBoot\tSize\tType"))
                 choices.append(("", "|   ========================================"))
@@ -656,10 +659,11 @@ class   Conf_Install:
 
             # If we got more than 100MB of free space (Less is very likely to be padding) we print it.
             if size_used - disk_size > 10:
-                choices.append(("FS:"+d["name"], "|      FREE SPACE\t\t"+ str(int(size_used) - int(disk_size)) + "M\tNone"))
+                choices.append(("FS:"+k, "|      FREE SPACE\t\t"+ str(int(size_used) - int(disk_size)) + "M\tNone"))
 
-
+        # Bottom line
         choices.append(("", "|-------------------------------------------------------"))
+
         # Actual call to the menu
         # Arguments:
         # no_tags=True, Do not display tags
