@@ -543,6 +543,8 @@ class   Conf_Install:
                         # If the partition marked as a boot one
                         if d_part[1] == "*":
                             part_info["boot"] = True
+                        else:
+                            part_info["boot"] = False
                         j = 2
 
                         # Iterate over the information, stop over the size column
@@ -618,15 +620,20 @@ class   Conf_Install:
     # Note: This function does not any change to the disk
     def     manual_partitionning(self):
         # Choices list, default to Menu helper
-        choices = [("", "   ID Name\t\tSize\tType")]
+        choices = []
 
         # Fill the choices list with disks and partitions
         for k, d in self.disks.items():
-            choices.append((k, k.replace("/dev/", "") +": "+ d["name"] +" "+ d["size"] + d["unit"] + " (" + d["label"] +")"))
+            choices.append(("", "|-------------------------------------------------------"))
+            choices.append((k, "| "+ k.replace("/dev/", "") +": "+ d["name"] +" "+ d["size"] + d["unit"] + " (" + d["label"] +")"))
             i = 0
             # Size used, in MB
             size_used = 0
             in_extended = 0
+
+            if len(d["part"]):
+                choices.append(("", "|   ID Name\t\tBoot\tSize\tType"))
+                choices.append(("", "|   ========================================"))
             for p in d["part"]:
                 # If the partition type is Extended, we don't wanna count it
                 if p["type"] != "Extended":
@@ -636,7 +643,10 @@ class   Conf_Install:
                     part_name = p["part"].replace("/dev/", "")
                 else:
                     part_name = "└─ " + p["part"].replace("/dev/", "")
-                choices.append((p["part"], "   "+ str(i) +"  "+ part_name +"\t\t"+ p["size"] +"\t"+ p["type"]))
+                if p["boot"]:
+                    choices.append((p["part"], "|   "+ str(i) +"  "+ part_name +"\t\t*\t"+ p["size"] +"\t"+ p["type"]))
+                else:
+                    choices.append((p["part"], "|   "+ str(i) +"  "+ part_name +"\t\t\t"+ p["size"] +"\t"+ p["type"]))
                 if p["type"] == "Extended":
                     in_extended = 1
                 i = i + 1
@@ -646,9 +656,10 @@ class   Conf_Install:
 
             # If we got more than 100MB of free space (Less is very likely to be padding) we print it.
             if size_used - disk_size > 10:
-                choices.append(("FS:"+d["name"], "    FREE SPACE\t\t"+ str(int(size_used) - int(disk_size)) + "M"))
+                choices.append(("FS:"+d["name"], "|      FREE SPACE\t\t"+ str(int(size_used) - int(disk_size)) + "M\tNone"))
 
 
+        choices.append(("", "|-------------------------------------------------------"))
         # Actual call to the menu
         # Arguments:
         # no_tags=True, Do not display tags
