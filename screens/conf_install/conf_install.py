@@ -542,9 +542,9 @@ class   Conf_Install:
 
                         # If the partition marked as a boot one
                         if d_part[1] == "*":
-                            part_info["boot"] = True
+                            part_info["flag"] = "boot"
                         else:
-                            part_info["boot"] = False
+                            part_info["flag"] = False
                         j = 2
 
                         # Iterate over the information, stop over the size column
@@ -635,7 +635,9 @@ Are you sure to continue?")
             # Disk top line
             choices.append(("", "|-------------------------------------------------------"))
 
-            choices.append((k, "| "+ k.replace("/dev/", "") +": "+ d["name"] +" "+ d["size"] + d["unit"] + " (" + d["label"] +")"))
+            # Note: disable the editing of disk
+            # To re-enable it, change the first argument of the tuple by "disk:"+ k
+            choices.append(("", "| "+ k.replace("/dev/", "") +": "+ d["name"] +" "+ d["size"] + d["unit"] + " (" + d["label"] +")"))
             i = 0
             # Size used, in MB
             size_used = 0
@@ -643,7 +645,7 @@ Are you sure to continue?")
 
             # If the disk contain any partition, we shom a column helper
             if len(d["part"]):
-                choices.append(("", "|   ID Name\t\tBoot\tSize\tType"))
+                choices.append(("", "|   ID Name\t\tFlag\tSize\tType"))
                 choices.append(("", "|   ========================================"))
             for p in d["part"]:
                 # If the partition type is Extended, we don't wanna count it
@@ -654,10 +656,10 @@ Are you sure to continue?")
                     part_name = p["part"].replace("/dev/", "")
                 else:
                     part_name = "└─ " + p["part"].replace("/dev/", "")
-                if p["boot"]:
-                    choices.append((p["part"], "|   "+ str(i) +"  "+ part_name +"\t\t*\t"+ p["size"] +"\t"+ p["type"]))
+                if p["flag"]:
+                    choices.append(("part:"+ p["part"], "|   "+ str(i) +"  "+ part_name +"\t\t"+ p["flag"] +"\t"+ p["size"] +"\t"+ p["type"]))
                 else:
-                    choices.append((p["part"], "|   "+ str(i) +"  "+ part_name +"\t\t\t"+ p["size"] +"\t"+ p["type"]))
+                    choices.append(("part:"+ p["part"], "|   "+ str(i) +"  "+ part_name +"\t\t\t"+ p["size"] +"\t"+ p["type"]))
                 if p["type"] == "Extended":
                     in_extended = 1
                 i = i + 1
@@ -665,9 +667,10 @@ Are you sure to continue?")
             # Get the size of the disk, in MB
             disk_size = self.size_to_mb(d["size"], d["unit"])
 
-            # If we got more than 100MB of free space (Less is very likely to be padding) we print it.
-            if size_used - disk_size > 10:
-                choices.append(("FS:"+k, "|      FREE SPACE\t\t"+ str(int(size_used) - int(disk_size)) + "M\tNone"))
+            # If we got more than 10MB of free space (Less is very likely to be padding) we print it.
+            # Free space is currently disabled, since the installer does not handle advanced partitionning (yet ?)
+            #if size_used - disk_size > 10:
+                #choices.append(("fs:"+k, "|      FREE SPACE\t\t"+ str(int(size_used) - int(disk_size)) + "M\tNone"))
 
         # Bottom line
         choices.append(("", "|-------------------------------------------------------"))
@@ -685,16 +688,86 @@ Are you sure to continue?")
         if code == "cancel":
             return 1
         # If the user hit the menu helper, we recall this very function
-        elif tag == "":
+        elif tag == "" and code != "ok":
             return self.manual_partitionning()
         # If the user press edit, launch the screen partition edit function, then recall this function
         elif code == "extra":
             self.part_edit(tag)
             return self.manual_partitionning()
+        # The user press OK
+        elif code == "ok":
+            found_root = 0
+            found_grub = 0
+
+            # Check for root, Grub boot partitions
+            for k, d in self.disks.items():
+                for p in d["part"]:
+                    if p["flag"] == "Root":
+                        found_root = 1
+                    elif p["flag"] == "Grub":
+                        found_grub = 1
+
+            # If the root partition is missing
+            if found_root == 0:
+                self.dlg.msgbox("No partitions as been flagged as root.")
+
+            # If the Grub partition is missing
+            elif found_grub == 0:
+                self.dlg.msgbox("No partitions as been flagged as Grub.")
+
+            # If we are missing a required partition, recall this function
+            if found_grub == 0 or found_root == 0:
+                return self.manual_partitionning()
+
+            # All good
+                return 0
         return 1
 
+    # Edition for manual partitionning function
+    # Note that the name is a bit misleading, that function can also edit disks.
     def     part_edit(self, part_name):
-        self.dlg.msgbox(part_name)
+        # The format of part_name is: 'type:name'
+        # So we split it in order to get the right information
+        name = part_name.split(":")
+
+        # Check if the list as 2 members
+        if len(name) != 2:
+            return 1
+
+        # If the edition is on a partition
+        if name[0] == "part":
+
+            # Choices for the menu
+            choices = [
+                ("Root", "Flag the partition as root (/)"),
+                ("Grub", "Flag the partition as Grub. Used for boot"),
+                ("Boot", "Flag the partition as boot (/boot)"),
+                ("Swap", "Flag the partition as swap"),
+                ("Home", "Flag the partition as home (/home)"),
+                ("Tmp", "Flag the partition as temporary (/tmp)"),
+            ]
+            # Actual call to the Menu
+            code, tag = self.dlg.menu("Choose a role for the partition:", choices=choices, title="Partitionning")
+
+            # If the user hit cancel
+            if code == "cancel":
+                return 1
+
+            # Replace the flag in the disks object
+            # Since name[1] is like: /dev/sda1, we can take the 8 first char
+            # to identify the main disk
+            for p in self.disks[name[1][:8]]["part"]:
+                if p["part"] == name[1]:
+                    # Replace the partition flag
+                    p["flag"] = tag
+
+                    # Change the type of the partition if needed
+                    if tag == "Root" or tag == "Temporary" or tag == "Home":
+                        p["type"] = "Linux filesystem"
+                    elif tag == "Swap":
+                        p["type"] = "Linux Swap"
+                    elif tag == "Grub":
+                        p["type"] = "None"
         return 0
 
     # Function that does the conversion from anything to MB
