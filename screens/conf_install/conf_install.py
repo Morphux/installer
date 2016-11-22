@@ -883,6 +883,8 @@ Are you sure to continue?")
     def     preview_partitionning(self):
         # Choices list
         choices = []
+        # Conf result, used internally
+        result_conf = []
 
         # Fill the choices list with disks and partitions
         for k, d in self.disks.items():
@@ -900,6 +902,7 @@ Are you sure to continue?")
                 part_name = p["part"].replace("/dev/", "")
                 if p["flag"]:
                     choices.append(("part:"+ p["part"], "|   "+ str(i) +"  "+ part_name +"\t\t"+ p["flag"] +"\t"+ p["size"] +"\t"+ p["type"]))
+                    result_conf.append({"disk": k, "part": p["part"], "type": p["type"], "flag": p["flag"], "size": p["size"]})
                 i = i + 1
 
         # Actual call to the menu
@@ -911,6 +914,9 @@ Are you sure to continue?")
         # If the user hit cancel, we return to the partition menu
         if code == "cancel":
             return self.partitionning()
+
+        # All good, we save the configuration
+        self.conf_lst["partitionning.layout"] = result_conf
         return 0
 
 
