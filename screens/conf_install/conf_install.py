@@ -21,6 +21,7 @@
 ##
 
 import subprocess
+import os
 
 class   Conf_Install:
 
@@ -32,6 +33,45 @@ class   Conf_Install:
     conf_lst = {} # List object for configuration
     users_l = [] # List of users, used internally
     disks = {} # Disk and partitions object
+
+    # Default partitionning object
+    # In case of default partitionning, this object will be used to define sizes,
+    # format and types of the partitions
+    # Object format is the following:
+    # name_of_the_layout: {
+    #   partition_type: size
+    # }
+    # Size can be hard-coded (100M), or in percent.
+    # Note that the percent is calculated with the hard-coded value
+    # For example, is a partition is set as 90%, the math will be:
+    # (90 * 100) / (disk_size - hard_coded_size)
+    # For swap partition, the optimal size is twice the amount of RAM, so the
+    # object is simply set as True.
+    # Note that the swap value is counted in 'hard_coded_size' for the
+    # percentage math
+    partition_layout = {
+        "Three partitions": {
+            "GRUB": [1, "1M"],
+            "Boot": [2, "100M"],
+            "Root": [3, "100%"],
+            "Swap": [4, True]
+        },
+        "Four partitions": {
+            "GRUB": [1, "1M"],
+            "Boot": [2, "100M"],
+            "Root": [3, "20%"],
+            "Home": [4, "80%"],
+            "Swap": [5, True]
+        },
+        "Five partitions": {
+            "GRUB": [1, "1M"],
+            "Boot": [2, "100M"],
+            "Root": [3, "20%"],
+            "Home": [4, "75%"],
+            "Tmp": [5, "5%"],
+            "Swap": [6, True]
+        }
+    }
 
 ##
 # Functions
@@ -434,6 +474,10 @@ class   Conf_Install:
         elif tag == "Manual":
             self.manual_partitionning()
 
+        # Review partitionning one last time
+        self.preview_partitionning()
+        return 0
+
     # Disk / Partitions parsing function
     # This function _does not_ handle the partitionning menu, just the parsing
     # See: partitionning
@@ -542,7 +586,7 @@ class   Conf_Install:
 
                         # If the partition marked as a boot one
                         if d_part[1] == "*":
-                            part_info["flag"] = "boot"
+                            part_info["flag"] = "Grub"
                         else:
                             part_info["flag"] = False
                         j = 2
@@ -605,7 +649,7 @@ YOU WILL LOOSE ANY DATA THAT'S ON THE DISK.\n\
 Are you sure to continue?")
             # If the user hit 'No', we recall this very function
             if code == "cancel":
-                self.guided_partitionning(encrypted)
+                return self.guided_partitionning(encrypted)
 
         # Save the choosen disk
         self.conf_lst["partitionning.disk"] = tag
@@ -622,7 +666,12 @@ Are you sure to continue?")
 
         # If the user hit cancel, we recall this function.
         if code == "cancel":
-            self.guided_partitionning(encrypted)
+            return self.guided_partitionning(encrypted)
+        # If the user hit 'Ok', we set the partition layout in the disks object
+        elif code == "ok":
+            self.apply_partition_layout(self.partition_layout[tag], self.conf_lst["partitionning.disk"])
+        return 1
+
 
     # Manual Partitionning function handler
     # Note: This function does not any change to the disk
@@ -762,7 +811,7 @@ Are you sure to continue?")
                     p["flag"] = tag
 
                     # Change the type of the partition if needed
-                    if tag == "Root" or tag == "Temporary" or tag == "Home":
+                    if tag == "Root" or tag == "Temporary" or tag == "Home" or tag == "Boot":
                         p["type"] = "Linux filesystem"
                     elif tag == "Swap":
                         p["type"] = "Linux Swap"
@@ -770,11 +819,106 @@ Are you sure to continue?")
                         p["type"] = "None"
         return 0
 
+    # Function that apply a partition layout to a disk.
+    # obj is the partition layout (See intern variables)
+    # disk_name is a string containing the disk name (/dev/sda like)
+    # Note: This does not any change to the disk, this is done in
+    # the installation process
+    def     apply_partition_layout(self, obj, disk_name):
+        # Get the disk object
+        disk = self.disks[disk_name]
+        hc_size = 0 # hard-coded size in MB
+        disk_size = 0 # Total disk size, in MB
+        ram_size = int(os.sysconf('SC_PAGE_SIZE') * os.sysconf('SC_PHYS_PAGES') / (1024.**2)) # Ram Size in MB
+
+        # Reset the partitions on the disk
+        disk["part"] = []
+
+        # Get the disk size
+        disk_size = self.size_to_mb(disk["size"], disk["unit"])
+
+        # Iterate first to get the hard-coded total size
+        for k, v in obj.items():
+            # Swap object is simply set to True, so we check the type
+            if type(v[1]) == type(False):
+                # Add the RAM size * 2 to the count
+                hc_size += ram_size * 2
+            # If the size is not in percent, we add it to the count
+            elif v[1][-1:] != "%":
+                hc_size += int(v[1][:-1])
+
+        # Iterate over the wanted partition layout
+        for k, v in obj.items():
+            part_obj = {}
+            part_obj["part"] = disk_name + str(v[0])
+
+            # If it's a swap partition
+            if type(v[1]) == type(False):
+                part_obj["size"] = str(ram_size * 2) + "M"
+                part_obj["type"] = "Linux Swap"
+                part_obj["flag"] = "Swap"
+
+            # If the size is in percent
+            elif v[1][-1:] == "%":
+                part_obj["size"] = str(int((disk_size - hc_size) * (int(v[1][:-1])) / 100)) + "M"
+            # Hard coded size
+            else:
+                part_obj["size"] = v[1]
+
+            # Specific type and flags
+            if k == "GRUB":
+                part_obj["flag"] = "Grub"
+                part_obj["type"] = "None"
+            elif type(v[1]) != type(False):
+                part_obj["type"] = "Linux filesystem" # Generic filesystem for things other than swap / Grub partition
+                part_obj["flag"] = k
+
+            # Add the new partition in the disk object
+            disk["part"].insert(v[0] - 1, part_obj)
+
+        self.conf_lst["partitionning.disk.format"] = True
+        return 1
+
+    # Function used to preview the final partitionning of the system
+    def     preview_partitionning(self):
+        # Choices list
+        choices = []
+
+        # Fill the choices list with disks and partitions
+        for k, d in self.disks.items():
+            choices.append(("", "| "+ k.replace("/dev/", "") +": "+ d["name"] +" "+ d["size"] + d["unit"] + " (" + d["label"] +")"))
+            i = 0
+            # Size used, in MB
+            in_extended = 0
+
+            # If the disk contain any partition, we shom a column helper
+            if len(d["part"]):
+                choices.append(("", "|   ID Name\t\tFlag\tSize\tType"))
+                choices.append(("", "|   ========================================"))
+
+            for p in d["part"]:
+                part_name = p["part"].replace("/dev/", "")
+                if p["flag"]:
+                    choices.append(("part:"+ p["part"], "|   "+ str(i) +"  "+ part_name +"\t\t"+ p["flag"] +"\t"+ p["size"] +"\t"+ p["type"]))
+                i = i + 1
+
+        # Actual call to the menu
+        # Arguments:
+        # no_tags=True, Do not display tags
+        code, tag = self.dlg.menu("Final partitionning review",
+            choices=choices, title="Review", no_tags=True)
+
+        # If the user hit cancel, we return to the partition menu
+        if code == "cancel":
+            return self.partitionning()
+        return 0
+
+
     # Function that does the conversion from anything to MB
     def     size_to_mb(self, size, unit):
         # The size is already in MB
         if unit[0] == "M":
             return float(size)
         elif unit[0] == "G":
-            return float(size) * 1024
+            return float(size) * 1000
         return 0
