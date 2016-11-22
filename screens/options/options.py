@@ -58,6 +58,13 @@ class   Options:
             "id": 5,
             "name": "Options Menu"
         }
+
+        # Fill the default options (in case the user never goes on this screen)
+        res_opt = {}
+        for i, opt in enumerate(self.options):
+            if opt[2]:
+                res_opt[opt[0]] = True
+        self.conf_lst["config"] = res_opt
         return self.config
 
     # main function, called by Main instance
