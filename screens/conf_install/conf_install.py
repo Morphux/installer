@@ -614,8 +614,7 @@ Are you sure to continue?")
         choices = [
             ("Three partitions", "Root, boot and swap partitions. Strongly advised for unexperienced users."),
             ("Four partitions", "Root, boot, /home and swap partitions"),
-            ("Five partitions", "Root, boot, /home, /tmp and swap partitions"),
-            ("Eight partitions", "Root, boot, /home, /usr, /opt, /tmp, /usr/src and swap partitions"),
+            ("Five partitions", "Root, boot, /home, /tmp and swap partitions")
         ]
 
         # Actual call to the menu
