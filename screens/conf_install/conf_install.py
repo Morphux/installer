@@ -543,6 +543,10 @@ class   Conf_Install:
                     print(str(fdisk[i])[2:][:9])
                     i = i + 1
 
+                if i == len(fdisk):
+                    self.disks[infos[1][:-1]]["label"] = "None"
+                    self.disks[infos[1][:-1]]["name"] = "HDD"
+                    break
                 # On some versions of fdisk, Disklabel and Disk identifier are not here
                 if str(fdisk[i])[2:] != "'":
                     # We split the line in order to get the information
