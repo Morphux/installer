@@ -539,34 +539,41 @@ class   Conf_Install:
                 }
 
                 # Iterate over the lines to the 'Disklabel' one
-                while i < len(fdisk) and str(fdisk[i])[2:][:9] != "Disklabel":
+                while i < len(fdisk) and str(fdisk[i])[2:][:9] != "Disklabel" and str(fdisk[i])[2:] != "'":
                     print(str(fdisk[i])[2:][:9])
                     i = i + 1
 
-                # We split the line in order to get the information
-                # Disklabel type: dos
-                label_infos = str(fdisk[i]).split(" ")
+                # On some versions of fdisk, Disklabel and Disk identifier are not here
+                if str(fdisk[i])[2:] != "'":
+                    # We split the line in order to get the information
+                    # Disklabel type: dos
+                    label_infos = str(fdisk[i]).split(" ")
 
-                # Let's check if the line is correct
-                if (len(label_infos) >= 2):
-                    # Stock the label information
-                    self.disks[infos[1][:-1]]["label"] = label_infos[2][:-1]
+                    # Let's check if the line is correct
+                    if (len(label_infos) >= 2):
+                        # Stock the label information
+                        self.disks[infos[1][:-1]]["label"] = label_infos[2][:-1]
 
-                # Iterate over the lines to the 'Disk identifier' one
-                # Disk identifier: 0x2d031adc
-                while i < len(fdisk) and str(fdisk[i])[2:][:15] != "Disk identifier":
-                    i = i + 1
+                    # Iterate over the lines to the 'Disk identifier' one
+                    # Disk identifier: 0x2d031adc
+                    while i < len(fdisk) and str(fdisk[i])[2:][:15] != "Disk identifier":
+                        i = i + 1
 
-                disk_name = str(fdisk[i]).split(" ")
+                    disk_name = str(fdisk[i]).split(" ")
 
-                # Let's check if the line is correct
-                if (len(disk_name) >= 2):
-                    # Stock the label information
-                    self.disks[infos[1][:-1]]["name"] = disk_name[2][:-1]
+                    # Let's check if the line is correct
+                    if (len(disk_name) >= 2):
+                        # Stock the label information
+                        self.disks[infos[1][:-1]]["name"] = disk_name[2][:-1]
 
-                # Iterate over the lines under the 'Disk' one
-                while i < len(fdisk) and str(fdisk[i])[2:] != "'":
-                    i = i + 1
+                    # Iterate over the lines under the 'Disk' one
+                    while i < len(fdisk) and str(fdisk[i])[2:] != "'":
+                        i = i + 1
+
+                # Replace the values by default values
+                else:
+                    self.disks[infos[1][:-1]]["label"] = "None"
+                    self.disks[infos[1][:-1]]["name"] = "HDD"
 
                 i = i + 1
                 # Read information about the partitions
