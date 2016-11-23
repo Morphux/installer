@@ -44,10 +44,10 @@ class   Conf_Install:
     # Size can be hard-coded (100M), or in percent.
     # Note that the percent is calculated with the hard-coded value
     # For example, is a partition is set as 90%, the math will be:
-    # (90 * 100) / (disk_size - hard_coded_size)
+    # (disk_size - hard_coded_size) * (90 / 100)
     # For swap partition, the optimal size is twice the amount of RAM, so the
     # object is simply set as True.
-    # Note that the swap value is counted in 'hard_coded_size' for the
+    # Note that the swap amount is counted in 'hard_coded_size' for the
     # percentage math
     partition_layout = {
         "Three partitions": {
