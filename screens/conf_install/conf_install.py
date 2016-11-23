@@ -853,7 +853,10 @@ Are you sure to continue?")
             # Swap object is simply set to True, so we check the type
             if type(v[1]) == type(False):
                 # Add the RAM size * 2 to the count
-                hc_size += ram_size * 2
+                if (ram_size * 2) < (disk_size / 2):
+                    hc_size += ram_size * 2
+                else:
+                    hc_size += ram_size
             # If the size is not in percent, we add it to the count
             elif v[1][-1:] != "%":
                 hc_size += int(v[1][:-1])
@@ -865,7 +868,10 @@ Are you sure to continue?")
 
             # If it's a swap partition
             if type(v[1]) == type(False):
-                part_obj["size"] = str(ram_size * 2) + "M"
+                if (ram_size * 2) < (disk_size / 2):
+                    part_obj["size"] = str(ram_size * 2) + "M"
+                else:
+                    part_obj["size"] = str(ram_size) + "M"
                 part_obj["type"] = "Linux Swap"
                 part_obj["flag"] = "Swap"
 
@@ -899,13 +905,13 @@ Are you sure to continue?")
 
         # Fill the choices list with disks and partitions
         for k, d in self.disks.items():
-            choices.append(("", "| "+ k.replace("/dev/", "") +": "+ d["name"] +" "+ d["size"] + d["unit"] + " (" + d["label"] +")"))
-            i = 0
-            # Size used, in MB
-            in_extended = 0
-
-            # If the disk contain any partition, we shom a column helper
             if len(d["part"]):
+                choices.append(("", "| "+ k.replace("/dev/", "") +": "+ d["name"] +" "+ d["size"] + d["unit"] + " (" + d["label"] +")"))
+                i = 0
+                # Size used, in MB
+                in_extended = 0
+
+                # Column helper
                 choices.append(("", "|   ID Name\t\tFlag\tSize\tType"))
                 choices.append(("", "|   ========================================"))
 
