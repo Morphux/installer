@@ -91,7 +91,7 @@ For more information about the menu entries, See <Help> button";
         return self.config
 
     # main function, called by Main instance
-    def     main(self):
+    def     main(self, Main):
         # Display the menu
         code, tag = self.dlg.menu(self.a_title, title="Main Menu", choices = self.choices, help_button=True)
         if (code == "ok" and tag == "Exit"):

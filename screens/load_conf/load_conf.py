@@ -45,7 +45,7 @@ class   Load_Conf:
 
     # main function, called by Main instance
     # The second parameter, d_path is the default starting path
-    def     main(self, d_path = "/"):
+    def     main(self, Main, d_path = "/"):
 
         # Call to the file selection dialog box
         code, path = self.dlg.fselect(d_path, height=20, width=60, title="Select the configuration file")

@@ -22,6 +22,7 @@
 
 import subprocess
 import os
+import json
 
 class   Conf_Install:
 
@@ -100,7 +101,28 @@ class   Conf_Install:
         return self.config
 
     # main function, called by Main instance
-    def     main(self):
+    def     main(self, Main):
+
+        # Check if we got a configuration file
+        if os.path.isfile("morphux_install.conf"):
+            code = self.dlg.yesno("We found a configuration file.\nUse it ?")
+            if code == "ok":
+                # Load the json into an object
+                with open("morphux_install.conf") as fd:
+                    self.conf_lst = json.load(fd)
+                    # Check the configuration integrity
+                    if self.check_conf():
+                        # Save this in order not to ask the configuration
+                        # saving in the installation process
+                        self.conf_lst["load_conf"] = True
+                        Main.conf_lst = self.conf_lst
+                        return 6
+                    # If the configuration is wrong, we return the user
+                    # to the step_by_step menu
+                    else:
+                        return self.step_by_step()
+
+
         # Since hostname is the first configuration to do, if the user
         # hit 'cancel' we return him to the Main Menu, not the step-by-step
         if (self.hostname()):

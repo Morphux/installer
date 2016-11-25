@@ -48,7 +48,7 @@ class   Shell:
         return self.config
 
     # main function, called by Main instance
-    def     main(self):
+    def     main(self, Main):
         # Execute the binary /bin/sh
         # Note there is no error handling, nor output redirection.
         sh = Popen(['/bin/sh'])

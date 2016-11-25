@@ -68,7 +68,7 @@ class   Options:
         return self.config
 
     # main function, called by Main instance
-    def     main(self):
+    def     main(self, Main):
         res_opt = {}
         # Call the dialog checklist
         code, tag = self.dlg.checklist("Use Space to select options", choices = self.options, title="Options Menu")

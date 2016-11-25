@@ -20,6 +20,8 @@
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
+import      json
+
 class   Install:
 
 ##
@@ -44,5 +46,11 @@ class   Install:
         return self.config
 
     # main function, called by Main instance
-    def main(self):
-        self.dlg.msgbox("Hey there !")
+    def main(self, Main):
+        # The current configuration is already loaded from a file, no
+        # reason to re-save it.
+        if "load_conf" not in self.conf_lst:
+            code = self.dlg.yesno("Do you want to save your current configuration ?")
+            if code == "ok":
+                with open("morphux_install.conf", "w") as fd:
+                    json.dump(self.conf_lst, fd)
