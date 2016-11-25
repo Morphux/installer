@@ -110,6 +110,7 @@ class   Conf_Install:
                 # Load the json into an object
                 with open("morphux_install.conf") as fd:
                     self.conf_lst = json.load(fd)
+                    # TODO catch exception on json.load
                     # Check the configuration integrity
                     if self.check_conf():
                         # Save this in order not to ask the configuration

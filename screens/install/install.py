@@ -54,3 +54,4 @@ class   Install:
             if code == "ok":
                 with open("morphux_install.conf", "w") as fd:
                     json.dump(self.conf_lst, fd)
+        print(self.conf_lst)

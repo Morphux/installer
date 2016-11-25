@@ -20,6 +20,8 @@
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
+import      json
+
 class   Load_Conf:
 
 ##
@@ -65,9 +67,14 @@ class   Load_Conf:
 
         with fd:
             # All good, we can read the file
-            data = fd.read()
-            print(data)
-            sys.exit(1)
-            # We do nothing with this file, yet.
-            return 0
+            self.conf_lst = json.load(fd)
 
+            # TODO catch exception on json.load
+
+            # Ugly method in order to check conf integrity
+            Main.screens[1][0].conf_lst = self.conf_lst
+            if Main.screens[1][0].check_conf():
+                self.conf_lst["load_conf"] = True
+                Main.conf_lst = self.conf_lst
+                return 6
+            return Main.screens[1][0].step_by_step()
