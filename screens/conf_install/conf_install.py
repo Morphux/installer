@@ -94,6 +94,7 @@ class   Conf_Install:
             {"Users": [self.users, "Setup users account"]},
             {"Networking": [self.network, "Configure Networking"]},
             {"Partitionning": [self.partitionning, "Configure Partitionning for the Installation"]},
+            {"Launch Installation": [False, "Launch install with current configuration"]},
             {"Abort": [False, "Return to menu, reset configuration"]}
         ]
         return self.config
@@ -135,7 +136,7 @@ class   Conf_Install:
         code, tag = self.dlg.menu("Choose a step in the installation", choices=choices, title="Step by Step")
 
         # If the choice is not abort, call the function, then recall the step_by_step function
-        if (tag != "Abort" and code != "cancel"):
+        if (tag != "Abort" and tag != "Launch Installation" and code != "cancel"):
             for c in self.inst_step:
                 for k, v in c.items():
                     if k == tag:
@@ -143,9 +144,14 @@ class   Conf_Install:
                         return self.step_by_step()
 
         # User press Abort, we empty the configuration, then return to the main menu
-        else:
+        elif tag == "Abort":
             self.conf_lst = {}
             return 0
+        elif tag == "Launch Installation":
+            if (self.check_conf()):
+                return 6
+            return self.step_by_step()
+        return 1
 
     # Hostname handling function
     def     hostname(self):
@@ -937,6 +943,38 @@ Are you sure to continue?")
         self.conf_lst["partitionning.layout"] = result_conf
         return 0
 
+    # Function that check the integrity of the configuration
+    # Mainly used for a step-by-step install, in order to launch install
+    # Without problems
+    def     check_conf(self):
+        missing = "" # Missing modules variable
+
+        # Check if the hostname is in the config. Not possible, but you know,
+        # doesn't hurt.
+        if "system.hostname" not in self.conf_lst:
+            missing += "Hostname, "
+
+        # Check the root password
+        if "system.root_p" not in self.conf_lst:
+            missing += "Root password, "
+
+        # Check the network configuration
+        if "network" not in self.conf_lst:
+            missing += "Networking, "
+
+        # Check the partitions informations
+        if "partitionning.layout" not in self.conf_lst:
+            missing += "Partitionning, "
+
+        # If we are missing any configuration, we show a message, and return
+        # to the step_by_step function
+        if missing != "":
+            missing = missing[:-2]
+            self.dlg.msgbox("The installer miss the following informations:\n"+
+                missing+ ".\nPlease provide them and relaunch the installation",
+                title="Error !")
+            return 0
+        return 1
 
     # Function that does the conversion from anything to MB
     def     size_to_mb(self, size, unit):
