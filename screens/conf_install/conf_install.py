@@ -121,7 +121,7 @@ class   Conf_Install:
 
         if (self.partitionning()):
             return self.step_by_step()
-        return 2
+        return 6
 
     # Step by Step configuration
     def     step_by_step(self):
