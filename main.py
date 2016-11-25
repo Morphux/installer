@@ -73,7 +73,6 @@ class   Main:
     # Get infos on screens, Initialize the instances
     def     get_screens_infos(self):
         config = {}
-        m_done = []
         for name, klass in self.modules.items():
             print("Reading "+ name +" module ...  ", end="")
             klass = klass()
@@ -81,7 +80,7 @@ class   Main:
             config = klass.init(self.d, self.conf_lst)
             # Stocking the return of init() in an object
             self.screens[config["id"]] = [klass, config]
-            print("Done !")
+            print("\tDone !")
 
     # Main loop function
     def     main(self):
