@@ -484,7 +484,7 @@ class   Conf_Install:
     def     get_partitions_info(self):
         # Units used for parsing fdisk output
         # M = Mb, G = Gb, etc
-        units = ["M", "G", "T", "P", "E", "Z", "Y"]
+        units = ["B", "K", "M", "G", "T", "P", "E", "Z", "Y"]
         i = 0
 
         # Execute fdisk -l command
@@ -606,6 +606,7 @@ class   Conf_Install:
                         while j < len(d_part) and d_part[j][-1:] not in units:
                             j = j + 1
 
+                        print(d_part)
                         # Get the size info (100M like)
                         part_info["size"] = d_part[j]
 
