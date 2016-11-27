@@ -885,6 +885,8 @@ Are you sure to continue?")
                 # Add the RAM size * 2 to the count
                 if (ram_size * 2) < (disk_size / 2):
                     hc_size += ram_size * 2
+                elif ram_size > disk_size:
+                    hc_size += 1000
                 else:
                     hc_size += ram_size
             # If the size is not in percent, we add it to the count
@@ -900,6 +902,8 @@ Are you sure to continue?")
             if type(v[1]) == type(False):
                 if (ram_size * 2) < (disk_size / 2):
                     part_obj["size"] = str(ram_size * 2) + "M"
+                elif ram_size > disk_size:
+                    part_obj["size"] = "1000M"
                 else:
                     part_obj["size"] = str(ram_size) + "M"
                 part_obj["type"] = "Linux Swap"

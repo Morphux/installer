@@ -22,6 +22,7 @@
 
 import      json
 import      os
+from        subprocess import Popen, PIPE, STDOUT
 
 class   Install:
 
@@ -62,6 +63,10 @@ class   Install:
         # Load packages files
         self.load_pkgs()
 
+        # If partitionning is needed, do it
+        if "partitionning.disk.format" in self.conf_lst:
+            self.create_partitions()
+
     # Load all the packages configuration files
     # path: Default to ./pkgs
     def     load_pkgs(self, path = "pkgs"):
@@ -91,3 +96,44 @@ class   Install:
             # Saving the configuration of the object
             self.pkgs[config["name"]] = [klass, config]
             print("\tDone !")
+
+    # Function that format disk and create new partitions
+    def     create_partitions(self):
+        # Object used to define types in fdisk
+        types = {
+            "Grub": "4",
+            "Boot": "15",
+            "Root": "15",
+            "Swap": "14"
+        }
+
+        layout = self.conf_lst["partitionning.layout"] # Partition future layout
+        disk = self.conf_lst["partitionning.disk"] # Disk used for partitionning
+
+        # Creating a new partiton label
+        self.dlg.infobox("Creating a new partition table on "+ disk+ "...")
+        self.fdisk(["g", "p", "w"], disk)
+
+        # List partitions to add
+        for p in layout:
+            if p["disk"] == disk:
+                self.dlg.infobox("Creating partition"+ p["part"] +"...")
+                self.fdisk(["n", p["part"][-1:], "", "+"+p["size"], "w"], disk)
+                self.fdisk(["t", p["part"][-1:], types[p["flag"]], "w"], disk)
+        return 0
+
+    # Function that call the disk binary with options for the console
+    # lst is a list of option
+    # disk is the physical disk for changes. (/dev/sda like)
+    def     fdisk(self, lst, disk):
+        args = "" # Argument string
+
+        # List the arguments, concat them into a string
+        for s in lst:
+            args += s + "\n"
+
+        # Call the fdisk binary with the disk
+        p = Popen(['fdisk', disk], stdout=PIPE, stdin=PIPE, stderr=STDOUT)
+
+        # Pipe the argument, for console
+        out = p.communicate(input=bytes(args, "UTF-8"))[0]
