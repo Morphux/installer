@@ -101,10 +101,10 @@ class   Install:
     def     create_partitions(self):
         # Object used to define types in fdisk
         types = {
-            "Grub": "4",
-            "Boot": "15",
-            "Root": "15",
-            "Swap": "14"
+            "Grub": "21686148-6449-6E6F-744E-656564454649",
+            "Boot": "0FC63DAF-8483-4772-8E79-3D69D8477DE4",
+            "Root": "0FC63DAF-8483-4772-8E79-3D69D8477DE4",
+            "Swap": "0657FD6D-A4AB-43C4-84E5-0933C84B4F4F"
         }
 
         layout = self.conf_lst["partitionning.layout"] # Partition future layout
@@ -115,11 +115,19 @@ class   Install:
         self.fdisk(["g", "p", "w"], disk)
 
         # List partitions to add
+        i = 0
         for p in layout:
             if p["disk"] == disk:
                 self.dlg.infobox("Creating partition"+ p["part"] +"...")
                 self.fdisk(["n", p["part"][-1:], "", "+"+p["size"], "w"], disk)
-                self.fdisk(["t", p["part"][-1:], types[p["flag"]], "w"], disk)
+
+                # If there is one partition on the disk, we do not need to pass
+                # a number to fdisk
+                if (i != 0):
+                    self.fdisk(["t", p["part"][-1:], types[p["flag"]], "w"], disk)
+                else:
+                    self.fdisk(["t", types[p["flag"]], "w"], disk)
+                i = i + 1
         return 0
 
     # Function that call the disk binary with options for the console
