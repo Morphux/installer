@@ -109,19 +109,22 @@ class   Conf_Install:
             if code == "ok":
                 # Load the json into an object
                 with open("morphux_install.conf") as fd:
-                    self.conf_lst = json.load(fd)
-                    # TODO catch exception on json.load
-                    # Check the configuration integrity
-                    if self.check_conf():
-                        # Save this in order not to ask the configuration
-                        # saving in the installation process
-                        self.conf_lst["load_conf"] = True
-                        Main.conf_lst = self.conf_lst
-                        return 6
-                    # If the configuration is wrong, we return the user
-                    # to the step_by_step menu
-                    else:
-                        return self.step_by_step()
+                    try:
+                        self.conf_lst = json.load(fd)
+
+                        # Check the configuration integrity
+                        if self.check_conf():
+                            # Save this in order not to ask the configuration
+                            # saving in the installation process
+                            self.conf_lst["load_conf"] = True
+                            Main.conf_lst = self.conf_lst
+                            return 6
+                        # If the configuration is wrong, we return the user
+                        # to the step_by_step menu
+                        else:
+                            return self.step_by_step()
+                    except ValueError:
+                        self.dlg.msgbox("The format of the file is wrong !")
 
 
         # Since hostname is the first configuration to do, if the user
