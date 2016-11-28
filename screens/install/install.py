@@ -22,7 +22,7 @@
 
 import      json
 import      os
-from        subprocess import Popen, PIPE, STDOUT
+from        subprocess import Popen, PIPE, STDOUT, call
 
 class   Install:
 
@@ -66,6 +66,7 @@ class   Install:
         # If partitionning is needed, do it
         if "partitionning.disk.format" in self.conf_lst:
             self.create_partitions()
+        self.format()
 
     # Load all the packages configuration files
     # path: Default to ./pkgs
@@ -104,6 +105,8 @@ class   Install:
             "Grub": "21686148-6449-6E6F-744E-656564454649",
             "Boot": "0FC63DAF-8483-4772-8E79-3D69D8477DE4",
             "Root": "0FC63DAF-8483-4772-8E79-3D69D8477DE4",
+            "Home": "0FC63DAF-8483-4772-8E79-3D69D8477DE4",
+            "Tmp": "0FC63DAF-8483-4772-8E79-3D69D8477DE4",
             "Swap": "0657FD6D-A4AB-43C4-84E5-0933C84B4F4F"
         }
 
@@ -111,14 +114,16 @@ class   Install:
         disk = self.conf_lst["partitionning.disk"] # Disk used for partitionning
 
         # Creating a new partiton label
-        self.dlg.infobox("Creating a new partition table on "+ disk+ "...")
+        self.dlg.infobox("Creating a new partition table on "+ disk+ "...",
+            width=50, height=3)
         self.fdisk(["g", "p", "w"], disk)
 
         # List partitions to add
         i = 0
         for p in layout:
             if p["disk"] == disk:
-                self.dlg.infobox("Creating partition"+ p["part"] +"...")
+                self.dlg.infobox("Creating partition"+ p["part"] +"...",
+                    width=50, height=3)
                 self.fdisk(["n", p["part"][-1:], "", "+"+p["size"], "w"], disk)
 
                 # If there is one partition on the disk, we do not need to pass
@@ -143,5 +148,36 @@ class   Install:
         # Call the fdisk binary with the disk
         p = Popen(['fdisk', disk], stdout=PIPE, stdin=PIPE, stderr=STDOUT)
 
-        # Pipe the argument, for console
+        # Pipe the argument, for console (We need to convert the input into
+        # bytes for python3)
         out = p.communicate(input=bytes(args, "UTF-8"))[0]
+
+    # Function that format partitions
+    # ext2 for Boot, swap for swap, ext4 for everything else
+    def     format(self):
+        layout = self.conf_lst["partitionning.layout"] # Partition future layout
+        disk = self.conf_lst["partitionning.disk"] # Disk used for partitionning
+
+        for p in layout:
+            if p["disk"] == disk and p["flag"] != "Grub":
+                self.dlg.infobox("Formatting partition "+ p["part"]+ "...",
+                width=50, height=3)
+                # If it's a /boot partition
+                if (p["flag"] == "Boot"):
+                    self.exec(["mkfs", "-t", "ext2", p["part"]])
+                # If it's swap
+                elif (p["flag"] == "Swap"):
+                    self.exec(["mkswap", p["part"]])
+                # Everything else, except Grub partition, that does not need
+                # formatting
+                else:
+                    self.exec(["mkfs", "-t", "ext4", p["part"]])
+
+    # Function that call a binary, with argument
+    # args is the list of bin + arguments (['ls', '-la'])
+    # Note that this function automatically hide the output of the command.
+    # Return the output of the command, bytes format
+    def     exec(self, args):
+        p = Popen(args, stdout=PIPE, stderr=STDOUT)
+        out = p.communicate()[0]
+        return out

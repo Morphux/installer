@@ -627,11 +627,7 @@ class   Conf_Install:
                         # Get the partition name (/dev/sdX1 like)
                         part_info["part"] = d_part[0]
 
-                        # If the partition marked as a boot one
-                        if d_part[1] == "*":
-                            part_info["flag"] = "Grub"
-                        else:
-                            part_info["flag"] = False
+                        part_info["flag"] = False
                         j = 2
 
                         # Iterate over the information, stop over the size column
