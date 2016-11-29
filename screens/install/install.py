@@ -22,6 +22,7 @@
 
 import      json
 import      os
+import      time
 from        subprocess import Popen, PIPE, STDOUT, call
 
 class   Install:
@@ -34,6 +35,7 @@ class   Install:
     conf_lst = {} # List object for configuration
     modules = {} # Module object
     pkgs = {} # Packages instances
+    mnt_point = "/mnt/morphux" # Install mount point
 
 ##
 # Functions
@@ -63,10 +65,22 @@ class   Install:
         # Load packages files
         self.load_pkgs()
 
+        # If a pre-existing install is present, format it
+        if os.path.isdir(self.mnt_point):
+            self.dlg.infobox("Cleaning "+ self.mnt_point +" repository...",
+                width=50, height=3)
+            self.exec(["umount", "-R", self.mnt_point])
+            self.exec(["rm", "-rf", self.mnt_point])
+
         # If partitionning is needed, do it
         if "partitionning.disk.format" in self.conf_lst:
             self.create_partitions()
+
+        # Format the partitions
         self.format()
+
+        # Mount the partitions
+        self.mount()
 
     # Load all the packages configuration files
     # path: Default to ./pkgs
@@ -122,7 +136,7 @@ class   Install:
         i = 0
         for p in layout:
             if p["disk"] == disk:
-                self.dlg.infobox("Creating partition"+ p["part"] +"...",
+                self.dlg.infobox("Creating partition "+ p["part"] +"...",
                     width=50, height=3)
                 self.fdisk(["n", p["part"][-1:], "", "+"+p["size"], "w"], disk)
 
@@ -133,6 +147,10 @@ class   Install:
                 else:
                     self.fdisk(["t", types[p["flag"]], "w"], disk)
                 i = i + 1
+
+        # Re-create partition table
+        self.dlg.infobox("Re-creating partition table...", width=50, height=3)
+        self.exec(["partprobe", disk])
         return 0
 
     # Function that call the disk binary with options for the console
@@ -181,3 +199,40 @@ class   Install:
         p = Popen(args, stdout=PIPE, stderr=STDOUT)
         out = p.communicate()[0]
         return out
+
+    # Function that mount the partitions for install
+    # self.mnt_point is used for the mount point.
+    def     mount(self):
+        layout = self.conf_lst["partitionning.layout"] # Partition layout
+        disk = self.conf_lst["partitionning.disk"] # Disk used for mount
+
+        # Create the mount point directory
+        self.exec(["mkdir", "-pv", self.mnt_point])
+
+        # Let's look for the root partition, in order to mount it
+        root = [p for p in layout if p["flag"] == "Root"]
+        # Mount the root partition
+        self.dlg.infobox("Mounting root partition...", width=50, height=3)
+        self.exec(["mount", "-v", "-t", "ext4", root[0]["part"], self.mnt_point])
+
+        # Mount all the others partition that needs mounting
+        for p in layout:
+            if p["flag"] != "Root" and p["flag"] != "Grub":
+                # No need to mount anything for swap, just activate it
+                self.dlg.infobox("Mounting "+ p["flag"]+ " partition...",
+                width=50, height=3)
+                if p["flag"] == "Swap":
+                    self.exec(["/sbin/swapon", "-v", p["part"]])
+                elif p["flag"] == "Boot":
+                    # Create the directory, then mount it
+                    self.exec(["mkdir", "-pv", self.mnt_point + "/boot"])
+                    self.exec(["mount", "-v", "-t", "ext2", p["part"], self.mnt_point + "/boot"])
+                elif p["flag"] == "Home":
+                    # Create the directory, then mount it
+                    self.exec(["mkdir", "-pv", self.mnt_point + "/home"])
+                    self.exec(["mount", "-v", "-t", "ext4", p["part"], self.mnt_point + "/home"])
+                elif p["flag"] == "Tmp":
+                    # Create the directory, then mount it
+                    self.exec(["mkdir", "-pv", self.mnt_point + "/tmp"])
+                    self.exec(["mount", "-v", "-t", "ext4", p["part"], self.mnt_point + "/tmp"])
+        return 0
