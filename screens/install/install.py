@@ -66,8 +66,8 @@ class   Install:
 
         # Load packages files
         self.load_pkgs()
-        self.phase_1_install()
-        sys.exit(1)
+        #self.phase_1_install()
+        #sys.exit(1)
 
         # If a pre-existing install is present, format it
         if os.path.isdir(self.mnt_point):
@@ -87,7 +87,7 @@ class   Install:
         self.mount()
 
         # If the installation require a 2-Phase install
-        if self.conf_lst["config"]["TMP_INSTALL"]:
+        if "TMP_INSTALL" in self.conf_lst["config"] and self.conf_lst["config"]["TMP_INSTALL"]:
             # Create the tools directory
             self.exec(["mkdir", "-v", self.mnt_point + "/tools"])
             # Link between the host and the install
