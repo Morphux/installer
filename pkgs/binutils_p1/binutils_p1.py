@@ -15,31 +15,31 @@
 ################################################################################
 
 ##
-# test.py
-# Created: 25/11/2016
+# binutils_p1.py
+# Created: 29/11/2016
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
-# This a temporary file, here in order to test the install process.
-
-class   Test:
+class   Binutils_P1:
 
     conf_lst = {}
+    e = False
 
-    def init(self, c_lst):
+    def init(self, c_lst, ex):
         self.conf_lst = c_lst
+        self.e = ex
         self.config = {
-            "name": "test", # Name of the package
-            "version": "1.0", # Version of the package
-            "size": 100, # Size of the installed package
-            "archive": "test-1.0.tar.gz", # Archive name
-            "cheksum": "", # Checksum of the archive
+            "name": "binutils", # Name of the package
+            "version": "2.27", # Version of the package
+            "size": 519, # Size of the installed package (MB)
+            "archive": "binutils-2.27.tar.bz2", # Archive name
+            "cheksum": "2869c9bf3e60ee97c74ac2a6bf4e9d68", # Checksum of the archive
             "SBU": 1, # SBU (Compilation time)
-            "tmp_install": False, # Is this package part of the temporary install
+            "tmp_install": True, # Is this package part of the temporary install
             "next": "test2", # Next package to install
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "http://url1.com/",
-                "http://url2.com/",
+                "ftp://install.morphux.org/packages/binutils-2.27.tar.bz2",
+                "http://ftp.gnu.org/gnu/binutils/binutils-2.27.tar.bz2",
             ]
         }
         return self.config

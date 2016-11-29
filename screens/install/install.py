@@ -23,6 +23,7 @@
 import      json
 import      os
 import      time
+from        urllib.request import urlretrieve
 from        subprocess import Popen, PIPE, STDOUT, call
 
 class   Install:
@@ -36,6 +37,7 @@ class   Install:
     modules = {} # Module object
     pkgs = {} # Packages instances
     mnt_point = "/mnt/morphux" # Install mount point
+    arch_dir = "/opt/packages/"
 
 ##
 # Functions
@@ -82,6 +84,14 @@ class   Install:
         # Mount the partitions
         self.mount()
 
+        # If the installation require a 2-Phase install
+        if self.conf_lst["config"]["TMP_INSTALL"]:
+            # Create the tools directory
+            self.exec(["mkdir", "-v", self.mnt_point + "/tools"])
+            # Link between the host and the install
+            self.exec(["ln", "-sv", self.mnt_point + "/tools", "/"])
+            self.phase_1_install()
+
     # Load all the packages configuration files
     # path: Default to ./pkgs
     def     load_pkgs(self, path = "pkgs"):
@@ -107,7 +117,7 @@ class   Install:
             print("Reading info on "+ name +" ...", end="")
             klass = klass()
             # Calling the init function of each package
-            config = klass.init(self.conf_lst)
+            config = klass.init(self.conf_lst, self.exec)
             # Saving the configuration of the object
             self.pkgs[config["name"]] = [klass, config]
             print("\tDone !")
@@ -236,3 +246,61 @@ class   Install:
                     self.exec(["mkdir", "-pv", self.mnt_point + "/tmp"])
                     self.exec(["mount", "-v", "-t", "ext4", p["part"], self.mnt_point + "/tmp"])
         return 0
+
+    # This function launch the phase-1 full installation
+    def     phase_1_install(self):
+        pkg_phase_1 = {} # List of package to install for phase 1
+        total_size = 0 # Total size of the install
+        total_sbus = 0 # Total time of the install, in SBUs
+
+        for name, pkg in self.pkgs.items():
+            if pkg[1]["tmp_install"]:
+                total_size += pkg[1]["size"]
+                total_sbus += pkg[1]["SBU"]
+                pkg_phase_1[name] = pkg
+
+        self.pkg_download(pkg_phase_1)
+
+    # This function take an object of packages, check if the sources are there.
+    # If they aren't, the function download them.
+    def     pkg_download(self, pkg_list):
+        to_dl = [] # Package to download
+
+        # If the archive directory is not here, we create it
+        if os.path.isdir(self.arch_dir) == False:
+            self.exec(["mkdir", "-vp", self.arch_dir])
+
+        for name, pkg in self.pkgs.items():
+            # Archive is not here, we need to download it.
+            if os.path.isfile(self.arch_dir + pkg[1]["archive"]) == False:
+                to_dl.append(pkg[1])
+
+        # If we got any package to download, download them.
+        if len(to_dl):
+            self.archive_dowload(to_dl)
+
+    # This function handle the downloading of archive
+    # The lst is a list of package to download
+    def     archive_dowload(self, lst):
+        dl_len = len(lst) # Number of packages to download
+        to_dl = 1 # Current archives downloaded
+
+        # First call to the update screen
+        self.dlg.gauge_start("Downloading "+ str(dl_len) +" packages ...", width=50)
+
+        # Iterate over packages to download
+        for conf in lst:
+            dl_ok = 0
+            i = 0
+            # Test multiples urls in case one fail
+            # TODO: Handle exception from retrieving
+            while dl_ok == 0:
+                # Update the progress bar
+                self.dlg.gauge_update(int((to_dl * 100) / dl_len),
+                    "Getting "+ conf["archive"]+ "... ("+ str(to_dl) +"/"+ str(dl_len) +")", True)
+                urlretrieve(conf["urls"][i], self.arch_dir + conf["archive"])
+                i += 1
+                dl_ok = 1
+            to_dl += 1
+
+        self.dlg.gauge_stop()
