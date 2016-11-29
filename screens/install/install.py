@@ -66,6 +66,8 @@ class   Install:
 
         # Load packages files
         self.load_pkgs()
+        self.phase_1_install()
+        sys.exit(1)
 
         # If a pre-existing install is present, format it
         if os.path.isdir(self.mnt_point):
@@ -205,9 +207,12 @@ class   Install:
     # args is the list of bin + arguments (['ls', '-la'])
     # Note that this function automatically hide the output of the command.
     # Return the output of the command, bytes format
-    def     exec(self, args):
-        p = Popen(args, stdout=PIPE, stderr=STDOUT)
-        out = p.communicate()[0]
+    def     exec(self, args, input=False):
+        p = Popen(args, stdin=PIPE, stdout=PIPE, stderr=STDOUT)
+        if input != False:
+            out = p.communicate(input=input)[0]
+        else:
+            out = p.communicate()[0]
         return out
 
     # Function that mount the partitions for install
@@ -278,6 +283,7 @@ class   Install:
         # If we got any package to download, download them.
         if len(to_dl):
             self.archive_dowload(to_dl)
+        self.check_archive(pkg_list)
 
     # This function handle the downloading of archive
     # The lst is a list of package to download
@@ -302,5 +308,37 @@ class   Install:
                 i += 1
                 dl_ok = 1
             to_dl += 1
+        # Stop the progress bar
+        self.dlg.gauge_stop()
 
+    # Function that check the checksums of the package
+    # This function take one argument, an object of package to check
+    def     check_archive(self, pkg_list):
+        to_check = len(pkg_list) # Number of package to check
+        checked = 1 # Numbers of package checked
+
+        # Start the gauge
+        self.dlg.gauge_start("Checking integrity of "+ str(to_check) +" packages ...",
+            width=50)
+
+        # Iterate over the packages to check
+        for name, pkg in pkg_list.items():
+
+            # This is UGLY
+            pkg_content = self.exec(["cat", self.arch_dir + pkg[1]["archive"]])
+            arch_sum = self.exec(["md5sum"], input=pkg_content).decode()
+            arch_sum = arch_sum.split(" ")[0]
+
+            # Checking the sum
+            if arch_sum != pkg[1]["cheksum"]:
+                # The sum is wrong, we warn the user, and we abort
+                self.dlg.infobox("The integrity of package "+ pkg[1]["name"]+
+                    " is wrong ! Aborting ...")
+                sys.exit(1)
+
+            # All good, we update the gauge
+            self.dlg.gauge_update(int(to_check * 100 / checked))
+            checked += 1
+
+        # Stop the gauge
         self.dlg.gauge_stop()
