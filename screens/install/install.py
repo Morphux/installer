@@ -37,7 +37,8 @@ class   Install:
     modules = {} # Module object
     pkgs = {} # Packages instances
     mnt_point = "/mnt/morphux" # Install mount point
-    arch_dir = "/opt/packages/"
+    arch_dir = "/opt/packages/" # Archive directory
+    m_gauge = {} # Object used for easy progress install
 
 ##
 # Functions
@@ -64,10 +65,14 @@ class   Install:
                 with open("morphux_install.conf", "w") as fd:
                     json.dump(self.conf_lst, fd)
 
+        # Get target architecture
+        self.conf_lst["arch"] = self.exec(["uname", "-m"]).decode().split("\n")[0]
+        self.conf_lst["target"] = self.exec(["uname", "-m"]).decode().split("\n")[0] + "-morphux-linux-gnu"
+
         # Load packages files
         self.load_pkgs()
-        #self.phase_1_install()
-        #sys.exit(1)
+        self.phase_1_install()
+        sys.exit(1)
 
         # If a pre-existing install is present, format it
         if os.path.isdir(self.mnt_point):
@@ -119,7 +124,7 @@ class   Install:
             print("Reading info on "+ name +" ...", end="")
             klass = klass()
             # Calling the init function of each package
-            config = klass.init(self.conf_lst, self.exec)
+            config = klass.init(self.conf_lst, self.exec, self.mnt_point)
             # Saving the configuration of the object
             self.pkgs[config["name"]] = [klass, config]
             print("\tDone !")
@@ -265,6 +270,8 @@ class   Install:
                 pkg_phase_1[name] = pkg
 
         self.pkg_download(pkg_phase_1)
+        self.inst_title = "Phase 1: Temporary"
+        self.install(pkg_phase_1, "binutils")
 
     # This function take an object of packages, check if the sources are there.
     # If they aren't, the function download them.
@@ -345,3 +352,134 @@ class   Install:
 
         # Stop the gauge
         self.dlg.gauge_stop()
+
+    # This function launch the install of packages in lst, by compilation
+    # lst is an object of all the packages with the name in key and a list
+    # in value. The list is format like: [config_object, class_object]
+    # first is a string argument used to begin the install by a package.
+    # Then, the next package is defined in config["next"]
+    def     install(self, lst, first):
+        pkg = [p for k, p in lst.items() if p[1]["name"] == first][0]
+        to_install = len(lst) # Len of package to install
+        installed = 1
+
+        while pkg != False:
+            # Init the global progress bar
+            self.global_progress_bar(text="Installing "+ pkg[1]["name"] +"-"+ pkg[1]["version"],
+                percent=int((to_install * 100) / installed),
+                decomp="In Progress", conf="N/A", comp="N/A",
+                inst="N/A", post_comp="N/A", pre_comp="N/A")
+
+            # Decompress the archive
+            self.untar(pkg[1])
+
+            self.global_progress_bar(decomp="Done", pre_comp="In Progress")
+
+            # Before instructions
+            if "before" not in pkg[1]:
+                pkg[0].before()
+                self.global_progress_bar(pre_comp="Done")
+            else:
+                self.global_progress_bar(pre_comp="Skipped")
+
+            self.global_progress_bar(conf="In Progress")
+            # ./configure instructions
+            if "configure" not in pkg[1]:
+                pkg[0].configure()
+                self.global_progress_bar(conf="Done")
+            else:
+                self.global_progress_bar(conf="Skipped")
+
+            self.global_progress_bar(comp="In Progress")
+            # make instructions
+            if "make" not in pkg[1]:
+                pkg[0].make()
+                self.global_progress_bar(comp="Done")
+            else:
+                self.global_progress_bar(comp="Skipped")
+
+            self.global_progress_bar(inst="In Progress")
+            # make install instructions
+            if "install" not in pkg[1]:
+                pkg[0].install()
+                self.global_progress_bar(inst="Done")
+            else:
+                self.global_progress_bar(inst="Skipped")
+
+            self.global_progress_bar(post_comp="In Progress")
+            # after instructions
+            if "after" not in pkg[1]:
+                pkg[0].after()
+                self.global_progress_bar(post_comp="Done")
+            else:
+                self.global_progress_bar(post_comp="Skipped")
+
+            self.global_progress_bar(reset=True)
+            if pkg[1]["next"] in lst:
+                pkg = lst[pkg[1]["next"]]
+            else:
+                pkg = False
+            installed += 1
+        return 0
+
+    # This function take a package configuration, and untar an archive in
+    # self.arch_dir directory, then chdir inside.
+    def     untar(self, conf):
+        # Chdir in the archives directory
+        os.chdir(self.arch_dir)
+
+        # Un-taring the archive
+        self.exec(["tar", "xf", conf["archive"]])
+
+        # Chdir into the decompressed directory (Must be in the format name-version)
+        os.chdir(conf["name"] + "-" + conf["version"])
+
+    # Function that display the global progress bar for an install
+    def     global_progress_bar(self, text="", percent=-1, decomp="",
+                pre_comp="", conf="", comp="", inst="", post_comp="", reset=False):
+
+        # Setting the text
+        if text != "":
+            self.m_gauge["text"] = text
+
+        # Setting the percents
+        if percent != -1:
+            self.m_gauge["percent"] = percent
+
+        # Setting the decompression status
+        if decomp != "":
+            self.m_gauge["decomp"] = decomp
+
+        # Setting the pre compilation status
+        if pre_comp != "":
+            self.m_gauge["pre_comp"] = pre_comp
+
+        # Setting the configuration status
+        if conf != "":
+            self.m_gauge["conf"] = conf
+
+        # Setting the compilation status
+        if comp != "":
+            self.m_gauge["comp"] = comp
+
+        # Setting the installation status
+        if inst != "":
+            self.m_gauge["inst"] = inst
+
+        # Setting the post compilation status
+        if post_comp != "":
+            self.m_gauge["post_comp"] = post_comp
+
+        if reset != False:
+            self.m_gauge = {}
+            return 0
+
+        self.dlg.mixedgauge(self.m_gauge["text"], percent=self.m_gauge["percent"],
+            elements = [
+                ("Decompressing", self.m_gauge["decomp"]),
+                ("Pre-Compilation", self.m_gauge["pre_comp"]),
+                ("Configuration", self.m_gauge["conf"]),
+                ("Compilation", self.m_gauge["comp"]),
+                ("Installation", self.m_gauge["inst"]),
+                ("Post-Compilation", self.m_gauge["post_comp"]),
+            ], title=self.inst_title)

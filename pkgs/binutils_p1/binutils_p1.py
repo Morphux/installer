@@ -20,14 +20,18 @@
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
+import      os
+
 class   Binutils_P1:
 
     conf_lst = {}
     e = False
+    root_dir = ""
 
-    def init(self, c_lst, ex):
+    def     init(self, c_lst, ex, root_dir):
         self.conf_lst = c_lst
         self.e = ex
+        self.root_dir = root_dir
         self.config = {
             "name": "binutils", # Name of the package
             "version": "2.27", # Version of the package
@@ -36,10 +40,38 @@ class   Binutils_P1:
             "cheksum": "2869c9bf3e60ee97c74ac2a6bf4e9d68", # Checksum of the archive
             "SBU": 1, # SBU (Compilation time)
             "tmp_install": True, # Is this package part of the temporary install
-            "next": "test2", # Next package to install
+            "next": False, # Next package to install
+            "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
                 "https://install.morphux.org/packages/binutils-2.27.tar.bz2",
                 "http://ftp.gnu.org/gnu/binutils/binutils-2.27.tar.bz2",
             ]
         }
         return self.config
+
+    def     before(self):
+        self.e(["mkdir", "-v", "build"])
+        os.chdir("build")
+        return 0
+
+    def     configure(self):
+        self.e(["../configure",
+                    "--prefix=/tools",
+                    "--with-sysroot="+ self.root_dir,
+                    "--with-lib-path=/tools/lib",
+                    "--target="+ self.conf_lst["target"],
+                    "--disable-nls",
+                    "--disable-werror"
+                ])
+        return 0
+
+    def     make(self):
+        self.e(["make"])
+        return 0
+
+    def     install(self):
+        if self.conf_lst["arch"] == "x86_64":
+            self.e(["mkdir", "-v", "/tools/lib"])
+            self.e(["ln", "-sv", "lib", "/tools/lib64"])
+        self.e(["make", "install"])
+        return 0
