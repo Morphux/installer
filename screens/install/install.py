@@ -324,15 +324,18 @@ class   Install:
         # Iterate over the packages to check
         for name, pkg in pkg_list.items():
 
-            # This is UGLY
-            pkg_content = self.exec(["cat", self.arch_dir + pkg[1]["archive"]])
-            arch_sum = self.exec(["md5sum"], input=pkg_content).decode()
+            # Read the archive into string
+            with open(self.arch_dir + pkg[1]["archive"], "rb") as fd:
+                pkg_content = fd.read()
+
+            # Get the sum of the archive
+            arch_sum = self.exec(["md5sum"], input=bytes(pkg_content)).decode()
             arch_sum = arch_sum.split(" ")[0]
 
             # Checking the sum
             if arch_sum != pkg[1]["cheksum"]:
                 # The sum is wrong, we warn the user, and we abort
-                self.dlg.infobox("The integrity of package "+ pkg[1]["name"]+
+                self.dlg.msgbox("The integrity of package "+ pkg[1]["name"]+
                     " is wrong ! Aborting ...")
                 sys.exit(1)
 

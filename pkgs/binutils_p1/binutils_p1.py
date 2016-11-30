@@ -38,7 +38,7 @@ class   Binutils_P1:
             "tmp_install": True, # Is this package part of the temporary install
             "next": "test2", # Next package to install
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "ftp://install.morphux.org/packages/binutils-2.27.tar.bz2",
+                "https://install.morphux.org/packages/binutils-2.27.tar.bz2",
                 "http://ftp.gnu.org/gnu/binutils/binutils-2.27.tar.bz2",
             ]
         }
