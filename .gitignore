@@ -1,2 +1,3 @@
 *.pyc
-morphux_install.json
+./morphux_install.json
+./CHECKSUMS
