@@ -85,6 +85,8 @@ class   Install:
 
         # Load packages files
         self.load_pkgs()
+        #self.phase_1_install()
+        #sys.exit(1)
 
         # If a pre-existing install is present, clean it
         if os.path.isdir(self.mnt_point):
@@ -228,8 +230,11 @@ class   Install:
     # args is the list of bin + arguments (['ls', '-la'])
     # Note that this function automatically hide the output of the command.
     # Return the output of the command, bytes format
-    def     exec(self, args, input=False):
-        p = Popen(args, stdin=PIPE, stdout=PIPE, stderr=STDOUT)
+    def     exec(self, args, input=False, shell=False):
+        if shell == True:
+            p = Popen(' '.join(args), stdin=PIPE, stdout=PIPE, stderr=STDOUT, shell=True)
+        else:
+            p = Popen(args, stdin=PIPE, stdout=PIPE, stderr=STDOUT)
         if input != False:
             out = p.communicate(input=input)[0]
         else:
@@ -311,6 +316,30 @@ class   Install:
         if len(to_dl):
             self.archive_dowload(to_dl)
         self.check_archive(pkg_list)
+        self.untar_all(pkg_list)
+
+    # Function that untar all the archives
+    # lst is an object of the packages to decompress
+    def     untar_all(self, lst):
+        to_unpack = len(lst) # Number of package to untar
+        unpacked = 1 # Current archives decompressed
+
+        # Start the progress bar
+        self.dlg.gauge_start("Unpacking "+ str(to_unpack) +" packages ...", width=50)
+
+        # Iterating over the packages
+        for name, p in lst.items():
+
+            # Update the progress bar
+            self.dlg.gauge_update(int((unpacked * 100) / to_unpack),
+                "Unpacking "+ p[1]["archive"] + "...", True)
+
+            # Un-tar the archive
+            self.untar(p[1])
+            unpacked += 1
+
+        # Stopping the progress bar
+        self.dlg.gauge_stop()
 
     # This function handle the downloading of archive
     # The lst is a list of package to download
@@ -406,22 +435,22 @@ class   Install:
         installed = 1
 
         while pkg != False:
-                       # Init the global progress bar
+            # Return to the archive dir
+            os.chdir(self.arch_dir)
+
+            # Init the global progress bar
             self.global_progress_bar(text="Installing "+ pkg[1]["name"] +"-"+ pkg[1]["version"]+ "...",
                 percent=int((installed * 100) / to_install),
-                decomp="In Progress", conf="N/A", comp="N/A",
-                inst="N/A", post_comp="N/A", pre_comp="N/A")
+                conf="N/A", comp="N/A",
+                inst="N/A", post_comp="N/A", pre_comp="In Progress")
 
             # If the package is the first, we measure the time
             if self.sbu_time == 0 and first == pkg[1]["name"]:
                 start = time.time()
                 self.async_progress_bar()
 
-
-            # Decompress the archive
-            self.untar(pkg[1])
-
-            self.global_progress_bar(decomp="Done", pre_comp="In Progress")
+            # Chdir into the decompressed directory (Must be in the format name-version)
+            os.chdir(pkg[1]["name"] + "-" + pkg[1]["version"])
 
             # Before instructions
             if "before" not in pkg[1]:
@@ -495,11 +524,8 @@ class   Install:
         # Un-taring the archive
         self.exec(["tar", "xf", conf["archive"]])
 
-        # Chdir into the decompressed directory (Must be in the format name-version)
-        os.chdir(conf["name"] + "-" + conf["version"])
-
     # Function that display the global progress bar for an install
-    def     global_progress_bar(self, text="", percent=-1, decomp="",
+    def     global_progress_bar(self, text="", percent=-1,
                 pre_comp="", conf="", comp="", inst="", post_comp="", reset=False):
 
         # Setting the text
@@ -509,10 +535,6 @@ class   Install:
         # Setting the percents
         if percent != -1:
             self.m_gauge["percent"] = percent
-
-        # Setting the decompression status
-        if decomp != "":
-            self.m_gauge["decomp"] = decomp
 
         # Setting the pre compilation status
         if pre_comp != "":
@@ -554,7 +576,6 @@ class   Install:
 
             self.dlg.mixedgauge(self.m_gauge["text"] + s_time, percent=self.m_gauge["percent"],
                 elements = [
-                    ("Decompressing", self.m_gauge["decomp"]),
                     ("Pre-Compilation", self.m_gauge["pre_comp"]),
                     ("Configuration", self.m_gauge["conf"]),
                     ("Compilation", self.m_gauge["comp"]),

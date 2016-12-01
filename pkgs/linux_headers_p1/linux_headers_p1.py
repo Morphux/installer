@@ -33,7 +33,7 @@ class   Linux_Headers_P1:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "linux-headers", # Name of the package
+            "name": "linux", # Name of the package
             "version": "4.7.2", # Version of the package
             "size": 666, # Size of the installed package (MB)
             "archive": "linux-4.7.2.tar.xz", # Archive name
@@ -52,8 +52,7 @@ class   Linux_Headers_P1:
         return self.e(["make", "mrproper"])
 
     def     install(self):
-        return self.e(["make", "INSTALL_HDR_PATH=dest", "headers_install"])
+        return self.e(["make", "INSTALL_HDR_PATH=dest", "headers_install", "-j", self.conf_lst["cpus"]])
 
     def     after(self):
-        # DO NOT WORK
-        return self.e(["cp", "-v", "dest/include/*", "/tools/include"])
+        return self.e(["cp", "-rvf", "dest/include/*", "/tools/include"], shell=True)

@@ -53,7 +53,6 @@ class   Glibc_P1:
         return res
 
     def     configure(self):
-        # DO NOT WORK
         return self.e(["../configure",
                 "--prefix=/tools",
                 "--host=" + self.conf_lst["target"],
@@ -62,10 +61,10 @@ class   Glibc_P1:
                 "--with-headers=/tools/include",
                 "libc_cv_forced_unwind=yes",
                 "libcv_cv_c_cleanup=yes"
-            ])
+            ], shell=True)
 
     def     make(self):
-        return self.e(["make"])
+        return self.e(["make", "-j", self.conf_lst["cpus"]])
 
     def     install(self):
         return self.e(["make", "install"])

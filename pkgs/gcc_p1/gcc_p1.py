@@ -39,7 +39,7 @@ class   Gcc_P1:
             "archive": "gcc-6.2.0.tar.bz2", # Archive name
             "SBU": 8.3, # SBU (Compilation time)
             "tmp_install": True, # Is this package part of the temporary install
-            "next": False, # Next package to install
+            "next": "linux", # Next package to install
             "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
                 "https://install.morphux.org/packages/gcc-6.2.0.tar.bz2"
