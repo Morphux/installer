@@ -37,7 +37,6 @@ class   Binutils_P1:
             "version": "2.27", # Version of the package
             "size": 519, # Size of the installed package (MB)
             "archive": "binutils-2.27.tar.bz2", # Archive name
-            "cheksum": "2869c9bf3e60ee97c74ac2a6bf4e9d68", # Checksum of the archive
             "SBU": 1, # SBU (Compilation time)
             "tmp_install": True, # Is this package part of the temporary install
             "next": False, # Next package to install

@@ -38,6 +38,9 @@ class   Install:
     pkgs = {} # Packages instances
     mnt_point = "/mnt/morphux" # Install mount point
     arch_dir = "/opt/packages/" # Archive directory
+    sums_url = "https://install.morphux.org/packages/CHECKSUMS" # checksums url
+    sum_file = "CHECKSUMS"
+    checksums = {} # Object of packages sums
     m_gauge = {} # Object used for easy progress install
 
 ##
@@ -324,6 +327,7 @@ class   Install:
         to_check = len(pkg_list) # Number of package to check
         checked = 1 # Numbers of package checked
 
+        self.get_checksums()
         # Start the gauge
         self.dlg.gauge_start("Checking integrity of "+ str(to_check) +" packages ...",
             width=50)
@@ -340,7 +344,7 @@ class   Install:
             arch_sum = arch_sum.split(" ")[0]
 
             # Checking the sum
-            if arch_sum != pkg[1]["cheksum"]:
+            if arch_sum != self.checksums[pkg[1]["archive"]]:
                 # The sum is wrong, we warn the user, and we abort
                 self.dlg.msgbox("The integrity of package "+ pkg[1]["name"]+
                     " is wrong ! Aborting ...")
@@ -352,6 +356,27 @@ class   Install:
 
         # Stop the gauge
         self.dlg.gauge_stop()
+
+    # This function parse the checksums file, and if the is not here,
+    # get it from the install.morphux.org server
+    def     get_checksums(self):
+        # Test if the file is already there
+        try:
+            fd = open(self.sum_file, 'r')
+
+        except IOError:
+            # If not, we retrieve it from the server
+            urlretrieve(self.sums_url, self.sum_file)
+            fd = open(self.sum_file, 'r')
+
+        # Getting the file content
+        content = fd.readlines()
+
+        # Iterating over each line
+        for line in content:
+            line = line.strip("\n").split(" ")
+            self.checksums[line[1]] = line[0]
+
 
     # This function launch the install of packages in lst, by compilation
     # lst is an object of all the packages with the name in key and a list
