@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# linux_headers_p1.py
+# glibc_p1.py
 # Created: 01/12/2016
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   Linux_Headers_P1:
+class   Glibc_P1:
 
     conf_lst = {}
     e = False
@@ -33,27 +33,39 @@ class   Linux_Headers_P1:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "linux-headers", # Name of the package
-            "version": "4.7.2", # Version of the package
+            "name": "glibc", # Name of the package
+            "version": "2.24", # Version of the package
             "size": 666, # Size of the installed package (MB)
-            "archive": "linux-4.7.2.tar.xz", # Archive name
-            "SBU": 0.1, # SBU (Compilation time)
+            "archive": "glibc-2.24.tar.xz", # Archive name
+            "SBU": 4, # SBU (Compilation time)
             "tmp_install": True, # Is this package part of the temporary install
-            "next": "glibc", # Next package to install
-            "configure": False,
-            "make": False,
+            "after": False,
+            "next": False, # Next package to install
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/linux-4.7.2.tar.xz"
+                "https://install.morphux.org/packages/glibc-2.24.tar.xz"
             ]
         }
         return self.config
 
     def     before(self):
-        return self.e(["make", "mrproper"])
+        res = self.e(["mkdir", "-vp", "build"])
+        os.chdir("build")
+        return res
+
+    def     configure(self):
+        # DO NOT WORK
+        return self.e(["../configure",
+                "--prefix=/tools",
+                "--host=" + self.conf_lst["target"],
+                "--build=$(../scripts/config.guess)",
+                "--enable-kernel=2.6.32",
+                "--with-headers=/tools/include",
+                "libc_cv_forced_unwind=yes",
+                "libcv_cv_c_cleanup=yes"
+            ])
+
+    def     make(self):
+        return self.e(["make"])
 
     def     install(self):
-        return self.e(["make", "INSTALL_HDR_PATH=dest", "headers_install"])
-
-    def     after(self):
-        # DO NOT WORK
-        return self.e(["cp", "-v", "dest/include/*", "/tools/include"])
+        return self.e(["make", "install"])
