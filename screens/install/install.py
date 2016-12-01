@@ -22,9 +22,13 @@
 
 import      json
 import      os
+import      sys
 import      time
+import      datetime
+import      threading
 from        urllib.request import urlretrieve
 from        subprocess import Popen, PIPE, STDOUT, call
+import      multiprocessing
 
 class   Install:
 
@@ -42,6 +46,10 @@ class   Install:
     sum_file = "CHECKSUMS"
     checksums = {} # Object of packages sums
     m_gauge = {} # Object used for easy progress install
+    sbu_time = 0 # Standard Build Unit time
+    total_sbus = 0 # Total SBU to install the system
+    current_time = 0 # Current install time
+    in_install = 0
 
 ##
 # Functions
@@ -72,12 +80,13 @@ class   Install:
         self.conf_lst["arch"] = self.exec(["uname", "-m"])[0].decode().split("\n")[0]
         self.conf_lst["target"] = self.exec(["uname", "-m"])[0].decode().split("\n")[0] + "-morphux-linux-gnu"
 
+        # Get number of CPUs
+        self.conf_lst["cpus"] = str(multiprocessing.cpu_count())
+
         # Load packages files
         self.load_pkgs()
-        #self.phase_1_install()
-        #sys.exit(1)
 
-        # If a pre-existing install is present, format it
+        # If a pre-existing install is present, clean it
         if os.path.isdir(self.mnt_point):
             self.dlg.infobox("Cleaning "+ self.mnt_point +" repository...",
                 width=50, height=3)
@@ -101,6 +110,10 @@ class   Install:
             # Link between the host and the install
             self.exec(["ln", "-sv", self.mnt_point + "/tools", "/"])
             self.phase_1_install()
+
+        self.dlg.msgbox("The installation is finished. Hit 'Enter' to close this dialog and reboot.", title="Success !")
+        # Need reboot here
+        sys.exit(1)
 
     # Load all the packages configuration files
     # path: Default to ./pkgs
@@ -267,14 +280,18 @@ class   Install:
         total_sbus = 0 # Total time of the install, in SBUs
 
         for name, pkg in self.pkgs.items():
-            if pkg[1]["tmp_install"]:
+            if pkg[1]["tmp_install"] == True:
                 total_size += pkg[1]["size"]
                 total_sbus += pkg[1]["SBU"]
                 pkg_phase_1[name] = pkg
 
         self.pkg_download(pkg_phase_1)
-        self.inst_title = "Phase 1: Temporary"
+        self.inst_title = "Phase 1: Temporary Install"
+        self.total_sbus = total_sbus
+        self.current_time = time.time()
+        self.in_install = 1
         self.install(pkg_phase_1, "binutils")
+        self.in_install = 0
 
     # This function take an object of packages, check if the sources are there.
     # If they aren't, the function download them.
@@ -351,7 +368,7 @@ class   Install:
                 sys.exit(1)
 
             # All good, we update the gauge
-            self.dlg.gauge_update(int(to_check * 100 / checked))
+            self.dlg.gauge_update(int(checked * 100 / to_check))
             checked += 1
 
         # Stop the gauge
@@ -389,11 +406,17 @@ class   Install:
         installed = 1
 
         while pkg != False:
-            # Init the global progress bar
-            self.global_progress_bar(text="Installing "+ pkg[1]["name"] +"-"+ pkg[1]["version"],
-                percent=int((to_install * 100) / installed),
+                       # Init the global progress bar
+            self.global_progress_bar(text="Installing "+ pkg[1]["name"] +"-"+ pkg[1]["version"]+ "...",
+                percent=int((installed * 100) / to_install),
                 decomp="In Progress", conf="N/A", comp="N/A",
                 inst="N/A", post_comp="N/A", pre_comp="N/A")
+
+            # If the package is the first, we measure the time
+            if self.sbu_time == 0 and first == pkg[1]["name"]:
+                start = time.time()
+                self.async_progress_bar()
+
 
             # Decompress the archive
             self.untar(pkg[1])
@@ -430,7 +453,7 @@ class   Install:
                 self.global_progress_bar(comp="Skipped")
 
             self.global_progress_bar(inst="In Progress")
-            # make install instructions
+           # make install instructions
             if "install" not in pkg[1]:
                 res = pkg[0].install()
                 if res[1] != 0:
@@ -449,12 +472,18 @@ class   Install:
             else:
                 self.global_progress_bar(post_comp="Skipped")
 
+            # If the package is first, we stock the total build time
+            if self.sbu_time == 0 and first == pkg[1]["name"]:
+                self.sbu_time = (time.time() - start)
+
             self.global_progress_bar(reset=True)
             if pkg[1]["next"] in lst:
                 pkg = lst[pkg[1]["next"]]
             else:
                 pkg = False
             installed += 1
+
+        self.install = 0
         return 0
 
     # This function take a package configuration, and untar an archive in
@@ -509,20 +538,46 @@ class   Install:
             self.m_gauge = {}
             return 0
 
-        self.dlg.mixedgauge(self.m_gauge["text"], percent=self.m_gauge["percent"],
-            elements = [
-                ("Decompressing", self.m_gauge["decomp"]),
-                ("Pre-Compilation", self.m_gauge["pre_comp"]),
-                ("Configuration", self.m_gauge["conf"]),
-                ("Compilation", self.m_gauge["comp"]),
-                ("Installation", self.m_gauge["inst"]),
-                ("Post-Compilation", self.m_gauge["post_comp"]),
-            ], title=self.inst_title)
+    # Asynchronous function, that display the bar
+    # Called every one second
+    def     async_progress_bar(self):
+        if self.in_install == 1:
+
+            # Add the estimated time
+            if self.sbu_time == 0:
+                s_time = "\nEstimated time of install: N/A\n"
+            else:
+                est_time = self.sbu_time * self.total_sbus
+                s_time = "\nEstimated time of install: " + time.strftime("%H:%M:%S", time.gmtime(est_time)) + "\n"
+
+            s_time += "Current installation time: " + time.strftime("%H:%M:%S", time.gmtime(time.time() - self.current_time))
+
+            self.dlg.mixedgauge(self.m_gauge["text"] + s_time, percent=self.m_gauge["percent"],
+                elements = [
+                    ("Decompressing", self.m_gauge["decomp"]),
+                    ("Pre-Compilation", self.m_gauge["pre_comp"]),
+                    ("Configuration", self.m_gauge["conf"]),
+                    ("Compilation", self.m_gauge["comp"]),
+                    ("Installation", self.m_gauge["inst"]),
+                    ("Post-Compilation", self.m_gauge["post_comp"]),
+                ], title=self.inst_title)
+
+            threading.Timer(1, self.async_progress_bar).start()
 
     # Function that handle installation error
     # exec_return arg is a tuple of (string_out, return_code)
     def     inst_error(self, exec_return):
-        code = self.dlg.yesno("An error happened during the installation :(\nDo you want to see the log file ?")
+        # Stop the progress bar thread
+        self.in_install = 0
+
+        # Print a dialog to ask the user if we want to see the log
+        code = self.dlg.yesno("An error happened during the installation :(\nReturn code: "+
+            str(exec_return[1])+"\nDo you want to see the log file ?")
+
+        # If user press 'Yes'
         if code == "ok":
+            # Show the output of the command
             self.dlg.scrollbox(exec_return[0].decode())
+
+        # Abort the installation
         sys.exit(1)

@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# binutils_p1.py
-# Created: 29/11/2016
+# gcc_p1.py
+# Created: 01/12/2016
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   Binutils_P1:
+class   Gcc_P1:
 
     conf_lst = {}
     e = False
@@ -33,41 +33,52 @@ class   Binutils_P1:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "binutils", # Name of the package
-            "version": "2.27", # Version of the package
-            "size": 519, # Size of the installed package (MB)
-            "archive": "binutils-2.27.tar.bz2", # Archive name
-            "SBU": 1, # SBU (Compilation time)
+            "name": "gcc", # Name of the package
+            "version": "6.2.0", # Version of the package
+            "size": 2500, # Size of the installed package (MB)
+            "archive": "gcc-6.2.0.tar.bz2", # Archive name
+            "SBU": 8.3, # SBU (Compilation time)
             "tmp_install": True, # Is this package part of the temporary install
-            "next": "gcc", # Next package to install
+            "next": False, # Next package to install
             "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/binutils-2.27.tar.bz2",
-                "http://ftp.gnu.org/gnu/binutils/binutils-2.27.tar.bz2",
+                "https://install.morphux.org/packages/gcc-6.2.0.tar.bz2"
             ]
         }
         return self.config
 
     def     before(self):
-        res = self.e(["mkdir", "-vp", "build"])
+        res = self.e(["./morphux_patch.sh"])
+        self.e(["mkdir", "-pv", "build"])
         os.chdir("build")
         return res
 
     def     configure(self):
         return self.e(["../configure",
-                    "--prefix=/tools",
-                    "--with-sysroot="+ self.root_dir,
-                    "--with-lib-path=/tools/lib",
                     "--target="+ self.conf_lst["target"],
+                    "--prefix=/tools",
+                    "--with-glibc-version=2.11",
+                    "--with-sysroot="+ self.root_dir,
+                    "--with-newlib",
+                    "--without-headers",
+                    "--with-local-prefix=/tools",
                     "--disable-nls",
-                    "--disable-werror"
+                    "--disable-shared",
+                    "--disable-multilib",
+                    "--disable-decimal-float",
+                    "--disable-threads",
+                    "--disable-libatomic",
+                    "--disable-libgomp",
+                    "--disable-libmpx",
+                    "--disable-libquadmath",
+                    "--disable-libssp",
+                    "--disable-libvtv",
+                    "--disable-libstdcxx",
+                    "--enable-languages=c,c++"
                 ])
 
     def     make(self):
         return self.e(["make", "-j", self.conf_lst["cpus"]])
 
     def     install(self):
-        if self.conf_lst["arch"] == "x86_64":
-            self.e(["mkdir", "-v", "/tools/lib"])
-            self.e(["ln", "-sv", "lib", "/tools/lib64"])
         return self.e(["make", "install"])
