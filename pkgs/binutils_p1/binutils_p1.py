@@ -49,12 +49,12 @@ class   Binutils_P1:
         return self.config
 
     def     before(self):
-        self.e(["mkdir", "-v", "build"])
+        res = self.e(["mkdir", "-v", "build"])
         os.chdir("build")
-        return 0
+        return res
 
     def     configure(self):
-        self.e(["../configure",
+        return self.e(["../configure",
                     "--prefix=/tools",
                     "--with-sysroot="+ self.root_dir,
                     "--with-lib-path=/tools/lib",
@@ -62,15 +62,12 @@ class   Binutils_P1:
                     "--disable-nls",
                     "--disable-werror"
                 ])
-        return 0
 
     def     make(self):
-        self.e(["make"])
-        return 0
+        return self.e(["make"])
 
     def     install(self):
         if self.conf_lst["arch"] == "x86_64":
             self.e(["mkdir", "-v", "/tools/lib"])
             self.e(["ln", "-sv", "lib", "/tools/lib64"])
-        self.e(["make", "install"])
-        return 0
+        return self.e(["make", "install"])

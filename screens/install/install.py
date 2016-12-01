@@ -69,13 +69,13 @@ class   Install:
                     json.dump(self.conf_lst, fd)
 
         # Get target architecture
-        self.conf_lst["arch"] = self.exec(["uname", "-m"]).decode().split("\n")[0]
-        self.conf_lst["target"] = self.exec(["uname", "-m"]).decode().split("\n")[0] + "-morphux-linux-gnu"
+        self.conf_lst["arch"] = self.exec(["uname", "-m"])[0].decode().split("\n")[0]
+        self.conf_lst["target"] = self.exec(["uname", "-m"])[0].decode().split("\n")[0] + "-morphux-linux-gnu"
 
         # Load packages files
         self.load_pkgs()
-        self.phase_1_install()
-        sys.exit(1)
+        #self.phase_1_install()
+        #sys.exit(1)
 
         # If a pre-existing install is present, format it
         if os.path.isdir(self.mnt_point):
@@ -221,7 +221,7 @@ class   Install:
             out = p.communicate(input=input)[0]
         else:
             out = p.communicate()[0]
-        return out
+        return out, p.returncode
 
     # Function that mount the partitions for install
     # self.mnt_point is used for the mount point.
@@ -340,7 +340,7 @@ class   Install:
                 pkg_content = fd.read()
 
             # Get the sum of the archive
-            arch_sum = self.exec(["md5sum"], input=bytes(pkg_content)).decode()
+            arch_sum = self.exec(["md5sum"], input=bytes(pkg_content))[0].decode()
             arch_sum = arch_sum.split(" ")[0]
 
             # Checking the sum
@@ -402,7 +402,9 @@ class   Install:
 
             # Before instructions
             if "before" not in pkg[1]:
-                pkg[0].before()
+                res = pkg[0].before()
+                if res[1] != 0:
+                    self.inst_error(res)
                 self.global_progress_bar(pre_comp="Done")
             else:
                 self.global_progress_bar(pre_comp="Skipped")
@@ -410,7 +412,9 @@ class   Install:
             self.global_progress_bar(conf="In Progress")
             # ./configure instructions
             if "configure" not in pkg[1]:
-                pkg[0].configure()
+                res = pkg[0].configure()
+                if res[1] != 0:
+                    self.inst_error(res)
                 self.global_progress_bar(conf="Done")
             else:
                 self.global_progress_bar(conf="Skipped")
@@ -418,7 +422,9 @@ class   Install:
             self.global_progress_bar(comp="In Progress")
             # make instructions
             if "make" not in pkg[1]:
-                pkg[0].make()
+                res = pkg[0].make()
+                if res[1] != 0:
+                    self.inst_error(res)
                 self.global_progress_bar(comp="Done")
             else:
                 self.global_progress_bar(comp="Skipped")
@@ -426,7 +432,9 @@ class   Install:
             self.global_progress_bar(inst="In Progress")
             # make install instructions
             if "install" not in pkg[1]:
-                pkg[0].install()
+                res = pkg[0].install()
+                if res[1] != 0:
+                    self.inst_error(res)
                 self.global_progress_bar(inst="Done")
             else:
                 self.global_progress_bar(inst="Skipped")
@@ -434,7 +442,9 @@ class   Install:
             self.global_progress_bar(post_comp="In Progress")
             # after instructions
             if "after" not in pkg[1]:
-                pkg[0].after()
+                res = pkg[0].after()
+                if res[1] != 0:
+                    self.inst_error(res)
                 self.global_progress_bar(post_comp="Done")
             else:
                 self.global_progress_bar(post_comp="Skipped")
@@ -508,3 +518,11 @@ class   Install:
                 ("Installation", self.m_gauge["inst"]),
                 ("Post-Compilation", self.m_gauge["post_comp"]),
             ], title=self.inst_title)
+
+    # Function that handle installation error
+    # exec_return arg is a tuple of (string_out, return_code)
+    def     inst_error(self, exec_return):
+        code = self.dlg.yesno("An error happened during the installation :(\nDo you want to see the log file ?")
+        if code == "ok":
+            self.dlg.scrollbox(exec_return[0].decode())
+        sys.exit(1)
