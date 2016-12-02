@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# glibc_p1.py
-# Created: 01/12/2016
+# libstdcpp_p1.py
+# Created: 02/12/2016
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   Glibc_P1:
+class   Libstdcpp_P1:
 
     conf_lst = {}
     e = False
@@ -33,21 +33,24 @@ class   Glibc_P1:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "glibc", # Name of the package
-            "version": "2.24", # Version of the package
+            "name": "libstdcpp", # Name of the package
+            "version": "6.2.0", # Version of the package
             "size": 666, # Size of the installed package (MB)
-            "archive": "glibc-2.24.tar.xz", # Archive name
-            "SBU": 4, # SBU (Compilation time)
+            "archive": "gcc-6.2.0.tar.bz2", # Archive name
+            "SBU": 0.4, # SBU (Compilation time)
             "tmp_install": True, # Is this package part of the temporary install
             "after": False,
-            "next": "libstdcpp", # Next package to install
+            "next": False, # Next package to install
+            "chdir": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/glibc-2.24.tar.xz"
+                "https://install.morphux.org/packages/gcc-6.2.0.tar.bz2"
             ]
         }
         return self.config
 
     def     before(self):
+        os.chdir("gcc-6.2.0")
+        res = self.e(["rm", "-rf", "build"])
         res = self.e(["mkdir", "-vp", "build"])
         os.chdir("build")
         return res
@@ -56,12 +59,12 @@ class   Glibc_P1:
         return self.e(["../configure",
                 "--prefix=/tools",
                 "--host=" + self.conf_lst["target"],
-                "--build=$(../scripts/config.guess)",
-                "--enable-kernel=2.6.32",
-                "--with-headers=/tools/include",
-                "libc_cv_forced_unwind=yes",
-                "libcv_cv_c_cleanup=yes"
-            ], shell=True)
+                "--disable-multilib",
+                "--disable-nls",
+                "--disable-libstdcxx-threads",
+                "--disable-libstdcxx-pch",
+                "--with-gxx-include-dir=/tools/"+ self.conf_lst["target"] +"/include/c++/6.2.0"
+            ])
 
     def     make(self):
         return self.e(["make", "-j", self.conf_lst["cpus"]])

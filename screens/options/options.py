@@ -42,7 +42,7 @@ class   Options:
         ("BIN_INSTALL", "Install system with binaries only, do not compile anything (FASTER)", 1),
         ("LOG", "Log Install", 0),
         ("AUTO_REBOOT", "Reboot automatically after sucessfull install", 0),
-        ("TMP_INSTALL", "Use a temporary system build (LFS-like, SLOWER)", 0),
+        ("TMP_INSTALL", "Use a temporary system build (LFS-like, SLOWER)", 1),
         ("MERGE_USR", "Build the system with symbolic links between /{bin,sbin} and /usr", 1),
     ]
 

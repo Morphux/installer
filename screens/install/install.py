@@ -450,7 +450,8 @@ class   Install:
                 self.async_progress_bar()
 
             # Chdir into the decompressed directory (Must be in the format name-version)
-            os.chdir(pkg[1]["name"] + "-" + pkg[1]["version"])
+            if "chdir" not in pkg[1]:
+                os.chdir(pkg[1]["name"] + "-" + pkg[1]["version"])
 
             # Before instructions
             if "before" not in pkg[1]:
