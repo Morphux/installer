@@ -232,9 +232,9 @@ class   Install:
     # Return the output of the command, bytes format
     def     exec(self, args, input=False, shell=False):
         if shell == True:
-            p = Popen(' '.join(args), stdin=PIPE, stdout=PIPE, stderr=STDOUT, shell=True)
+            p = Popen(' '.join(args), stdin=PIPE, stdout=PIPE, stderr=STDOUT, shell=True, env=os.environ)
         else:
-            p = Popen(args, stdin=PIPE, stdout=PIPE, stderr=STDOUT)
+            p = Popen(args, stdin=PIPE, stdout=PIPE, stderr=STDOUT, env=os.environ)
         if input != False:
             out = p.communicate(input=input)[0]
         else:
@@ -284,16 +284,22 @@ class   Install:
         total_size = 0 # Total size of the install
         total_sbus = 0 # Total time of the install, in SBUs
 
+        # Look for the phase 1 packages
         for name, pkg in self.pkgs.items():
             if pkg[1]["tmp_install"] == True:
                 total_size += pkg[1]["size"]
                 total_sbus += pkg[1]["SBU"]
                 pkg_phase_1[name] = pkg
 
+        # Download the archives
         self.pkg_download(pkg_phase_1)
+
         self.inst_title = "Phase 1: Temporary Install"
         self.total_sbus = total_sbus
         self.current_time = time.time()
+
+        # Change the PATH environment variable
+        os.environ["PATH"] = os.environ["PATH"] + ":/tools/bin"
         self.in_install = 1
         self.install(pkg_phase_1, "binutils")
         self.in_install = 0
@@ -354,7 +360,7 @@ class   Install:
         for conf in lst:
             dl_ok = 0
             i = 0
-            if os.path.isfile(self.arch_dir + conf["archive"] == False):
+            if os.path.isfile(self.arch_dir + conf["archive"]) == False:
                 # Test multiples urls in case one fail
                 # TODO: Handle exception from retrieving
                 while dl_ok == 0:
