@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# binutils2_p1.py
+# gcc2_p1.py
 # Created: 04/12/2016
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   Binutils2_P1:
+class   Gcc2_P1:
 
     conf_lst = {}
     e = False
@@ -33,37 +33,42 @@ class   Binutils2_P1:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "binutils2", # Name of the package
-            "version": "2.27", # Version of the package
+            "name": "gcc2", # Name of the package
+            "version": "6.2.0", # Version of the package
             "size": 533, # Size of the installed package (MB)
-            "archive": "binutils-2.27.tar.bz2", # Archive name
-            "SBU": 1.1, # SBU (Compilation time)
+            "archive": "gcc-6.2.0.tar.bz2", # Archive name
+            "SBU": 11, # SBU (Compilation time)
             "tmp_install": True, # Is this package part of the temporary install
-            "next": "gcc2", # Next package to install
+            "next": False, # Next package to install
             "chdir": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/binutils-2.27.tar.bz2"
+                "https://install.morphux.org/packages/gcc-6.2.0.tar.bz2"
             ]
         }
         return self.config
 
     def     before(self):
-        os.chdir("binutils-2.27")
-        res = self.e(["rm", "-rf", "build"])
-        res = self.e(["mkdir", "-vp", "build"])
+        os.chdir("gcc-6.2.0")
+        self.e(["rm", "-rf", "build"])
+        self.e(["mkdir", "-vp", "build"])
+        res = self.e(["cat", "gcc/limitx.h", "gcc/glimits.h", "gcc/limity.h",
+                    ">", "`dirname $($LFS_TGT-gcc -print-libgcc-file-name)`/include-fixed/limits.h"], shell=True)
         os.chdir("build")
         return res
 
     def     configure(self):
         os.environ["CC"] = self.conf_lst["target"] + "-gcc"
+        os.environ["CXX"] = self.conf_lst["target"] + "-g++"
         os.environ["AR"] = self.conf_lst["target"] + "-ar"
-        os.environ["RANLIB"] = self.conf_lst["target"] + "-ranlib"
         return self.e(["../configure",
                 "--prefix=/tools",
-                "--disable-nls",
-                "--disable-werror",
-                "--with-lib-path=/tools/lib",
-                "--with-sysroot"
+                "--with-local-prefix=/tools",
+                "--with-native-system-header-dir=/tools/include",
+                "--enable-languages=c,c++",
+                "--disable-libstdcxx-pch",
+                "--disable-multilib",
+                "--disable-bootstrap",
+                "--disable-libgomp"
             ])
 
     def     make(self):
@@ -73,6 +78,4 @@ class   Binutils2_P1:
         return self.e(["make", "install"])
 
     def     after(self):
-        return self.e(["make", "-C", "ld" "clean"])
-        return self.e(["make", "-C", "ld", "LIBPATH=/usr/lib:/lib"], shell=True)
-        return self.e(["cp", "-v", "ld/ld-new", "/tools/bin"])
+        return self.e(["ln", "-sv", "gcc", "/tools/bin/cc"])
