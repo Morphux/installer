@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# libstdcpp_p1.py
-# Created: 02/12/2016
+# binutils2_p1.py
+# Created: 04/12/2016
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   Libstdcpp_P1:
+class   Binutils2_P1:
 
     conf_lst = {}
     e = False
@@ -33,37 +33,37 @@ class   Libstdcpp_P1:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "libstdcpp", # Name of the package
-            "version": "6.2.0", # Version of the package
-            "size": 666, # Size of the installed package (MB)
-            "archive": "gcc-6.2.0.tar.bz2", # Archive name
-            "SBU": 0.4, # SBU (Compilation time)
+            "name": "binutils2", # Name of the package
+            "version": "2.27", # Version of the package
+            "size": 533, # Size of the installed package (MB)
+            "archive": "binutils-2.27.tar.bz2", # Archive name
+            "SBU": 1.1, # SBU (Compilation time)
             "tmp_install": True, # Is this package part of the temporary install
-            "after": False,
-            "next": "binutils2", # Next package to install
+            "next": False, # Next package to install
             "chdir": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/gcc-6.2.0.tar.bz2"
+                "https://install.morphux.org/packages/binutils-2.27.tar.bz2"
             ]
         }
         return self.config
 
     def     before(self):
-        os.chdir("gcc-6.2.0")
+        os.chdir("binutils-2.27")
         res = self.e(["rm", "-rf", "build"])
         res = self.e(["mkdir", "-vp", "build"])
         os.chdir("build")
         return res
 
     def     configure(self):
-        return self.e(["../libstdc++-v3/configure",
+        os.environ["CC"] = self.conf_lst["target"] + "-gcc"
+        os.environ["AR"] = self.conf_lst["target"] + "-ar"
+        os.environ["RANLIB"] = self.conf_lst["target"] + "-ranlib"
+        return self.e(["../configure",
                 "--prefix=/tools",
-                "--host=" + self.conf_lst["target"],
-                "--disable-multilib",
                 "--disable-nls",
-                "--disable-libstdcxx-threads",
-                "--disable-libstdcxx-pch",
-                "--with-gxx-include-dir=/tools/"+ self.conf_lst["target"] +"/include/c++/6.2.0"
+                "--disable-werror",
+                "--with-lib-path=/tools/lib",
+                "--with-sysroot"
             ])
 
     def     make(self):
@@ -71,3 +71,8 @@ class   Libstdcpp_P1:
 
     def     install(self):
         return self.e(["make", "install"])
+
+    def     after(self):
+        return self.e(["make", "-C", "ld" "clean"])
+        return self.e(["make", "-C", "ld", "LIBPATH=/usr/lib:/lib"], shell=True)
+        return self.e(["cp", "-v", "ld/ld-new", "/tools/bin"])
