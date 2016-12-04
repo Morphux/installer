@@ -56,7 +56,7 @@ class   Libstdcpp_P1:
         return res
 
     def     configure(self):
-        return self.e(["../configure",
+        return self.e(["../libstdc++-v3/configure",
                 "--prefix=/tools",
                 "--host=" + self.conf_lst["target"],
                 "--disable-multilib",

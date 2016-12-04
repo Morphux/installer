@@ -299,7 +299,7 @@ class   Install:
         self.current_time = time.time()
 
         # Change the PATH environment variable
-        os.environ["PATH"] = os.environ["PATH"] + ":/tools/bin"
+        os.environ["PATH"] = "/tools/bin:" + os.environ["PATH"]
         self.in_install = 1
         self.install(pkg_phase_1, "binutils")
         self.in_install = 0
