@@ -52,7 +52,8 @@ class   Gcc2_P1:
         self.e(["rm", "-rf", "build"])
         self.e(["mkdir", "-vp", "build"])
         res = self.e(["cat", "gcc/limitx.h", "gcc/glimits.h", "gcc/limity.h",
-                    ">", "`dirname $($LFS_TGT-gcc -print-libgcc-file-name)`/include-fixed/limits.h"], shell=True)
+                    ">", "`dirname $("+ self.conf_lst["target"] +
+                    "-gcc -print-libgcc-file-name)`/include-fixed/limits.h"], shell=True)
         os.chdir("build")
         return res
 

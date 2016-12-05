@@ -329,6 +329,7 @@ class   Install:
     def     untar_all(self, lst):
         to_unpack = len(lst) # Number of package to untar
         unpacked = 1 # Current archives decompressed
+        arch_done = [] # List of archives decompressed
 
         # Start the progress bar
         self.dlg.gauge_start("Unpacking "+ str(to_unpack) +" packages ...", width=50)
@@ -340,8 +341,16 @@ class   Install:
             self.dlg.gauge_update(int((unpacked * 100) / to_unpack),
                 "Unpacking "+ p[1]["archive"] + "...", True)
 
-            # Un-tar the archive
-            self.untar(p[1])
+            # Some packages use the same sources, so we store the list
+            # of already decompressed archives in order to not decompress
+            # the same archive multiple times.
+            if p[1]["archive"] not in arch_done:
+                # Un-tar the archive
+                self.untar(p[1])
+
+                # Add the archive to the list
+                arch_done.append(p[1]["archive"])
+
             unpacked += 1
 
         # Stopping the progress bar

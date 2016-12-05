@@ -73,6 +73,6 @@ class   Binutils2_P1:
         return self.e(["make", "install"])
 
     def     after(self):
-        return self.e(["make", "-C", "ld" "clean"])
+        return self.e(["make", "-C", "ld", "clean"])
         return self.e(["make", "-C", "ld", "LIBPATH=/usr/lib:/lib"], shell=True)
         return self.e(["cp", "-v", "ld/ld-new", "/tools/bin"])
