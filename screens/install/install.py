@@ -50,6 +50,8 @@ class   Install:
     total_sbus = 0 # Total SBU to install the system
     current_time = 0 # Current install time
     in_install = 0
+    current_install = [] # Object used to save the installation progress
+    def_install = ".install" # Default path for the install progress file
 
 ##
 # Functions
@@ -524,6 +526,7 @@ class   Install:
                 self.sbu_time = (time.time() - start)
 
             self.global_progress_bar(reset=True)
+            self.update_install_file(pkg[1])
             if pkg[1]["next"] in lst:
                 pkg = lst[pkg[1]["next"]]
             else:
@@ -620,3 +623,15 @@ class   Install:
 
         # Abort the installation
         sys.exit(1)
+
+    # This function update the install file (.install) by default
+    # If an install fail, or is quitted, we can resume it later
+    def     update_install_file(self, conf):
+        # Update the object
+        self.current_install.append(conf)
+
+        # Open the install file
+        with open(self.def_install, "w") as fd:
+            # Dump the current install progress
+            json.dump(self.current_install, fd)
+            fd.close()
