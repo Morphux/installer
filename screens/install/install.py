@@ -51,7 +51,7 @@ class   Install:
     current_time = 0 # Current install time
     in_install = 0
     current_install = [] # Object used to save the installation progress
-    def_install = ".install" # Default path for the install progress file
+    def_install = "/opt/.install" # Default path for the install progress file
 
 ##
 # Functions
@@ -308,7 +308,7 @@ class   Install:
 
     # This function take an object of packages, check if the sources are there.
     # If they aren't, the function download them.
-    def     pkg_download(self, pkg_list):
+    def     pkg_download(self, pkg_list, untar=True):
         to_dl = [] # Package to download
 
         # If the archive directory is not here, we create it
@@ -324,7 +324,8 @@ class   Install:
         if len(to_dl):
             self.archive_dowload(to_dl)
         self.check_archive(pkg_list)
-        self.untar_all(pkg_list)
+        if untar:
+            self.untar_all(pkg_list)
 
     # Function that untar all the archives
     # lst is an object of the packages to decompress
@@ -525,8 +526,8 @@ class   Install:
             if self.sbu_time == 0 and first == pkg[1]["name"]:
                 self.sbu_time = (time.time() - start)
 
-            self.global_progress_bar(reset=True)
             self.update_install_file(pkg[1])
+            self.global_progress_bar(reset=True)
             if pkg[1]["next"] in lst:
                 pkg = lst[pkg[1]["next"]]
             else:
@@ -534,6 +535,8 @@ class   Install:
             installed += 1
 
         self.install = 0
+        # Install is done, we removing the install progress file
+        os.remove(self.def_install)
         return 0
 
     # This function take a package configuration, and untar an archive in
@@ -635,4 +638,3 @@ class   Install:
             # Dump the current install progress
             json.dump({"conf": self.conf_lst, "installed":
                 self.current_install}, fd)
-            fd.close()
