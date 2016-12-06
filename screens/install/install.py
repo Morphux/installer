@@ -633,5 +633,6 @@ class   Install:
         # Open the install file
         with open(self.def_install, "w") as fd:
             # Dump the current install progress
-            json.dump(self.current_install, fd)
+            json.dump({"conf": self.conf_lst, "installed":
+                self.current_install}, fd)
             fd.close()
