@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# expect_p1.py
+# dejagnu_p1.py
 # Created: 08/12/2016
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   Expect_P1:
+class   Dejagnu_P1:
 
     conf_lst = {}
     e = False
@@ -33,33 +33,26 @@ class   Expect_P1:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "expect", # Name of the package
+            "name": "dejagnu", # Name of the package
             "version": "5.45", # Version of the package
-            "size": 4.3, # Size of the installed package (MB)
-            "archive": "expect5.45.tar.gz", # Archive name
+            "size": 3.2, # Size of the installed package (MB)
+            "archive": "dejagnu-1.6.tar.gz", # Archive name
             "SBU": 0.1, # SBU (Compilation time)
             "tmp_install": True, # Is this package part of the temporary install
-            "next": "dejagnu", # Next package to install
+            "next": False, # Next package to install
             "after": False,
+            "before": False,
+            "make": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/expect5.45.tar.gz"
+                "https://install.morphux.org/packages/dejagnu-1.6.tar.gz"
             ]
         }
         return self.config
 
-    def     before(self):
-        self.e(["cp", "-v", "configure{,.orig}"], shell=True)
-        return self.e(["sed", "s:/usr/local/bin:/bin:", "configure.orig", ">", "configure"], shell=True)
-
     def     configure(self):
         return self.e(["./configure",
-                "--prefix=/tools",
-                "--with-tcl=/tools/lib",
-                "--with-tclinclude=/tools/include"
+                "--prefix=/tools"
             ])
 
-    def     make(self):
-        return self.e(["make", "-j", self.conf_lst["cpus"]])
-
     def     install(self):
-        self.e(["make", "SCRIPTS=\"\"", "install"], shell=True)
+        self.e(["make", "install"])
