@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# coreutils_p1.py
+# diffutils_p1.py
 # Created: 08/12/2016
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   Coreutils_P1:
+class   Diffutils_P1:
 
     conf_lst = {}
     e = False
@@ -33,13 +33,13 @@ class   Coreutils_P1:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "coreutils", # Name of the package
-            "version": "8.25", # Version of the package
-            "size": 132, # Size of the installed package (MB)
+            "name": "diffutils", # Name of the package
+            "version": "3.5", # Version of the package
+            "size": 21.5, # Size of the installed package (MB)
             "archive": "", # Archive name
-            "SBU": 0.6, # SBU (Compilation time)
+            "SBU": 0.2, # SBU (Compilation time)
             "tmp_install": True, # Is this package part of the temporary install
-            "next": "diffutils", # Next package to install
+            "next": False, # Next package to install
             "before": False,
             "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
@@ -51,7 +51,6 @@ class   Coreutils_P1:
     def     configure(self):
         return self.e(["./configure",
                 "--prefix=/tools",
-                "--enable-install-program=hostname"
         ])
 
     def     make(self):
