@@ -39,7 +39,7 @@ class   Bash_P1:
             "archive": "", # Archive name
             "SBU": 0.4, # SBU (Compilation time)
             "tmp_install": True, # Is this package part of the temporary install
-            "next": False, # Next package to install
+            "next": "bzip2", # Next package to install
             "before": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
                 "https://install.morphux.org/packages/"
