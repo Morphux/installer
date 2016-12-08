@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# gcc2_p1.py
-# Created: 04/12/2016
+# tclcore_p1.py
+# Created: 08/12/2016
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   Gcc2_P1:
+class   Tclcore_P1:
 
     conf_lst = {}
     e = False
@@ -33,50 +33,34 @@ class   Gcc2_P1:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "gcc2", # Name of the package
-            "version": "6.2.0", # Version of the package
-            "size": 533, # Size of the installed package (MB)
-            "archive": "gcc-6.2.0.tar.bz2", # Archive name
-            "SBU": 11, # SBU (Compilation time)
+            "name": "tcl-core", # Name of the package
+            "version": "8.6.6", # Version of the package
+            "size": 40, # Size of the installed package (MB)
+            "archive": "tcl-core8.6.6-src.tar.gz", # Archive name
+            "SBU": 0.4, # SBU (Compilation time)
             "tmp_install": True, # Is this package part of the temporary install
-            "next": "tcl-core", # Next package to install
-            "chdir": False,
+            "next": False, # Next package to install
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/gcc-6.2.0.tar.bz2"
+                "https://install.morphux.org/packages/tcl-core8.6.6-src.tar.gz"
             ]
         }
         return self.config
 
     def     before(self):
-        os.chdir("gcc-6.2.0")
-        self.e(["rm", "-rf", "build"])
-        self.e(["mkdir", "-vp", "build"])
-        res = self.e(["cat", "gcc/limitx.h", "gcc/glimits.h", "gcc/limity.h",
-                    ">", "`dirname $("+ self.conf_lst["target"] +
-                    "-gcc -print-libgcc-file-name)`/include-fixed/limits.h"], shell=True)
-        os.chdir("build")
-        return res
+        return os.chdir("unix")
 
     def     configure(self):
-        os.environ["CC"] = self.conf_lst["target"] + "-gcc"
-        os.environ["CXX"] = self.conf_lst["target"] + "-g++"
-        os.environ["AR"] = self.conf_lst["target"] + "-ar"
-        return self.e(["../configure",
-                "--prefix=/tools",
-                "--with-local-prefix=/tools",
-                "--with-native-system-header-dir=/tools/include",
-                "--enable-languages=c,c++",
-                "--disable-libstdcxx-pch",
-                "--disable-multilib",
-                "--disable-bootstrap",
-                "--disable-libgomp"
+        return self.e(["./configure",
+                "--prefix=/tools"
             ])
 
     def     make(self):
         return self.e(["make", "-j", self.conf_lst["cpus"]])
 
     def     install(self):
-        return self.e(["make", "install"])
+        self.e(["make", "install"])
+        return self.e(["make", "install-private-headers"])
 
     def     after(self):
-        return self.e(["ln", "-sv", "gcc", "/tools/bin/cc"])
+        self.e(["chmod", "-v", "u+w", "/tools/lib/libtcl8.6.so"])
+        return self.e(["ln", "-sv", "tclsh8.6", "/tools/bin/tclsh"])
