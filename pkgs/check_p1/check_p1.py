@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# dejagnu_p1.py
+# check_p1.py
 # Created: 08/12/2016
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   Dejagnu_P1:
+class   Check_P1:
 
     conf_lst = {}
     e = False
@@ -33,26 +33,28 @@ class   Dejagnu_P1:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "dejagnu", # Name of the package
-            "version": "5.45", # Version of the package
-            "size": 3.2, # Size of the installed package (MB)
-            "archive": "dejagnu-1.6.tar.gz", # Archive name
+            "name": "check", # Name of the package
+            "version": "0,10.0", # Version of the package
+            "size": 9.5, # Size of the installed package (MB)
+            "archive": "", # Archive name
             "SBU": 0.1, # SBU (Compilation time)
             "tmp_install": True, # Is this package part of the temporary install
-            "next": "check", # Next package to install
-            "after": False,
+            "next": False, # Next package to install
             "before": False,
-            "make": False,
+            "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/dejagnu-1.6.tar.gz"
+                "https://install.morphux.org/packages/"
             ]
         }
         return self.config
 
     def     configure(self):
-        return self.e(["./configure",
-                "--prefix=/tools"
-            ])
+        return self.e(["PKG_CONFIG=", "./configure",
+                "--prefix=/tools",
+            ], shell=True)
+
+    def     make(self):
+        return self.e(["make", "-j", self.conf_lst["cpus"]])
 
     def     install(self):
         self.e(["make", "install"])
