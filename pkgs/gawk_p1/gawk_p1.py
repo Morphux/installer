@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# findutils_p1.py
+# gawk_p1.py
 # Created: 08/12/2016
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   Findutils_P1:
+class   Gawk_P1:
 
     conf_lst = {}
     e = False
@@ -33,13 +33,13 @@ class   Findutils_P1:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "findutils", # Name of the package
-            "version": "4.6.0", # Version of the package
-            "size": 35, # Size of the installed package (MB)
+            "name": "gawk", # Name of the package
+            "version": "4.1.3", # Version of the package
+            "size": 34, # Size of the installed package (MB)
             "archive": "", # Archive name
-            "SBU": 0.3, # SBU (Compilation time)
+            "SBU": 0.2, # SBU (Compilation time)
             "tmp_install": True, # Is this package part of the temporary install
-            "next": "gawk", # Next package to install
+            "next": False, # Next package to install
             "before": False,
             "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
