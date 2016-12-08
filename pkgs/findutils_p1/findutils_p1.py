@@ -36,14 +36,14 @@ class   Findutils_P1:
             "name": "findutils", # Name of the package
             "version": "4.6.0", # Version of the package
             "size": 35, # Size of the installed package (MB)
-            "archive": "", # Archive name
+            "archive": "findutils-4.6.0.tar.gz", # Archive name
             "SBU": 0.3, # SBU (Compilation time)
             "tmp_install": True, # Is this package part of the temporary install
             "next": "gawk", # Next package to install
             "before": False,
             "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/"
+                "https://install.morphux.org/packages/findutils-4.6.0.tar.gz"
             ]
         }
         return self.config

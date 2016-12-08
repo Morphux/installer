@@ -36,14 +36,14 @@ class   Diffutils_P1:
             "name": "diffutils", # Name of the package
             "version": "3.5", # Version of the package
             "size": 21.5, # Size of the installed package (MB)
-            "archive": "", # Archive name
+            "archive": "diffutils-3.5.tar.xz", # Archive name
             "SBU": 0.2, # SBU (Compilation time)
             "tmp_install": True, # Is this package part of the temporary install
             "next": "file", # Next package to install
             "before": False,
             "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/"
+                "https://install.morphux.org/packages/diffutils-3.5.tar.xz"
             ]
         }
         return self.config

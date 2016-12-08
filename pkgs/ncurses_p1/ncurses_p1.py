@@ -36,13 +36,13 @@ class   Ncurses_P1:
             "name": "ncurses", # Name of the package
             "version": "6.0", # Version of the package
             "size": 38, # Size of the installed package (MB)
-            "archive": "", # Archive name
+            "archive": "ncurses-6.0.tar.gz", # Archive name
             "SBU": 0.5, # SBU (Compilation time)
             "tmp_install": True, # Is this package part of the temporary install
             "next": "bash", # Next package to install
             "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/"
+                "https://install.morphux.org/packages/ncurses-6.0.tar.gz"
             ]
         }
         return self.config

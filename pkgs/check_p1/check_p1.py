@@ -36,14 +36,14 @@ class   Check_P1:
             "name": "check", # Name of the package
             "version": "0.10.0", # Version of the package
             "size": 9.5, # Size of the installed package (MB)
-            "archive": "", # Archive name
+            "archive": "check-0.10.0.tar.gz", # Archive name
             "SBU": 0.1, # SBU (Compilation time)
             "tmp_install": True, # Is this package part of the temporary install
             "next": "ncurses", # Next package to install
             "before": False,
             "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/"
+                "https://install.morphux.org/packages/check-0.10.0.tar.gz"
             ]
         }
         return self.config

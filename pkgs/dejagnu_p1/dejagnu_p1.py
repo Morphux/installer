@@ -34,7 +34,7 @@ class   Dejagnu_P1:
         self.root_dir = root_dir
         self.config = {
             "name": "dejagnu", # Name of the package
-            "version": "5.45", # Version of the package
+            "version": "1.6", # Version of the package
             "size": 3.2, # Size of the installed package (MB)
             "archive": "dejagnu-1.6.tar.gz", # Archive name
             "SBU": 0.1, # SBU (Compilation time)
@@ -55,4 +55,4 @@ class   Dejagnu_P1:
             ])
 
     def     install(self):
-        self.e(["make", "install"])
+        return self.e(["make", "install"])

@@ -524,7 +524,7 @@ class   Install:
 
             # If the package is first, we stock the total build time
             if self.sbu_time == 0 and first == pkg[1]["name"]:
-                self.sbu_time = (time.time() - start)
+                self.sbu_time = (time.time() - start) * 1.5
 
             self.update_install_file(pkg[1])
             self.global_progress_bar(reset=True)

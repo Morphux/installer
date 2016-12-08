@@ -36,7 +36,7 @@ class   Bzip2_P1:
             "name": "bzip2", # Name of the package
             "version": "1.0.6", # Version of the package
             "size": 5.2, # Size of the installed package (MB)
-            "archive": "", # Archive name
+            "archive": "bzip2-1.0.6.tar.gz", # Archive name
             "SBU": 0.1, # SBU (Compilation time)
             "tmp_install": True, # Is this package part of the temporary install
             "next": "coreutils", # Next package to install
@@ -44,7 +44,7 @@ class   Bzip2_P1:
             "after": False,
             "configure": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/"
+                "https://install.morphux.org/packages/bzip2-1.0.6.tar.gz"
             ]
         }
         return self.config

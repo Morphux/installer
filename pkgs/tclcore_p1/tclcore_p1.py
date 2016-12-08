@@ -40,6 +40,7 @@ class   Tclcore_P1:
             "SBU": 0.4, # SBU (Compilation time)
             "tmp_install": True, # Is this package part of the temporary install
             "next": "expect", # Next package to install
+            "chdir": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
                 "https://install.morphux.org/packages/tcl-core8.6.6-src.tar.gz"
             ]
@@ -47,7 +48,7 @@ class   Tclcore_P1:
         return self.config
 
     def     before(self):
-        os.chdir("unix")
+        os.chdir("tcl8.6.6/unix")
         return "", 0
 
     def     configure(self):

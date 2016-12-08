@@ -40,6 +40,7 @@ class   Expect_P1:
             "SBU": 0.1, # SBU (Compilation time)
             "tmp_install": True, # Is this package part of the temporary install
             "next": "dejagnu", # Next package to install
+            "chdir": False,
             "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
                 "https://install.morphux.org/packages/expect5.45.tar.gz"
@@ -48,7 +49,8 @@ class   Expect_P1:
         return self.config
 
     def     before(self):
-        self.e(["cp", "-v", "configure{,.orig}"], shell=True)
+        os.chdir("expect5.45")
+        self.e(["cp", "-v", "configure", "configure.orig"])
         return self.e(["sed", "s:/usr/local/bin:/bin:", "configure.orig", ">", "configure"], shell=True)
 
     def     configure(self):
@@ -62,4 +64,4 @@ class   Expect_P1:
         return self.e(["make", "-j", self.conf_lst["cpus"]])
 
     def     install(self):
-        self.e(["make", "SCRIPTS=\"\"", "install"], shell=True)
+        return self.e(["make", "SCRIPTS=\"\"", "install"], shell=True)

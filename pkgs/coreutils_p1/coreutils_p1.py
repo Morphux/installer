@@ -36,19 +36,20 @@ class   Coreutils_P1:
             "name": "coreutils", # Name of the package
             "version": "8.25", # Version of the package
             "size": 132, # Size of the installed package (MB)
-            "archive": "", # Archive name
+            "archive": "coreutils-8.25.tar.xz", # Archive name
             "SBU": 0.6, # SBU (Compilation time)
             "tmp_install": True, # Is this package part of the temporary install
             "next": "diffutils", # Next package to install
             "before": False,
             "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/"
+                "https://install.morphux.org/packages/coreutils-8.25.tar.xz"
             ]
         }
         return self.config
 
     def     configure(self):
+        os.environ["FORCE_UNSAFE_CONFIGURE"] = "1"
         return self.e(["./configure",
                 "--prefix=/tools",
                 "--enable-install-program=hostname"
