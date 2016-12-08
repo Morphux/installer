@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# diffutils_p1.py
+# file_p1.py
 # Created: 08/12/2016
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   Diffutils_P1:
+class   File_P1:
 
     conf_lst = {}
     e = False
@@ -33,13 +33,13 @@ class   Diffutils_P1:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "diffutils", # Name of the package
-            "version": "3.5", # Version of the package
-            "size": 21.5, # Size of the installed package (MB)
+            "name": "file", # Name of the package
+            "version": "5.28", # Version of the package
+            "size": 15, # Size of the installed package (MB)
             "archive": "", # Archive name
-            "SBU": 0.2, # SBU (Compilation time)
+            "SBU": 0.1, # SBU (Compilation time)
             "tmp_install": True, # Is this package part of the temporary install
-            "next": "file", # Next package to install
+            "next": False, # Next package to install
             "before": False,
             "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
