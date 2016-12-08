@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# file_p1.py
+# findutils_p1.py
 # Created: 08/12/2016
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   File_P1:
+class   Findutils_P1:
 
     conf_lst = {}
     e = False
@@ -33,13 +33,13 @@ class   File_P1:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "file", # Name of the package
-            "version": "5.28", # Version of the package
-            "size": 15, # Size of the installed package (MB)
+            "name": "findutils", # Name of the package
+            "version": "4.6.0", # Version of the package
+            "size": 35, # Size of the installed package (MB)
             "archive": "", # Archive name
-            "SBU": 0.1, # SBU (Compilation time)
+            "SBU": 0.3, # SBU (Compilation time)
             "tmp_install": True, # Is this package part of the temporary install
-            "next": "findutils", # Next package to install
+            "next": False, # Next package to install
             "before": False,
             "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
