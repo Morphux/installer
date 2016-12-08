@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# check_p1.py
+# bash_p1.py
 # Created: 08/12/2016
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   Check_P1:
+class   Bash_P1:
 
     conf_lst = {}
     e = False
@@ -33,15 +33,14 @@ class   Check_P1:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "check", # Name of the package
-            "version": "0.10.0", # Version of the package
-            "size": 9.5, # Size of the installed package (MB)
+            "name": "bash", # Name of the package
+            "version": "4.3.30", # Version of the package
+            "size": 54, # Size of the installed package (MB)
             "archive": "", # Archive name
-            "SBU": 0.1, # SBU (Compilation time)
+            "SBU": 0.4, # SBU (Compilation time)
             "tmp_install": True, # Is this package part of the temporary install
-            "next": "ncurses", # Next package to install
+            "next": False, # Next package to install
             "before": False,
-            "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
                 "https://install.morphux.org/packages/"
             ]
@@ -49,12 +48,16 @@ class   Check_P1:
         return self.config
 
     def     configure(self):
-        return self.e(["PKG_CONFIG=", "./configure",
+        return self.e(["./configure",
                 "--prefix=/tools",
-            ], shell=True)
+                "--without-bash-malloc"
+            ])
 
     def     make(self):
         return self.e(["make", "-j", self.conf_lst["cpus"]])
 
     def     install(self):
         return self.e(["make", "install"])
+
+    def     after(self):
+        return self.e(["ln", "-sv", "bash", "/tools/bin/sh"])

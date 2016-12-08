@@ -40,7 +40,7 @@ class   Ncurses_P1:
             "SBU": 0.5, # SBU (Compilation time)
             "tmp_install": True, # Is this package part of the temporary install
             "next": False, # Next package to install
-            "before": False,
+            "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
                 "https://install.morphux.org/packages/"
             ]
@@ -64,4 +64,4 @@ class   Ncurses_P1:
         return self.e(["make", "-j", self.conf_lst["cpus"]])
 
     def     install(self):
-        self.e(["make", "install"])
+        return self.e(["make", "install"])
