@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# perl_p1.py
+# sed_p1.py
 # Created: 09/12/2016
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   Perl_P1:
+class   Sed_P1:
 
     conf_lst = {}
     e = False
@@ -33,13 +33,13 @@ class   Perl_P1:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "perl", # Name of the package
-            "version": "5.2.4", # Version of the package
-            "size": 1.3, # Size of the installed package (MB)
+            "name": "sed", # Name of the package
+            "version": "4.2.2", # Version of the package
+            "size": 10, # Size of the installed package (MB)
             "archive": "", # Archive name
-            "SBU": 1.3, # SBU (Compilation time)
+            "SBU": 0.1, # SBU (Compilation time)
             "tmp_install": True, # Is this package part of the temporary install
-            "next": "sed", # Next package to install
+            "next": False, # Next package to install
             "before": False,
             "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
@@ -49,16 +49,12 @@ class   Perl_P1:
         return self.config
 
     def     configure(self):
-        return self.e(["sh", "Configure",
-                "-des",
-                "-Dprefix=/tools",
-                "-Dlibs=-lm"
-            ])
+        return self.e(["./configure",
+                "--prefix=/tools",
+        ])
 
     def     make(self):
         return self.e(["make", "-j", self.conf_lst["cpus"]])
 
     def     install(self):
-        self.e(["cp", "-v", "perl", "cpan/podlators/scripts/pod2man", "/tools/bin"])
-        self.e(["mkdir", "-pv", "/tools/lib/perl5/5.24.0"])
-        return self.e(["cp", "-Rv", "lib/*", "/tools/lib/perl5/5.24.0"], shell=True)
+        return self.e(["make", "install"])
