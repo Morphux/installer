@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# gawk_p1.py
-# Created: 08/12/2016
+# gettext_p1.py
+# Created: 09/12/2016
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   Gawk_P1:
+class   Gettext_P1:
 
     conf_lst = {}
     e = False
@@ -33,28 +33,37 @@ class   Gawk_P1:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "gawk", # Name of the package
-            "version": "4.1.3", # Version of the package
-            "size": 34, # Size of the installed package (MB)
-            "archive": "gawk-4.1.3.tar.xz", # Archive name
-            "SBU": 0.2, # SBU (Compilation time)
+            "name": "gettext", # Name of the package
+            "version": "0.19.8.1", # Version of the package
+            "size": 164, # Size of the installed package (MB)
+            "archive": "", # Archive name
+            "SBU": 0.9, # SBU (Compilation time)
             "tmp_install": True, # Is this package part of the temporary install
-            "next": "gettext", # Next package to install
-            "before": False,
+            "next": False, # Next package to install
             "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/gawk-4.1.3.tar.xz"
+                "https://install.morphux.org/packages/"
             ]
         }
         return self.config
 
+    def     before(self):
+        os.chdir("gettext-tools")
+
     def     configure(self):
-        return self.e(["./configure",
+        return self.e(["EMACS=NO", "./configure",
                 "--prefix=/tools",
-        ])
+                "--disable-shared"
+        ], shell=True)
 
     def     make(self):
-        return self.e(["make", "-j", self.conf_lst["cpus"]])
+        self.e(["make", "-C", "gnulib-lib",  "-j", self.conf_lst["cpus"]])
+        self.e(["make", "-C", "intl", "pluralx.c",  "-j", self.conf_lst["cpus"]])
+        self.e(["make", "-C", "src", "msgfmt",  "-j", self.conf_lst["cpus"]])
+        self.e(["make", "-C", "src", "msgmerge",  "-j", self.conf_lst["cpus"]])
+        return self.e(["make", "-C", "src", "xgettext",  "-j", self.conf_lst["cpus"]])
 
     def     install(self):
-        return self.e(["make", "install"])
+        self.e(["cp", "-v", "src/msgfmt", "/tools/bin"])
+        self.e(["cp", "-v", "src/msgmerge", "/tools/bin"])
+        return self.e(["cp", "-v", "src/xgettext", "/tools/bin"])
