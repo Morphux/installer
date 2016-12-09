@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# m4_p1.py
+# make_p1.py
 # Created: 09/12/2016
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   M4_P1:
+class   Make_P1:
 
     conf_lst = {}
     e = False
@@ -33,13 +33,13 @@ class   M4_P1:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "m4", # Name of the package
-            "version": "1.4.17", # Version of the package
-            "size": 18, # Size of the installed package (MB)
+            "name": "make", # Name of the package
+            "version": "4.2.1", # Version of the package
+            "size": 12.5, # Size of the installed package (MB)
             "archive": "", # Archive name
-            "SBU": 0.2, # SBU (Compilation time)
+            "SBU": 0.1, # SBU (Compilation time)
             "tmp_install": True, # Is this package part of the temporary install
-            "next": "make", # Next package to install
+            "next": False, # Next package to install
             "before": False,
             "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
