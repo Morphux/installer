@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# texinfo_p1.py
+# utillinux_p1.py
 # Created: 09/12/2016
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   Texinfo_P1:
+class   Utillinux_P1:
 
     conf_lst = {}
     e = False
@@ -33,13 +33,13 @@ class   Texinfo_P1:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "texinfo", # Name of the package
-            "version": "6.1", # Version of the package
-            "size": 99, # Size of the installed package (MB)
+            "name": "utillinux", # Name of the package
+            "version": "2.28.1", # Version of the package
+            "size": 114, # Size of the installed package (MB)
             "archive": "", # Archive name
-            "SBU": 0.2, # SBU (Compilation time)
+            "SBU": 0.8, # SBU (Compilation time)
             "tmp_install": True, # Is this package part of the temporary install
-            "next": "utillinux", # Next package to install
+            "next": False, # Next package to install
             "before": False,
             "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
@@ -51,7 +51,11 @@ class   Texinfo_P1:
     def     configure(self):
         return self.e(["./configure",
                 "--prefix=/tools",
-        ])
+                "--without-python",
+                "--disable-makeinstall-chown",
+                "--without-systemdsystemunitdir",
+                "PKG_CONFIG=\"\""
+        ], shell=True)
 
     def     make(self):
         return self.e(["make", "-j", self.conf_lst["cpus"]])
