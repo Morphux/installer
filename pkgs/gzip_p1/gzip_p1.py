@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# grep_p1.py
+# gzip_p1.py
 # Created: 09/12/2016
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   Grep_P1:
+class   Gzip_P1:
 
     conf_lst = {}
     e = False
@@ -33,13 +33,13 @@ class   Grep_P1:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "grep", # Name of the package
-            "version": "2.25", # Version of the package
-            "size": 18, # Size of the installed package (MB)
+            "name": "gzip", # Name of the package
+            "version": "1.8", # Version of the package
+            "size": 8.9, # Size of the installed package (MB)
             "archive": "", # Archive name
-            "SBU": 0.2, # SBU (Compilation time)
+            "SBU": 0.1, # SBU (Compilation time)
             "tmp_install": True, # Is this package part of the temporary install
-            "next": "gzip", # Next package to install
+            "next": False, # Next package to install
             "before": False,
             "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
