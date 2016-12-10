@@ -36,14 +36,14 @@ class   Utillinux_P1:
             "name": "utillinux", # Name of the package
             "version": "2.28.1", # Version of the package
             "size": 114, # Size of the installed package (MB)
-            "archive": "", # Archive name
+            "archive": "util-linux-2.28.1.tar.xz", # Archive name
             "SBU": 0.8, # SBU (Compilation time)
             "tmp_install": True, # Is this package part of the temporary install
             "next": "xz", # Next package to install
             "before": False,
             "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/"
+                "https://install.morphux.org/packages/util-linux-2.28.1.tar.xz"
             ]
         }
         return self.config

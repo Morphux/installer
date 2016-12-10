@@ -36,14 +36,14 @@ class   Sed_P1:
             "name": "sed", # Name of the package
             "version": "4.2.2", # Version of the package
             "size": 10, # Size of the installed package (MB)
-            "archive": "", # Archive name
+            "archive": "sed-4.2.2.tar.bz2", # Archive name
             "SBU": 0.1, # SBU (Compilation time)
             "tmp_install": True, # Is this package part of the temporary install
             "next": "tar", # Next package to install
             "before": False,
             "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/"
+                "https://install.morphux.org/packages/sed-4.2.2.tar.bz2"
             ]
         }
         return self.config

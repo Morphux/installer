@@ -36,14 +36,14 @@ class   Perl_P1:
             "name": "perl", # Name of the package
             "version": "5.2.4", # Version of the package
             "size": 1.3, # Size of the installed package (MB)
-            "archive": "", # Archive name
+            "archive": "perl-5.24.0.tar.bz2", # Archive name
             "SBU": 1.3, # SBU (Compilation time)
             "tmp_install": True, # Is this package part of the temporary install
             "next": "sed", # Next package to install
             "before": False,
             "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/"
+                "https://install.morphux.org/packages/perl-5.24.0.tar.bz2"
             ]
         }
         return self.config

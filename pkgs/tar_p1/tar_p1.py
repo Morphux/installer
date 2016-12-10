@@ -36,14 +36,14 @@ class   Tar_P1:
             "name": "tar", # Name of the package
             "version": "1.29", # Version of the package
             "size": 32, # Size of the installed package (MB)
-            "archive": "", # Archive name
+            "archive": "tar-1.29.tar.xz", # Archive name
             "SBU": 0.3, # SBU (Compilation time)
             "tmp_install": True, # Is this package part of the temporary install
             "next": "texinfo", # Next package to install
             "before": False,
             "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/"
+                "https://install.morphux.org/packages/tar-1.29.tar.xz"
             ]
         }
         return self.config

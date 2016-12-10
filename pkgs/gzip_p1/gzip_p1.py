@@ -36,14 +36,14 @@ class   Gzip_P1:
             "name": "gzip", # Name of the package
             "version": "1.8", # Version of the package
             "size": 8.9, # Size of the installed package (MB)
-            "archive": "", # Archive name
+            "archive": "gzip-1.8.tar.xz", # Archive name
             "SBU": 0.1, # SBU (Compilation time)
             "tmp_install": True, # Is this package part of the temporary install
             "next": "m4", # Next package to install
             "before": False,
             "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/"
+                "https://install.morphux.org/packages/gzip-1.8.tar.xz"
             ]
         }
         return self.config

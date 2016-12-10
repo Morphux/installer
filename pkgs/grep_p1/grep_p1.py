@@ -36,14 +36,14 @@ class   Grep_P1:
             "name": "grep", # Name of the package
             "version": "2.25", # Version of the package
             "size": 18, # Size of the installed package (MB)
-            "archive": "", # Archive name
+            "archive": "grep-2.25.tar.xz", # Archive name
             "SBU": 0.2, # SBU (Compilation time)
             "tmp_install": True, # Is this package part of the temporary install
             "next": "gzip", # Next package to install
             "before": False,
             "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/"
+                "https://install.morphux.org/packages/grep-2.25.tar.xz"
             ]
         }
         return self.config

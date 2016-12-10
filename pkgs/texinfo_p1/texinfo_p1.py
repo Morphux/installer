@@ -36,14 +36,14 @@ class   Texinfo_P1:
             "name": "texinfo", # Name of the package
             "version": "6.1", # Version of the package
             "size": 99, # Size of the installed package (MB)
-            "archive": "", # Archive name
+            "archive": "texinfo-6.1.tar.xz", # Archive name
             "SBU": 0.2, # SBU (Compilation time)
             "tmp_install": True, # Is this package part of the temporary install
             "next": "utillinux", # Next package to install
             "before": False,
             "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/"
+                "https://install.morphux.org/packages/texinfo-6.1.tar.xz"
             ]
         }
         return self.config

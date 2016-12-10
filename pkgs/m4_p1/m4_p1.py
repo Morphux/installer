@@ -36,14 +36,14 @@ class   M4_P1:
             "name": "m4", # Name of the package
             "version": "1.4.17", # Version of the package
             "size": 18, # Size of the installed package (MB)
-            "archive": "", # Archive name
+            "archive": "m4-1.4.17.tar.xz", # Archive name
             "SBU": 0.2, # SBU (Compilation time)
             "tmp_install": True, # Is this package part of the temporary install
             "next": "make", # Next package to install
             "before": False,
             "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/"
+                "https://install.morphux.org/packages/m4-1.4.17.tar.xz"
             ]
         }
         return self.config

@@ -36,13 +36,13 @@ class   Gettext_P1:
             "name": "gettext", # Name of the package
             "version": "0.19.8.1", # Version of the package
             "size": 164, # Size of the installed package (MB)
-            "archive": "", # Archive name
+            "archive": "gettext-0.19.8.1.tar.xz", # Archive name
             "SBU": 0.9, # SBU (Compilation time)
             "tmp_install": True, # Is this package part of the temporary install
             "next": "grep", # Next package to install
             "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/"
+                "https://install.morphux.org/packages/gettext-0.19.8.1.tar.xz"
             ]
         }
         return self.config

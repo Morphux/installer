@@ -36,14 +36,14 @@ class   Make_P1:
             "name": "make", # Name of the package
             "version": "4.2.1", # Version of the package
             "size": 12.5, # Size of the installed package (MB)
-            "archive": "", # Archive name
+            "archive": "make-4.2.1.tar.bz2", # Archive name
             "SBU": 0.1, # SBU (Compilation time)
             "tmp_install": True, # Is this package part of the temporary install
             "next": "patch", # Next package to install
             "before": False,
             "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/"
+                "https://install.morphux.org/packages/make-4.2.1.tar.bz2"
             ]
         }
         return self.config
