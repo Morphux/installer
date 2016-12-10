@@ -39,7 +39,7 @@ class   Texinfo_P1:
             "archive": "texinfo-6.1.tar.xz", # Archive name
             "SBU": 0.2, # SBU (Compilation time)
             "tmp_install": True, # Is this package part of the temporary install
-            "next": "utillinux", # Next package to install
+            "next": "util-linux", # Next package to install
             "before": False,
             "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers

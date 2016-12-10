@@ -49,6 +49,7 @@ class   Tar_P1:
         return self.config
 
     def     configure(self):
+        os.environ["FORCE_UNSAFE_CONFIGURE"] = "1"
         return self.e(["./configure",
                 "--prefix=/tools",
         ])

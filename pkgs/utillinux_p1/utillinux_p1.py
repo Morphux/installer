@@ -33,7 +33,7 @@ class   Utillinux_P1:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "utillinux", # Name of the package
+            "name": "util-linux", # Name of the package
             "version": "2.28.1", # Version of the package
             "size": 114, # Size of the installed package (MB)
             "archive": "util-linux-2.28.1.tar.xz", # Archive name

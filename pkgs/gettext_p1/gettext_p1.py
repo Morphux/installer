@@ -49,6 +49,7 @@ class   Gettext_P1:
 
     def     before(self):
         os.chdir("gettext-tools")
+        return "", 0
 
     def     configure(self):
         return self.e(["EMACS=NO", "./configure",

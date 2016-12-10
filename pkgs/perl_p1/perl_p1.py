@@ -34,7 +34,7 @@ class   Perl_P1:
         self.root_dir = root_dir
         self.config = {
             "name": "perl", # Name of the package
-            "version": "5.2.4", # Version of the package
+            "version": "5.24.0", # Version of the package
             "size": 1.3, # Size of the installed package (MB)
             "archive": "perl-5.24.0.tar.bz2", # Archive name
             "SBU": 1.3, # SBU (Compilation time)
