@@ -41,7 +41,7 @@ class   Install:
     modules = {} # Module object
     pkgs = {} # Packages instances
     mnt_point = "/mnt/morphux" # Install mount point
-    arch_dir = "/opt/packages/" # Archive directory
+    arch_dir = mnt_point + "/packages/" # Archive directory (Must end with a /)
     sums_url = "https://install.morphux.org/packages/CHECKSUMS" # checksums url
     sum_file = "CHECKSUMS"
     checksums = {} # Object of packages sums
@@ -51,7 +51,7 @@ class   Install:
     current_time = 0 # Current install time
     in_install = 0
     current_install = [] # Object used to save the installation progress
-    def_install = "/opt/.install" # Default path for the install progress file
+    def_install = mnt_point + "/.install" # Default path for the install progress file
 
 ##
 # Functions
