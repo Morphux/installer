@@ -687,6 +687,7 @@ class   Install:
         self.exec(["mkdir", "-pv", path + "usr/local/games"])
         self.exec(["mkdir", "-pv", path + "usr/share/games"])
 
+    # This function does links vital to compilation
     def     links(self):
         self.exec(["ln", "-sv", "/tools/bin/{bash,cat,echo,pwd,stty}", "/bin"], shell=True)
         self.exec(["ln", "-sv", "/tools/bin/perl", "/usr/bin"])
@@ -696,6 +697,7 @@ class   Install:
         self.exec(["ln", "-sv", "bash", "/bin/sh"])
         self.exec(["ln", "-sv", "/proc/self/mounts", "/etc/mtab"])
 
+    # This function create basic files for login programs
     def     login_links(self, path = "/"):
         self.exec(["touch", path + "var/log/{btmp,lastlog,faillog,wtmp}"], shell=True)
         self.exec(["chgrp", "-v", "utmp", path + "var/log/lastlog"])
