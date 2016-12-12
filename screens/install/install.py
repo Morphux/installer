@@ -695,3 +695,9 @@ class   Install:
         self.exec(["sed 's/tools/usr/' /tools/lib/libstdc++.la > /usr/lib/libstdc++.la"], shell=True)
         self.exec(["ln", "-sv", "bash", "/bin/sh"])
         self.exec(["ln", "-sv", "/proc/self/mounts", "/etc/mtab"])
+
+    def     login_links(self, path = "/"):
+        self.exec(["touch", path + "var/log/{btmp,lastlog,faillog,wtmp}"], shell=True)
+        self.exec(["chgrp", "-v", "utmp", path + "var/log/lastlog"])
+        self.exec(["chmod", "-v", "664", path + "var/log/lastlog"])
+        self.exec(["chmod", "-v", "600", path + "var/log/btmp"])
