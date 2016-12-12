@@ -114,6 +114,8 @@ class   Install:
             # Link between the host and the install
             self.exec(["ln", "-sv", self.mnt_point + "/tools", "/"])
             self.phase_1_install()
+            self.chroot()
+            self.skeleton()
 
         self.dlg.msgbox("The installation is finished. Hit 'Enter' to close this dialog and reboot.", title="Success !")
         # Need reboot here
@@ -638,3 +640,48 @@ class   Install:
             # Dump the current install progress
             json.dump({"conf": self.conf_lst, "installed":
                 self.current_install}, fd)
+
+    # Function that chroot into the temporary install
+    def     chroot(self):
+        os.chroot(self.mnt_point)
+        os.environ["PATH"] = "/bin:/usr/bin:/usr/sbin:/tools/bin"
+
+    # Function that create the basic distribution skeleton
+    def     skeleton(path = "/"):
+        self.exec(["mkdir", "-pv"
+                    path + "{bin,boot,etc/{opt,sysconfig},home,lib/firmware,mnt,opt}"
+        ], shell=True)
+        self.exec(["mkdir", "-pv"
+                    path + "{media/{floppy,cdrom},sbin,srv,var}"
+        ], shell=True)
+        self.exec(["install", "-dv", "-m", "0750", path + "root"])
+        self.exec(["install", "-dv", "-m", "1777", path + "tmp", path + "var/tmp"])
+        self.exec(["mkdir", "-pv"
+                    path + "usr/{,local/}{bin,include,lib,sbin,src}"
+        ], shell=True)
+        self.exec(["mkdir", "-pv"
+                    path + "usr{,local/}share/{color,dict,doc,info,locale,man}"
+        ], shell=True)
+        self.exec(["mkdir", "-pv"
+                    path + "usr{,local/}share/{misc,terminfo,zoneinfo}"
+        ], shell=True)
+        self.exec(["mkdir", "-pv"
+                    path + "usr/libexec"
+        ], shell=True)
+        self.exec(["mkdir", "-pv"
+                    path + "usr/{,local/}share/man/man{1..8}"
+        ], shell=True)
+
+        if self.conf_lst["arch"] == "x86_64":
+            self.exec(["ln", "-sv", "lib", path + "lib64"])
+            self.exec(["ln", "-sv", "lib", path + "usr/lib64"])
+            self.exec(["ln", "-sv", "lib", path + "usr/local/lib64"])
+
+        self.exec(["mkdir", "-v", path + "var/{log,mail,spool}"], shell=True)
+        self.exec(["ln", "-sv", path + "run", path + "var/run"])
+        self.exec(["ln", "-sv", path + "run/lock", path + "var/lock"])
+        self.exec(["mkdir", "-pv"
+                    path + "var/{opt,cache,lib/{color,misc,locate},local}"
+        ], shell=True)
+        self.exec(["mkdir", "-pv", path + "usr/local/games"])
+        self.exec(["mkdir", "-pv", path + "usr/share/games"])
