@@ -118,6 +118,7 @@ class   Install:
             self.copy_files(self.mnt_point)
             self.chroot()
             self.links()
+            self.phase_2_install()
 
         self.dlg.msgbox("The installation is finished. Hit 'Enter' to close this dialog and reboot.", title="Success !")
         # Need reboot here
@@ -308,6 +309,27 @@ class   Install:
         os.environ["PATH"] = "/tools/bin:" + os.environ["PATH"]
         self.in_install = 1
         self.install(pkg_phase_1, "binutils")
+        self.in_install = 0
+
+    # This function launch the phase-2 full installation
+    def     phase_2_install(self):
+        pkg_phase_2 = {}
+        total_size = 0
+        total_sbus = 0
+
+        # Look for phase 2 package
+        for name, pkg in self.pkgs.items():
+            if pkgs[1]["tmp_install"] == False:
+                total_size += pkg[1]["size"]
+                total_sbus += pkg[1]["SBU"]
+                pkg_phase_2[name] = pkg
+
+        # Download the required archives
+        self.pkg_download(pkg_phase_2)
+
+        self.inst_title = "Phase 2: Installation"
+        self.in_install = 1
+        self.install(pkg_phase_2, "linux-headers")
         self.in_install = 0
 
     # This function take an object of packages, check if the sources are there.

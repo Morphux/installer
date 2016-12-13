@@ -33,12 +33,13 @@ class   Linux_Headers_P2:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "linux", # Name of the package
+            "name": "linux-headers", # Name of the package
             "version": "4.7.2", # Version of the package
             "size": 666, # Size of the installed package (MB)
             "archive": "linux-4.7.2.tar.xz", # Archive name
             "SBU": 0.1, # SBU (Compilation time)
-            "next": "glibc", # Next package to install
+            "next": False, # Next package to install
+            "tmp_install": False,
             "configure": False,
             "make": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
