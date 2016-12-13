@@ -82,6 +82,13 @@ class   Glibc_P2:
             ("fr_FR", "ISO-8859-1", "fr_FR")
             ("fr_FR@euro", "ISO-8859-15", "fr_FR@euro")
             ("fr_FR", "UTF-8", "fr_FR.UTF-8"),
+            ("it_IT", "ISO-8859-1", "it_IT"),
+            ("it_IT", "UTF-8", "it_IT.UTF-8"),
+            ("jp_JP", "EUC-JP", "ja_JP"),
+            ("ru_RU", "KOI8-R", "ru_RU.KOI8-R"),
+            ("ru_RU", "UTF-8", "ru_RU.UTF-8"),
+            ("tr_TR", "UTF-8", "tr_TR.UTF-8"),
+            ("zh_CN", "GB18030", "zh_CN.GB18030")
         ]
         self.e(["cp", "-v", "../nscd/nscd.conf", "/etc/nscd.conf"])
         self.e(["mkdir", "-pv", "/var/cache/nscd"])
