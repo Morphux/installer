@@ -114,8 +114,9 @@ class   Install:
             # Link between the host and the install
             self.exec(["ln", "-sv", self.mnt_point + "/tools", "/"])
             self.phase_1_install()
+            self.skeleton(self.mnt_point)
+            self.copy_files(self.mnt_point)
             self.chroot()
-            self.skeleton()
             self.links()
 
         self.dlg.msgbox("The installation is finished. Hit 'Enter' to close this dialog and reboot.", title="Success !")
@@ -644,11 +645,13 @@ class   Install:
 
     # Function that chroot into the temporary install
     def     chroot(self):
+        self.dlg.infobox("Chrooting...")
         os.chroot(self.mnt_point)
         os.environ["PATH"] = "/bin:/usr/bin:/usr/sbin:/tools/bin"
 
     # Function that create the basic distribution skeleton
     def     skeleton(path = "/"):
+        self.dlg.infobox("Creating skeleton...")
         self.exec(["mkdir", "-pv"
                     path + "{bin,boot,etc/{opt,sysconfig},home,lib/firmware,mnt,opt}"
         ], shell=True)
@@ -689,6 +692,7 @@ class   Install:
 
     # This function does links vital to compilation
     def     links(self):
+        self.dlg.infobox("Linking files...")
         self.exec(["ln", "-sv", "/tools/bin/{bash,cat,echo,pwd,stty}", "/bin"], shell=True)
         self.exec(["ln", "-sv", "/tools/bin/perl", "/usr/bin"])
         self.exec(["ln", "-sv", "/tools/lib/libgcc_s.so{,.1}", "/usr/lib"], shell=True)
@@ -699,7 +703,21 @@ class   Install:
 
     # This function create basic files for login programs
     def     login_links(self, path = "/"):
+        self.dlg.infobox("Linking files...")
         self.exec(["touch", path + "var/log/{btmp,lastlog,faillog,wtmp}"], shell=True)
         self.exec(["chgrp", "-v", "utmp", path + "var/log/lastlog"])
         self.exec(["chmod", "-v", "664", path + "var/log/lastlog"])
         self.exec(["chmod", "-v", "600", path + "var/log/btmp"])
+
+    # This function copy specificied files in defaultfiles/ and install them
+    # on the system
+    def     copy_files(self, path = "/"):
+        directory = "defaultfiles"
+        files {
+            ("passwd", "etc/passwd"),
+            ("group", "etc/group")
+        }
+
+        self.dlg.infobox("Creating defaultfiles...")
+        for f in files:
+            os.copy(defaultfiles + f[0], path + f[1])
