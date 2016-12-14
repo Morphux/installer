@@ -39,7 +39,7 @@ class   Glibc_P2:
             "archive": "glibc-2.24.tar.xz", # Archive name
             "SBU": 17, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
-            "next": "libstdcpp", # Next package to install
+            "next": "toolchain", # Next package to install
             "urls": [ # Url to download the package. The first one must be morphux servers
                 "https://install.morphux.org/packages/glibc-2.24.tar.xz"
             ]

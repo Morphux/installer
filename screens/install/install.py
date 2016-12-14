@@ -343,7 +343,8 @@ class   Install:
 
         for name, pkg in self.pkgs.items():
             # Archive is not here, we need to download it.
-            if os.path.isfile(self.arch_dir + pkg[1]["archive"]) == False:
+            if os.path.isfile(self.arch_dir + pkg[1]["archive"]) == False and
+                type(pkg[1]["archive"]) != type(False):
                 to_dl.append(pkg[1])
 
         # If we got any package to download, download them.
@@ -366,6 +367,8 @@ class   Install:
         # Iterating over the packages
         for name, p in lst.items():
 
+            if type(p[1]["archive"] == type(False)):
+                continue
             # Update the progress bar
             self.dlg.gauge_update(int((unpacked * 100) / to_unpack),
                 "Unpacking "+ p[1]["archive"] + "...", True)
@@ -426,6 +429,9 @@ class   Install:
 
         # Iterate over the packages to check
         for name, pkg in pkg_list.items():
+
+            if type(pkg[1]["archive"]) == type(False):
+                continue
 
             # Read the archive into string
             with open(self.arch_dir + pkg[1]["archive"], "rb") as fd:
