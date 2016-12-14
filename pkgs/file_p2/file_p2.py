@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# zlib_p2.py
+# file_p2.py
 # Created: 14/12/2016
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   Zlib_P2:
+class   File_P2:
 
     conf_lst = {}
     e = False
@@ -33,16 +33,17 @@ class   Zlib_P2:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "zlib", # Name of the package
-            "version": "1.2.8", # Version of the package
-            "size": 4, # Size of the installed package (MB)
-            "archive": "", # Archive name
+            "name": "file", # Name of the package
+            "version": "5.28", # Version of the package
+            "size": 15, # Size of the installed package (MB)
+            "archive": "file-5.28.tar.gz", # Archive name
             "SBU": 0.1, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
-            "next": "file", # Next package to install
+            "next": False, # Next package to install
             "before": False,
+            "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/"
+                "https://install.morphux.org/packages/file-5.28.tar.gz"
             ]
         }
         return self.config
@@ -57,7 +58,3 @@ class   Zlib_P2:
 
     def     install(self):
         return self.e(["make", "install"])
-
-    def     after(self):
-        self.e(["mv", "-v", "/usr/lib/libz.so.*", "/lib"], shell=True)
-        return self.e(["ln", "-sfv", "../../lib/$(readlink /usr/lib/libz.so) /usr/lib/libz.so"], shell=True)
