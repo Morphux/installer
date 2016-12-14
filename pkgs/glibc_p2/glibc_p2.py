@@ -90,9 +90,30 @@ class   Glibc_P2:
             ("tr_TR", "UTF-8", "tr_TR.UTF-8"),
             ("zh_CN", "GB18030", "zh_CN.GB18030")
         ]
+        zoneinfo="/usr/share/zoneinfo"
+        locale_base = "America/New_York"
+
         self.e(["cp", "-v", "../nscd/nscd.conf", "/etc/nscd.conf"])
         self.e(["mkdir", "-pv", "/var/cache/nscd"])
         self.e(["mkdir", "-pv", "/usr/lib/locale"])
 
         for l in locales:
             self.e(["localedef", "-i", l[0], "-f", l[1], l[2]])
+
+        self.e(["tar", "xf", "../../tzdata2016f.tar.gz"])
+        self.e(["mkdir", "-pv", zoneinfo + "/{posix,right}"], shell=True)
+
+        self.e(["for tz in etcetera southamerica northamerica europe africa antarctica \
+                    asia australasia backward pacificnew systemv; do \
+                zic -L /dev/null \
+                -d", zoneinfo,
+                "-y 'sh yearistype.sh' ${tz} \
+                zic -L /dev/null \
+                -d", zoneinfo, "/posix -y 'sh yearistype.sh' ${tz} \
+                zic -L leapseconds -d ", zoneinfo,"/right -y 'sh yearistype.sh' ${tz} \
+            done"
+            ], shell=True)
+        self.e(["cp", "-v", "zone.tab", "zone1970.tab", "iso3166.tab", zoneinfo])
+        self.e(["zic", "-d", zoneinfo, "-p", "America/New_York"])
+        self.e(["cp", "-v", "/usr/share/zoneinfo/" + locale_base, "/etc/localtime"])
+        self.e(["mkdir", "-pv", "/etc/ld.so.conf.d"])
