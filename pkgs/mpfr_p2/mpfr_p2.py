@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# gmp_p2.py
+# mpfr_p2.py
 # Created: 15/12/2016
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   Gmp_P2:
+class   Mpfr_P2:
 
     conf_lst = {}
     e = False
@@ -33,13 +33,13 @@ class   Gmp_P2:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "gmp", # Name of the package
-            "version": "6.1.1", # Version of the package
-            "size": 59, # Size of the installed package (MB)
+            "name": "mpfr", # Name of the package
+            "version": "3.1.4", # Version of the package
+            "size": 45, # Size of the installed package (MB)
             "archive": "", # Archive name
-            "SBU": 1.2, # SBU (Compilation time)
+            "SBU": 0.8, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
-            "next": "mpfr", # Next package to install
+            "next": False, # Next package to install
             "before": False,
             "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
@@ -50,9 +50,9 @@ class   Gmp_P2:
 
     def     configure(self):
         return self.e(["./configure",
-            "--enable-cxx",
             "--disable-static",
-            "--docdir=/usr/share/doc/gmp-6.1.1"
+            "--enable-thread-safe",
+            "--docdir=/usr/share/doc/mpfr-3.1.4"
         ])
 
     def     make(self):
