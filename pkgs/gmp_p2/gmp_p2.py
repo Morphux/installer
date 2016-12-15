@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# binutils_p2.py
-# Created: 14/12/2016
+# gmp_p2.py
+# Created: 15/12/2016
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   Binutils_P2:
+class   Gmp_P2:
 
     conf_lst = {}
     e = False
@@ -33,35 +33,30 @@ class   Binutils_P2:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "binutils", # Name of the package
-            "version": "2.27", # Version of the package
-            "size": 488, # Size of the installed package (MB)
-            "archive": "binutils-2.27.tar.bz2", # Archive name
-            "SBU": 2.5, # SBU (Compilation time)
+            "name": "gmp", # Name of the package
+            "version": "6.1.1", # Version of the package
+            "size": 59, # Size of the installed package (MB)
+            "archive": "", # Archive name
+            "SBU": 1.2, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
-            "next": "gmp", # Next package to install
+            "next": False, # Next package to install
+            "before": False,
             "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/binutils-2.27.tar.bz2",
-                "http://ftp.gnu.org/gnu/binutils/binutils-2.27.tar.bz2",
+                "https://install.morphux.org/packages/",
             ]
         }
         return self.config
 
-    def     before(self):
-        res = self.e(["mkdir", "-vp", "build"])
-        os.chdir("build")
-        return res
-
     def     configure(self):
-        return self.e(["../configure",
-                    "--prefix=/usr",
-                    "--enable-shared",
-                    "--disable-werror"
-                ])
+        return self.e(["./configure",
+            "--enable-cxx",
+            "--disable-static",
+            "--docdir=/usr/share/doc/gmp-6.1.1"
+        ])
 
     def     make(self):
-        return self.e(["make", "tooldir=/usr", "-j", self.conf_lst["cpus"]])
+        return self.e(["make", "-j", self.conf_lst["cpus"]])
 
     def     install(self):
-        return self.e(["make", "tooldir=/usr", "install"])
+        return self.e(["make", "install"])
