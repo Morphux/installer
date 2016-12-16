@@ -343,8 +343,7 @@ class   Install:
 
         for name, pkg in self.pkgs.items():
             # Archive is not here, we need to download it.
-            if os.path.isfile(self.arch_dir + pkg[1]["archive"]) == False and
-                type(pkg[1]["archive"]) != type(False):
+            if type(pkg[1]["archive"]) != type(False) and os.path.isfile(self.arch_dir + pkg[1]["archive"]) == False:
                 to_dl.append(pkg[1])
 
         # If we got any package to download, download them.
@@ -367,8 +366,9 @@ class   Install:
         # Iterating over the packages
         for name, p in lst.items():
 
-            if type(p[1]["archive"] == type(False)):
+            if type(p[1]["archive"]) == type(False):
                 continue
+
             # Update the progress bar
             self.dlg.gauge_update(int((unpacked * 100) / to_unpack),
                 "Unpacking "+ p[1]["archive"] + "...", True)
@@ -680,27 +680,27 @@ class   Install:
     # Function that create the basic distribution skeleton
     def     skeleton(path = "/"):
         self.dlg.infobox("Creating skeleton...")
-        self.exec(["mkdir", "-pv"
+        self.exec(["mkdir", "-pv",
                     path + "{bin,boot,etc/{opt,sysconfig},home,lib/firmware,mnt,opt}"
         ], shell=True)
-        self.exec(["mkdir", "-pv"
+        self.exec(["mkdir", "-pv",
                     path + "{media/{floppy,cdrom},sbin,srv,var}"
         ], shell=True)
         self.exec(["install", "-dv", "-m", "0750", path + "root"])
         self.exec(["install", "-dv", "-m", "1777", path + "tmp", path + "var/tmp"])
-        self.exec(["mkdir", "-pv"
+        self.exec(["mkdir", "-pv",
                     path + "usr/{,local/}{bin,include,lib,sbin,src}"
         ], shell=True)
-        self.exec(["mkdir", "-pv"
+        self.exec(["mkdir", "-pv",
                     path + "usr{,local/}share/{color,dict,doc,info,locale,man}"
         ], shell=True)
-        self.exec(["mkdir", "-pv"
+        self.exec(["mkdir", "-pv",
                     path + "usr{,local/}share/{misc,terminfo,zoneinfo}"
         ], shell=True)
-        self.exec(["mkdir", "-pv"
+        self.exec(["mkdir", "-pv",
                     path + "usr/libexec"
         ], shell=True)
-        self.exec(["mkdir", "-pv"
+        self.exec(["mkdir", "-pv",
                     path + "usr/{,local/}share/man/man{1..8}"
         ], shell=True)
 
@@ -712,7 +712,7 @@ class   Install:
         self.exec(["mkdir", "-v", path + "var/{log,mail,spool}"], shell=True)
         self.exec(["ln", "-sv", path + "run", path + "var/run"])
         self.exec(["ln", "-sv", path + "run/lock", path + "var/lock"])
-        self.exec(["mkdir", "-pv"
+        self.exec(["mkdir", "-pv",
                     path + "var/{opt,cache,lib/{color,misc,locate},local}"
         ], shell=True)
         self.exec(["mkdir", "-pv", path + "usr/local/games"])
@@ -741,7 +741,7 @@ class   Install:
     # on the system
     def     copy_files(self, path = "/"):
         directory = "defaultfiles"
-        files {
+        files = {
             ("passwd", "etc/passwd"),
             ("group", "etc/group"),
             ("nsswitch.conf", "etc/nsswitch.conf"),

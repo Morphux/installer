@@ -36,16 +36,16 @@ class   Man_P2:
             "name": "man", # Name of the package
             "version": "4.07", # Version of the package
             "size": 26, # Size of the installed package (MB)
-            "archive": "", # Archive name
+            "archive": "man-pages-4.07.tar.xz", # Archive name
             "SBU": 0.1, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
-            "next": False, # Next package to install
+            "next": "glibc", # Next package to install
             "before": False,
             "configure": False,
             "make": False,
             "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/"
+                "https://install.morphux.org/packages/man-pages-4.07.tar.xz"
             ]
         }
         return self.config
