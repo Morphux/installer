@@ -22,7 +22,7 @@
 
 import      os
 
-class   Gcc_P2:
+class   Bzip2_P2:
 
     conf_lst = {}
     e = False
@@ -33,45 +33,38 @@ class   Gcc_P2:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "gcc", # Name of the package
-            "version": "6.2.0", # Version of the package
-            "size": 3300, # Size of the installed package (MB)
-            "archive": "gcc-6.2.0.tar.bz2", # Archive name
-            "SBU": 79, # SBU (Compilation time)
+            "name": "bzip2", # Name of the package
+            "version": "1.0.6", # Version of the package
+            "size": 4.9, # Size of the installed package (MB)
+            "archive": "", # Archive name
+            "SBU": 0.1, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
-            "next": "bzip2", # Next package to install
+            "next": False, # Next package to install
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/gcc-6.2.0.tar.bz2"
+                "https://install.morphux.org/packages/"
             ]
         }
         return self.config
 
     def     before(self):
-        self.e(["mkdir", "-pv", "build"])
-        os.chdir("build")
-        return res
+        self.e(["patch", "-Np1", "-i", "../bzip2-1.0.6-install_docs-1.patch"])
+        self.e(["sed -i 's@\(ln -s -f \)$(PREFIX)/bin/@\1@' Makefile"], shell=True)
+        return self.e(["sed -i 's@(PREFIX)/man@(PREFIX)/share/man@g' Makefile"])
 
     def     configure(self):
-        return self.e(["../configure",
-                    "--prefix=/usr",
-                    "--enable-languages=c,c++",
-                    "--disable-multilib",
-                    "--disable-bootstrap",
-                    "--with-system-zlib"
-                ])
+        self.e(["make", "-f", "Makefile-libbz2_so"])
+        return self.e(["make", "clean"])
 
     def     make(self):
         return self.e(["make", "-j", self.conf_lst["cpus"]])
 
     def     install(self):
-        return self.e(["make", "install"])
+        return self.e(["make", "PREFIX=/usr" "install"])
 
     def     after(self):
-        self.e(["ln", "-sv", "../usr/bin/cpp", "/lib"])
-        self.e(["ln", "-sv", "gcc", "/usr/bin/cc"])
-        self.e(["install", "-v", "-dm755", "/usr/lib/bfd-plugins"])
-        self.e(["ln", "-sfv", 
-            "../../libexec/gcc/$(gcc -dumpmachine)/6.2.0/liblto_plugin.so",
-            "/usr/lib/bfd-plugins/"], shell=True)
-        self.e(["mkdir", "-pv", "/usr/share/gdb/auto-load/usr/lib/"])
-        self.e(["mv", "-v", "/usr/lib/*gdb.py", "/usr/share/gdb/auto-load/usr/lib"], shell=True)
+        self.e(["cp", "-v", "bzip2-shared", "/bin/bzip2"])
+        self.e(["cp", "-av", "libbz2.so.*", "/lib"], shell=True)
+        self.e(["ln", "-sv", "../../lib/libbz2.so.1.0", "/usr/lib/libbz2.so"])
+        self.e(["rm", "-v", "/usr/bin/{bunzip2,bzcat,bzip2}"], shell=True)
+        self.e(["ln", "-sv", "bzip2", "/bin/bunzip2"])
+        return self.e(["ln", "-sv", "bzip2", "/bin/bzcat"])
