@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# mpfr_p2.py
-# Created: 15/12/2016
+# mpc_p2.py
+# Created: 16/12/2016
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   Mpfr_P2:
+class   Mpc_P2:
 
     conf_lst = {}
     e = False
@@ -33,26 +33,26 @@ class   Mpfr_P2:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "mpfr", # Name of the package
-            "version": "3.1.4", # Version of the package
+            "name": "mpc", # Name of the package
+            "version": "1.0.3", # Version of the package
             "size": 45, # Size of the installed package (MB)
-            "archive": "mpfr-3.1.4.tar.xz", # Archive name
-            "SBU": 0.8, # SBU (Compilation time)
+            "archive": "", # Archive name
+            "SBU": 0.3, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
-            "next": "mpc", # Next package to install
+            "next": "gcc", # Next package to install
             "before": False,
             "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/mpfr-3.1.4.tar.xz",
+                "https://install.morphux.org/packages/",
             ]
         }
         return self.config
 
     def     configure(self):
         return self.e(["./configure",
+            "--prefix=/usr",
             "--disable-static",
-            "--enable-thread-safe",
-            "--docdir=/usr/share/doc/mpfr-3.1.4"
+            "--docdir=/usr/share/doc/mpc-1.0.3"
         ])
 
     def     make(self):

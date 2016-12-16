@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# mpfr_p2.py
-# Created: 15/12/2016
+# gcc_p2.py
+# Created: 16/12/2016
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   Mpfr_P2:
+class   Gcc_P2:
 
     conf_lst = {}
     e = False
@@ -33,30 +33,45 @@ class   Mpfr_P2:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "mpfr", # Name of the package
-            "version": "3.1.4", # Version of the package
-            "size": 45, # Size of the installed package (MB)
-            "archive": "mpfr-3.1.4.tar.xz", # Archive name
-            "SBU": 0.8, # SBU (Compilation time)
+            "name": "gcc", # Name of the package
+            "version": "6.2.0", # Version of the package
+            "size": 3300, # Size of the installed package (MB)
+            "archive": "gcc-6.2.0.tar.bz2", # Archive name
+            "SBU": 79, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
-            "next": "mpc", # Next package to install
-            "before": False,
-            "after": False,
+            "next": False, # Next package to install
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/mpfr-3.1.4.tar.xz",
+                "https://install.morphux.org/packages/gcc-6.2.0.tar.bz2"
             ]
         }
         return self.config
 
+    def     before(self):
+        self.e(["mkdir", "-pv", "build"])
+        os.chdir("build")
+        return res
+
     def     configure(self):
-        return self.e(["./configure",
-            "--disable-static",
-            "--enable-thread-safe",
-            "--docdir=/usr/share/doc/mpfr-3.1.4"
-        ])
+        return self.e(["../configure",
+                    "--prefix=/usr",
+                    "--enable-languages=c,c++",
+                    "--disable-multilib",
+                    "--disable-bootstrap",
+                    "--with-system-zlib"
+                ])
 
     def     make(self):
         return self.e(["make", "-j", self.conf_lst["cpus"]])
 
     def     install(self):
         return self.e(["make", "install"])
+
+    def     after(self):
+        self.e(["ln", "-sv", "../usr/bin/cpp", "/lib"])
+        self.e(["ln", "-sv", "gcc", "/usr/bin/cc"])
+        self.e(["install", "-v", "-dm755", "/usr/lib/bfd-plugins"])
+        self.e(["ln", "-sfv", 
+            "../../libexec/gcc/$(gcc -dumpmachine)/6.2.0/liblto_plugin.so",
+            "/usr/lib/bfd-plugins/"], shell=True)
+        self.e(["mkdir", "-pv", "/usr/share/gdb/auto-load/usr/lib/"])
+        self.e(["mv", "-v", "/usr/lib/*gdb.py", "/usr/share/gdb/auto-load/usr/lib"], shell=True)
