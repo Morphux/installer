@@ -728,12 +728,12 @@ class   Install:
 
         if "MERGE_USR" in self.conf_lst["config"] and self.conf_lst["config"]["MERGE_USR"] == True:
             # Removing previously created directories
-            self.e(["rm", "-rf", path + "bin"])
-            self.e(["rm", "-rf", path + "sbin"])
+            self.exec(["rm", "-rf", path + "bin"])
+            self.exec(["rm", "-rf", path + "sbin"])
 
             # Link directories
-            self.e(["ln", "-sv", "/usr/bin", "/bin"])
-            self.e(["ln", "-sv", "/usr/sbin", "/sbin"])
+            self.exec(["ln", "-sv", "/usr/bin", "/bin"])
+            self.exec(["ln", "-sv", "/usr/sbin", "/sbin"])
 
     # This function does links vital to compilation
     def     links(self):
