@@ -30,6 +30,7 @@ import      shutil
 from        urllib.request import urlretrieve
 from        subprocess import Popen, PIPE, STDOUT, call
 import      multiprocessing
+from        pythondialog.dialog import *
 
 class   Install:
 
@@ -72,7 +73,7 @@ class   Install:
     # main function, called by Main instance
     def     main(self, Main):
         # Save the installer PWD
-        self.org_pwd = os.environ["PWD"]
+        self.org_pwd = os.getcwd()
 
         # The current configuration is already loaded from a file, no
         # reason to re-save it.
@@ -748,7 +749,7 @@ class   Install:
     # This function copy specificied files in defaultfiles/ and install them
     # on the system
     def     copy_files(self, path = "/"):
-        directory = "defaultfiles"
+        directory = "defaultfiles/"
         files = {
             ("passwd", "etc/passwd"),
             ("group", "etc/group"),
@@ -758,4 +759,4 @@ class   Install:
 
         self.dlg.infobox("Creating defaultfiles...")
         for f in files:
-            shutil.copyfile(defaultfiles + f[0], path + f[1])
+            shutil.copyfile(directory + f[0], path + f[1])
