@@ -93,8 +93,6 @@ class   Install:
 
         # Load packages files
         self.load_pkgs()
-        #self.phase_1_install()
-        #sys.exit(1)
 
         # If a pre-existing install is present, clean it
         if os.path.isdir(self.mnt_point):
@@ -113,6 +111,7 @@ class   Install:
         # Mount the partitions
         self.mount()
 
+        self.pkg_download(self.pkgs)
         # If the installation require a 2-Phase install
         if "TMP_INSTALL" in self.conf_lst["config"] and self.conf_lst["config"]["TMP_INSTALL"]:
             # Create the tools directory
@@ -305,9 +304,6 @@ class   Install:
                 total_sbus += pkg[1]["SBU"]
                 pkg_phase_1[name] = pkg
 
-        # Download the archives
-        self.pkg_download(pkg_phase_1)
-
         self.inst_title = "Phase 1: Temporary Install"
         self.total_sbus = total_sbus
         self.current_time = time.time()
@@ -326,13 +322,10 @@ class   Install:
 
         # Look for phase 2 package
         for name, pkg in self.pkgs.items():
-            if pkgs[1]["tmp_install"] == False:
+            if pkg[1]["tmp_install"] == False:
                 total_size += pkg[1]["size"]
                 total_sbus += pkg[1]["SBU"]
                 pkg_phase_2[name] = pkg
-
-        # Download the required archives
-        self.pkg_download(pkg_phase_2)
 
         self.inst_title = "Phase 2: Installation"
         self.in_install = 1
