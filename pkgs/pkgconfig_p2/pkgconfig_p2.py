@@ -36,14 +36,14 @@ class   Pkgconfig_P2:
             "name": "pkgconfig", # Name of the package
             "version": "0.29.1", # Version of the package
             "size": 28, # Size of the installed package (MB)
-            "archive": "", # Archive name
+            "archive": "pkg-config-0.29.1.tar.gz", # Archive name
             "SBU": 0.3, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
             "next": "ncurses", # Next package to install
             "before": False,
             "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/"
+                "https://install.morphux.org/packages/pkg-config-0.29.1.tar.gz"
             ]
         }
         return self.config
