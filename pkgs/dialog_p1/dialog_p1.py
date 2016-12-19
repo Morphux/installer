@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# xz_p1.py
-# Created: 09/12/2016
+# dialog_p1.py
+# Created: 19/12/2016
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   Xz_P1:
+class   Dialog_P1:
 
     conf_lst = {}
     e = False
@@ -33,17 +33,17 @@ class   Xz_P1:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "xz", # Name of the package
-            "version": "5.2.2", # Version of the package
+            "name": "dialog", # Name of the package
+            "version": "1.3-20160828", # Version of the package
             "size": 16, # Size of the installed package (MB)
-            "archive": "xz-5.2.2.tar.xz", # Archive name
-            "SBU": 0.2, # SBU (Compilation time)
+            "archive": "dialog.tar.gz", # Archive name
+            "SBU": 0.1, # SBU (Compilation time)
             "tmp_install": True, # Is this package part of the temporary install
-            "next": "dialog", # Next package to install
+            "next": False, # Next package to install
             "before": False,
             "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/xz-5.2.2.tar.xz"
+                "https://install.morphux.org/packages/dialog.tar.gz"
             ]
         }
         return self.config
