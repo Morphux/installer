@@ -112,8 +112,9 @@ class   Install:
         self.mount()
 
         self.pkg_download(self.pkgs)
+
         # If the installation require a 2-Phase install
-        if "BIN_INSTALL" in self.conf_lst["config"] and self.conf_lst["config"]["BIN_INSTALL"] == False:
+        if "BIN_INSTALL" not in self.conf_lst["config"]:
             # Create the tools directory
             self.exec(["mkdir", "-v", self.mnt_point + "/tools"])
             # Link between the host and the install
