@@ -42,6 +42,7 @@ class   Linux_Headers_P2:
             "tmp_install": False,
             "configure": False,
             "make": False,
+            "chdir": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
                 "https://install.morphux.org/packages/linux-4.7.2.tar.xz"
             ]
@@ -49,6 +50,7 @@ class   Linux_Headers_P2:
         return self.config
 
     def     before(self):
+        os.chdir("linux-4.7.2")
         return self.e(["make", "mrproper"])
 
     def     install(self):

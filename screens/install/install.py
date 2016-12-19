@@ -578,6 +578,8 @@ class   Install:
         os.chdir(self.arch_dir)
 
         # Un-taring the archive
+        if (os.path.isdir(conf["name"] + "-" + conf["version"])):
+            return 1
         self.exec(["tar", "xf", conf["archive"]])
 
     # Function that display the global progress bar for an install
