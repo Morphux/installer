@@ -119,6 +119,7 @@ class   Install:
             # Link between the host and the install
             self.exec(["ln", "-sv", self.mnt_point + "/tools", "/"])
             self.phase_1_install()
+            self.mnt_kfs()
             os.chdir(self.org_pwd)
             self.skeleton(self.mnt_point)
             self.copy_files(self.mnt_point)
@@ -758,3 +759,17 @@ class   Install:
         self.dlg.infobox("Creating defaultfiles...")
         for f in files:
             shutil.copyfile(directory + f[0], path + f[1])
+
+    # This function mounts kernel file system on the future installation
+    # /dev, /proc, /sys, /run
+    def     mnt_kfs(self):
+        self.dlg.infobox("Mounting kernel file systems")
+        self.e(["mkdir", "-pv", self.mnt_point + "/{dev,proc,sys,run}"], shell=True)
+        self.e(["mknod", "-m", "600", self.mnt_point + "/dev/console", "c", "5", "1"])
+        self.e(["mknod", "-m", "660", self.mnt_point + "/dev/null", "c", "1", "3"])
+        self.e(["mount", "-v", "--bind", "/dev", self.mnt_point + "/dev"])
+        self.e(["mount", "-vt", "devpts", "devpts", self.mnt_point + "/dev/pts", "-o", "gid=5,mode=620"])
+        self.e(["mount", "-vt", "proc", "proc", self.mnt_point + "/proc"])
+        self.e(["mount", "-vt", "sysfs", "sysfs", self.mnt_point + "/sys"])
+        self.e(["mount", "-vt", "tmpfs", "tmpfs", self.mnt_point + "/run"])
+
