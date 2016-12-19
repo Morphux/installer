@@ -33,7 +33,7 @@ class   Man_P2:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "man", # Name of the package
+            "name": "man-pages", # Name of the package
             "version": "4.07", # Version of the package
             "size": 26, # Size of the installed package (MB)
             "archive": "man-pages-4.07.tar.xz", # Archive name

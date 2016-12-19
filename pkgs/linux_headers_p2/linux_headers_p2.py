@@ -38,7 +38,7 @@ class   Linux_Headers_P2:
             "size": 666, # Size of the installed package (MB)
             "archive": "linux-4.7.2.tar.xz", # Archive name
             "SBU": 0.1, # SBU (Compilation time)
-            "next": "man", # Next package to install
+            "next": "man-pages", # Next package to install
             "tmp_install": False,
             "configure": False,
             "make": False,
