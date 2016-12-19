@@ -341,7 +341,7 @@ class   Install:
         if os.path.isdir(self.arch_dir) == False:
             self.exec(["mkdir", "-vp", self.arch_dir])
 
-        for name, pkg in self.pkgs.items():
+        for name, pkg in pkg_list.items():
             # Archive is not here, we need to download it.
             if type(pkg[1]["archive"]) != type(False) and os.path.isfile(self.arch_dir + pkg[1]["archive"]) == False:
                 to_dl.append(pkg[1])
