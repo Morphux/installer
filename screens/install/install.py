@@ -328,6 +328,8 @@ class   Install:
                 pkg_phase_2[name] = pkg
 
         self.inst_title = "Phase 2: Installation"
+        # Change package directory
+        self.arch_dir = "/packages";
         self.in_install = 1
         self.install(pkg_phase_2, "linux-headers")
         self.in_install = 0
