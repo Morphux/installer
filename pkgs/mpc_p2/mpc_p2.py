@@ -36,14 +36,14 @@ class   Mpc_P2:
             "name": "mpc", # Name of the package
             "version": "1.0.3", # Version of the package
             "size": 45, # Size of the installed package (MB)
-            "archive": "", # Archive name
+            "archive": "mpc-1.0.3.tar.gz", # Archive name
             "SBU": 0.3, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
             "next": "gcc", # Next package to install
             "before": False,
             "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/",
+                "https://install.morphux.org/packages/mpc-1.0.3.tar.gz",
             ]
         }
         return self.config
