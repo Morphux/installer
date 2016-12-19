@@ -53,6 +53,7 @@ class   Install:
     in_install = 0
     current_install = [] # Object used to save the installation progress
     def_install = mnt_point + "/.install" # Default path for the install progress file
+    org_pwd = ""
 
 ##
 # Functions
@@ -70,6 +71,9 @@ class   Install:
 
     # main function, called by Main instance
     def     main(self, Main):
+        # Save the installer PWD
+        self.org_pwd = os.environ["PWD"]
+
         # The current configuration is already loaded from a file, no
         # reason to re-save it.
         if "load_conf" not in self.conf_lst:
@@ -115,6 +119,7 @@ class   Install:
             # Link between the host and the install
             self.exec(["ln", "-sv", self.mnt_point + "/tools", "/"])
             self.phase_1_install()
+            os.chdir(self.org_pwd)
             self.skeleton(self.mnt_point)
             self.copy_files(self.mnt_point)
             self.chroot()
@@ -677,6 +682,8 @@ class   Install:
         self.dlg.infobox("Chrooting...")
         os.chroot(self.mnt_point)
         os.environ["PATH"] = "/bin:/usr/bin:/usr/sbin:/tools/bin"
+        self.dlg = Dialog(dialog="dialog", autowidgetsize=True)
+        self.dlg.set_background_title(title + ", version " + version)
 
     # Function that create the basic distribution skeleton
     def     skeleton(self, path = "/"):

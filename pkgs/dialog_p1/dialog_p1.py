@@ -51,6 +51,7 @@ class   Dialog_P1:
     def     configure(self):
         return self.e(["./configure",
                 "--prefix=/tools",
+                "--with-ncursesw"
         ])
 
     def     make(self):
