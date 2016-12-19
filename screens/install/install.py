@@ -683,8 +683,8 @@ class   Install:
         self.dlg.infobox("Chrooting...")
         os.chroot(self.mnt_point)
         os.environ["PATH"] = "/bin:/usr/bin:/usr/sbin:/tools/bin"
-        self.dlg = Dialog(dialog="dialog", autowidgetsize=True)
-        self.dlg.set_background_title(title + ", version " + version)
+        self.dlg = Dialog(dialog="/tools/bin/dialog", autowidgetsize=True)
+        self.dlg.set_background_title("Morphux Installer" + ", version " + "1.0")
 
     # Function that create the basic distribution skeleton
     def     skeleton(self, path = "/"):
@@ -730,6 +730,7 @@ class   Install:
     # This function does links vital to compilation
     def     links(self):
         self.dlg.infobox("Linking files...")
+        self.exec(["ln", "-sv", "/tools/bin/sh", "/bin/sh"])
         self.exec(["ln", "-sv", "/tools/bin/{bash,cat,echo,pwd,stty}", "/bin"], shell=True)
         self.exec(["ln", "-sv", "/tools/bin/perl", "/usr/bin"])
         self.exec(["ln", "-sv", "/tools/lib/libgcc_s.so{,.1}", "/usr/lib"], shell=True)
