@@ -113,7 +113,7 @@ class   Install:
 
         self.pkg_download(self.pkgs)
         # If the installation require a 2-Phase install
-        if "BIN_INSTALL" in self.conf_lst["config"] and self.conf_lst["config"]["TMP_INSTALL"]:
+        if "BIN_INSTALL" in self.conf_lst["config"] and self.conf_lst["config"]["BIN_INSTALL"] == False:
             # Create the tools directory
             self.exec(["mkdir", "-v", self.mnt_point + "/tools"])
             # Link between the host and the install
@@ -724,6 +724,15 @@ class   Install:
         ], shell=True)
         self.exec(["mkdir", "-pv", path + "usr/local/games"])
         self.exec(["mkdir", "-pv", path + "usr/share/games"])
+
+        if "MERGE_USR" in self.conf_lst["config"] and self.conf_lst["config"]["MERGE_USR"] == True:
+            # Removing previously created directories
+            self.e(["rm", "-rf", path + "bin"])
+            self.e(["rm", "-rf", path + "sbin"])
+
+            # Link directories
+            self.e(["ln", "-sv", "/usr/bin", "/bin"])
+            self.e(["ln", "-sv", "/usr/sbin", "/sbin"])
 
     # This function does links vital to compilation
     def     links(self):
