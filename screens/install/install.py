@@ -26,6 +26,7 @@ import      sys
 import      time
 import      datetime
 import      threading
+import      shutil
 from        urllib.request import urlretrieve
 from        subprocess import Popen, PIPE, STDOUT, call
 import      multiprocessing
@@ -678,7 +679,7 @@ class   Install:
         os.environ["PATH"] = "/bin:/usr/bin:/usr/sbin:/tools/bin"
 
     # Function that create the basic distribution skeleton
-    def     skeleton(path = "/"):
+    def     skeleton(self, path = "/"):
         self.dlg.infobox("Creating skeleton...")
         self.exec(["mkdir", "-pv",
                     path + "{bin,boot,etc/{opt,sysconfig},home,lib/firmware,mnt,opt}"
@@ -750,4 +751,4 @@ class   Install:
 
         self.dlg.infobox("Creating defaultfiles...")
         for f in files:
-            os.copy(defaultfiles + f[0], path + f[1])
+            shutil.copyfile(defaultfiles + f[0], path + f[1])
