@@ -774,12 +774,12 @@ class   Install:
     # /dev, /proc, /sys, /run
     def     mnt_kfs(self):
         self.dlg.infobox("Mounting kernel file systems")
-        self.e(["mkdir", "-pv", self.mnt_point + "/{dev,proc,sys,run}"], shell=True)
-        self.e(["mknod", "-m", "600", self.mnt_point + "/dev/console", "c", "5", "1"])
-        self.e(["mknod", "-m", "660", self.mnt_point + "/dev/null", "c", "1", "3"])
-        self.e(["mount", "-v", "--bind", "/dev", self.mnt_point + "/dev"])
-        self.e(["mount", "-vt", "devpts", "devpts", self.mnt_point + "/dev/pts", "-o", "gid=5,mode=620"])
-        self.e(["mount", "-vt", "proc", "proc", self.mnt_point + "/proc"])
-        self.e(["mount", "-vt", "sysfs", "sysfs", self.mnt_point + "/sys"])
-        self.e(["mount", "-vt", "tmpfs", "tmpfs", self.mnt_point + "/run"])
+        self.exec(["mkdir", "-pv", self.mnt_point + "/{dev,proc,sys,run}"], shell=True)
+        self.exec(["mknod", "-m", "600", self.mnt_point + "/dev/console", "c", "5", "1"])
+        self.exec(["mknod", "-m", "660", self.mnt_point + "/dev/null", "c", "1", "3"])
+        self.exec(["mount", "-v", "--bind", "/dev", self.mnt_point + "/dev"])
+        self.exec(["mount", "-vt", "devpts", "devpts", self.mnt_point + "/dev/pts", "-o", "gid=5,mode=620"])
+        self.exec(["mount", "-vt", "proc", "proc", self.mnt_point + "/proc"])
+        self.exec(["mount", "-vt", "sysfs", "sysfs", self.mnt_point + "/sys"])
+        self.exec(["mount", "-vt", "tmpfs", "tmpfs", self.mnt_point + "/run"])
 
