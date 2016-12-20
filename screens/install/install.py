@@ -336,6 +336,7 @@ class   Install:
         self.inst_title = "Phase 2: Installation"
         # Change package directory
         self.arch_dir = "/packages";
+        self.mnt_point = "/"
         self.in_install = 1
         self.install(pkg_phase_2, "linux-headers")
         self.in_install = 0
