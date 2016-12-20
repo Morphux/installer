@@ -36,15 +36,18 @@ class   Toolchain_P2:
             "name": "toolchain", # Name of the package
             "version": "0", # Version of the package
             "size": 0, # Size of the installed package (MB)
-            "archive": False, # Archive name
+            "archive": "tzdata2016f.tar.gz", # Archive name
             "SBU": 0, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
             "next": "zlib_p2", # Next package to install
-            "urls": False,
             "configure": False,
             "make": False,
             "install": False,
-            "after": False
+            "after": False,
+            "chdir": False,
+            "urls": [
+                "https://install.morphux.org/packages/tzdata2016f.tar.gz"
+            ],
         }
         return self.config
 

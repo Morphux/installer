@@ -79,8 +79,8 @@ class   Glibc_P2:
             ("en_US", "UTF-8", "en_US.UTF-8"),
             ("ex_MX", "ISO-8859-1", "es_MX"),
             ("fa_IR", "UTF-8", "fa_IR"),
-            ("fr_FR", "ISO-8859-1", "fr_FR")
-            ("fr_FR@euro", "ISO-8859-15", "fr_FR@euro")
+            ("fr_FR", "ISO-8859-1", "fr_FR"),
+            ("fr_FR@euro", "ISO-8859-15", "fr_FR@euro"),
             ("fr_FR", "UTF-8", "fr_FR.UTF-8"),
             ("it_IT", "ISO-8859-1", "it_IT"),
             ("it_IT", "UTF-8", "it_IT.UTF-8"),
@@ -116,4 +116,4 @@ class   Glibc_P2:
         self.e(["cp", "-v", "zone.tab", "zone1970.tab", "iso3166.tab", zoneinfo])
         self.e(["zic", "-d", zoneinfo, "-p", "America/New_York"])
         self.e(["cp", "-v", "/usr/share/zoneinfo/" + locale_base, "/etc/localtime"])
-        self.e(["mkdir", "-pv", "/etc/ld.so.conf.d"])
+        return self.e(["mkdir", "-pv", "/etc/ld.so.conf.d"])
