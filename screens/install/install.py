@@ -736,8 +736,8 @@ class   Install:
             self.exec(["rm", "-rf", path + "sbin"])
 
             # Link directories
-            self.exec(["ln", "-sv", "/usr/bin", "/bin"])
-            self.exec(["ln", "-sv", "/usr/sbin", "/sbin"])
+            self.exec(["ln", "-sv", "/usr/bin", path + "bin"])
+            self.exec(["ln", "-sv", "/usr/sbin", path + "sbin"])
 
     # This function does links vital to compilation
     def     links(self):
