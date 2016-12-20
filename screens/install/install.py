@@ -42,7 +42,7 @@ class   Install:
     conf_lst = {} # List object for configuration
     modules = {} # Module object
     pkgs = {} # Packages instances
-    mnt_point = "/mnt/morphux" # Install mount point
+    mnt_point = "/mnt/morphux/" # Install mount point
     arch_dir = mnt_point + "/packages/" # Archive directory (Must end with a /)
     sums_url = "https://install.morphux.org/packages/CHECKSUMS" # checksums url
     sum_file = "CHECKSUMS"
