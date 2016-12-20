@@ -115,5 +115,5 @@ class   Glibc_P2:
             ], shell=True)
         self.e(["cp", "-v", "zone.tab", "zone1970.tab", "iso3166.tab", zoneinfo])
         self.e(["zic", "-d", zoneinfo, "-p", "America/New_York"])
-        self.e(["cp", "-v", "/usr/share/zoneinfo/" + locale_base, "/etc/localtime"])
-        return self.e(["mkdir", "-pv", "/etc/ld.so.conf.d"])
+        self.e(["mkdir", "-pv", "/etc/ld.so.conf.d"])
+        return self.e(["cp", "-v", "/usr/share/zoneinfo/" + locale_base, "/etc/localtime"])
