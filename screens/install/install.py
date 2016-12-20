@@ -331,7 +331,7 @@ class   Install:
             if pkg[1]["tmp_install"] == False:
                 total_size += pkg[1]["size"]
                 total_sbus += pkg[1]["SBU"]
-                pkg_phase_2[name] = pkg
+                pkg_phase_2[pkg[1]["name"]] = pkg
 
         self.inst_title = "Phase 2: Installation"
         # Change package directory
