@@ -114,7 +114,8 @@ class   Install:
         self.pkg_download(self.pkgs)
 
         # If the installation require a 2-Phase install
-        if "BIN_INSTALL" not in self.conf_lst["config"]:
+        if "BIN_INSTALL" not in self.conf_lst["config"] or \
+            ("BIN_INSTALL" in self.conf_lst["config"] and self.conf_lst["config"]["BIN_INSTALL"] == False):
             # Create the tools directory
             self.exec(["mkdir", "-v", self.mnt_point + "/tools"])
             # Link between the host and the install
@@ -159,7 +160,10 @@ class   Install:
             # Calling the init function of each package
             config = klass.init(self.conf_lst, self.exec, self.mnt_point)
             # Saving the configuration of the object
-            self.pkgs[config["name"]] = [klass, config]
+            if config["tmp_install"]:
+                self.pkgs[config["name"]] = [klass, config]
+            else:
+                self.pkgs[config["name"] + "_phase_2"] = [klass, config]
             print("\tDone !")
 
     # Function that format disk and create new partitions
