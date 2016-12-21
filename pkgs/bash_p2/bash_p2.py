@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# readline_p2.py
+# bash_p2.py
 # Created: 21/12/2016
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   Readline_P2:
+class   Bash_P2:
 
     conf_lst = {}
     e = False
@@ -33,38 +33,35 @@ class   Readline_P2:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "readline", # Name of the package
-            "version": "6.3", # Version of the package
-            "size": 14, # Size of the installed package (MB)
-            "archive": "", # Archive name
-            "SBU": 0.1, # SBU (Compilation time)
+            "name": "bash", # Name of the package
+            "version": "4.3.30", # Version of the package
+            "size": 50, # Size of the installed package (MB)
+            "archive": "bash-4.3.30.tar.gz", # Archive name
+            "SBU": 1.8, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
-            "next": "bash", # Next package to install
+            "next": False, # Next package to install
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/"
+                "https://install.morphux.org/packages/bash-4.3.30.tar.gz"
             ]
         }
         return self.config
 
     def     before(self):
-        self.e(["patch", "-Np1", "-i", "../readline-6.3-upstream_fixes-3.patch"])
-        self.e(["sed -i '/MV.*old/d' Makefile.in"], shell=True)
-        return self.e(["sed -i '/{OLDSUFF}/c:' support/shlib-install"], shell=True)
+        return self.e(["patch", "-Np1", "-i", "../bash-4.3.30-upstream_fixes-3.patch"])
 
     def     configure(self):
         return self.e(["./configure",
                 "--prefix=/usr",
-                "--disable-static",
-                "--docdir=/usr/share/doc/readline-6.3"
-        ])
+                "--without-bash-malloc",
+                "--docdir=/usr/share/doc/bash-4.3.30",
+                "--with-installed-readline"
+            ])
 
     def     make(self):
-        return self.e(["make", "SHLIB_LIBS=-lncurses", "-j", self.conf_lst["cpus"]])
+        return self.e(["make", "-j", self.conf_lst["cpus"]])
 
     def     install(self):
-        return self.e(["make", "SHLIB_LIBS=-lncurses", "install"])
+        return self.e(["make", "install"])
 
     def     after(self):
-        self.e(["mv -v /usr/lib/lib{readline,history}.so.* /lib"], shell=True)
-        self.e(["ln -sfv ../../lib/$(readlink /usr/lib/libreadline.so) /usr/lib/libreadline.so"], shell=True)
-        return self.e(["ln -sfv ../../lib/$(readlink /usr/lib/libhistory.so ) /usr/lib/libhistory.so"], shell=True)
+        return self.e(["mv", "-vf", "/usr/bin/bash", "/bin"])
