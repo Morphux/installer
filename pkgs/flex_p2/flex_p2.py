@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# bison_p2.py
+# flex_p2.py
 # Created: 21/12/2016
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   Bison_P2:
+class   Flex_P2:
 
     conf_lst = {}
     e = False
@@ -33,15 +33,14 @@ class   Bison_P2:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "bison", # Name of the package
-            "version": "3.0.4", # Version of the package
-            "size": 32, # Size of the installed package (MB)
+            "name": "flex", # Name of the package
+            "version": "2.6.1", # Version of the package
+            "size": 31, # Size of the installed package (MB)
             "archive": "", # Archive name
-            "SBU": 0.3, # SBU (Compilation time)
+            "SBU": 0.4, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
-            "next": "flex", # Next package to install
+            "next": False, # Next package to install
             "before": False,
-            "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
                 "https://install.morphux.org/packages/"
             ]
@@ -51,6 +50,7 @@ class   Bison_P2:
     def     configure(self):
         return self.e(["./configure",
                 "--prefix=/usr",
+                "--docdir=/usr/share/doc/flex-2.6.1"
         ])
 
     def     make(self):
@@ -58,3 +58,6 @@ class   Bison_P2:
 
     def     install(self):
         return self.e(["make", "install"])
+
+    def     after(self):
+        return self.e(["ln", "-sv", "flex", "/usr/bin/lex"])
