@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# sed_p2.py
+# shadow_p2.py
 # Created: 21/12/2016
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   Sed_P2:
+class   Shadow_P2:
 
     conf_lst = {}
     e = False
@@ -33,26 +33,31 @@ class   Sed_P2:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "sed", # Name of the package
-            "version": "4.2.2", # Version of the package
-            "size": 10, # Size of the installed package (MB)
-            "archive": "sed-4.2.2.tar.bz2", # Archive name
+            "name": "shadow", # Name of the package
+            "version": "4.2.1", # Version of the package
+            "size": 42, # Size of the installed package (MB)
+            "archive": "", # Archive name
             "SBU": 0.2, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
-            "next": "shadow", # Next package to install
-            "before": False,
-            "after": False,
+            "next": False, # Next package to install
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/sed-4.2.2.tar.bz2"
+                "https://install.morphux.org/packages/"
             ]
         }
         return self.config
 
+    def     before(self):
+        self.e(["sed -i 's/groups$(EXEEXT) //' src/Makefile.in"], shell=True)
+        self.e(["find man -name Makefile.in -exec sed -i 's/groups\.1 / /' {} \;"], shell=True)
+        self.e(["find man -name Makefile.in -exec sed -i 's/getspnam\.3 / /' {} \;"], shell=True)
+        self.e(["find man -name Makefile.in -exec sed -i 's/passwd\.5 / /' {} \;"], shell=True)
+        self.e(["sed -i -e 's@#ENCRYPT_METHOD DES@ENCRYPT_METHOD SHA512@' -e 's@/var/spool/mail@/var/mail@' etc/login.defs"], shell=True)
+        return self.e(["sed -i 's/1000/999/' etc/useradd"], shell=True)
+
     def     configure(self):
         return self.e(["./configure",
-                "--prefix=/usr",
-                "--bindir=/bin",
-                "--htmldir=/usr/share/doc/sed-4.2.2"
+                    "--sysconfdir=/etc",
+                    "--with-group-name-max-length=32"
         ])
 
     def     make(self):
@@ -60,3 +65,8 @@ class   Sed_P2:
 
     def     install(self):
         return self.e(["make", "install"])
+
+    def     after(self):
+        self.e(["mv", "-v", "/usr/bin/passwd", "/bin"])
+        self.e(["pwconv"])
+        return self.e(["grpconv"])
