@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# expat_p2.py
+# inetutils_p2.py
 # Created: 21/12/2016
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   Expat_P2:
+class   Inetutils_P2:
 
     conf_lst = {}
     e = False
@@ -33,13 +33,13 @@ class   Expat_P2:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "expat", # Name of the package
-            "version": "2.2.0", # Version of the package
-            "size": 6.1, # Size of the installed package (MB)
+            "name": "inetutils", # Name of the package
+            "version": "1.9.4", # Version of the package
+            "size": 27, # Size of the installed package (MB)
             "archive": "", # Archive name
-            "SBU": 0.1, # SBU (Compilation time)
+            "SBU": 0.4, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
-            "next": "inetutils", # Next package to install
+            "next": False, # Next package to install
             "before": False,
             "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
@@ -51,7 +51,14 @@ class   Expat_P2:
     def     configure(self):
         return self.e(["./configure",
                 "--prefix=/usr",
-                "--disable-static"
+                "--localstatedir=/var",
+                "--disable-logger",
+                "--disable-whois",
+                "--disable-rcp",
+                "--disable-rexec",
+                "--disable-rlogin",
+                "--disable-rsh",
+                "--disable-servers",
             ])
 
     def     make(self):
@@ -59,3 +66,7 @@ class   Expat_P2:
 
     def     install(self):
         return self.e(["make", "install"])
+
+    def     after(self):
+        self.e(["mv -v /usr/bin/{hostname,ping,ping6,traceroute} /bin"], shell=True)
+        return self.e(["mv", "-v", "/usr/bin/ifconfig", "/sbin"])
