@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# xz_p2.py
+# kmod_p2.py
 # Created: 21/12/2016
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   Xz_P2:
+class   Kmod_P2:
 
     conf_lst = {}
     e = False
@@ -33,28 +33,29 @@ class   Xz_P2:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "xz", # Name of the package
-            "version": "5.2.2", # Version of the package
-            "size": 15, # Size of the installed package (MB)
-            "archive": "xz-5.2.2.tar.xz", # Archive name
-            "SBU": 0.2, # SBU (Compilation time)
+            "name": "kmod", # Name of the package
+            "version": "23", # Version of the package
+            "size": 10.3, # Size of the installed package (MB)
+            "archive": "", # Archive name
+            "SBU": 0.1, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
-            "next": "kmod", # Next package to install
+            "next": False, # Next package to install
             "after": False,
+            "before": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/xz-5.2.2.tar.xz"
+                "https://install.morphux.org/packages/"
             ]
         }
         return self.config
 
-    def     before(self):
-        return self.e(["sed -e '/mf\.buffer = NULL/a next->coder->mf.size = 0;' -i src/liblzma/lz/lz_encoder.c"], shell=True)
-
     def     configure(self):
         return self.e(["./configure",
                 "--prefix=/usr",
-                "--disable-static",
-                "--docdir=/usr/share/doc/xz-5.2.2"
+                "--bindir=/bin",
+                "--sysconfdir=/etc",
+                "--with-rootlibdir=/lib",
+                "--with-xz",
+                "--with-zlib"
         ])
 
     def     make(self):
@@ -62,6 +63,7 @@ class   Xz_P2:
 
     def     install(self):
         self.e(["make", "install"])
-        self.e(["mv -v /usr/bin/{lzma,unlzma,lzcat,xz,unxz,xzcat} /bin"], shell=True)
-        self.e(["mv -v /usr/lib/liblzma.so.* /lib"], shell=True)
-        return self.e(["ln -svf ../../lib/$(readlink /usr/lib/liblzma.so) /usr/lib/liblzma.so"], shell=True)
+        self.e(["for target in depmod insmod lsmod modinfo modprobe rmmod; do \
+        ln -sfv ../bin/kmod /sbin/$target\
+        done"], shell=True)
+        return self.e(["ln", "-sfv", "kmod", "/bin/lsmod"])
