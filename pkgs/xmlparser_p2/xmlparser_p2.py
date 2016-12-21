@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# perl_p2.py
+# xmlparser_p2.py
 # Created: 21/12/2016
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   Perl_P2:
+class   Xmlparser_P2:
 
     conf_lst = {}
     e = False
@@ -33,34 +33,23 @@ class   Perl_P2:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "perl", # Name of the package
-            "version": "5.24.0", # Version of the package
-            "size": 1.3, # Size of the installed package (MB)
-            "archive": "perl-5.24.0.tar.bz2", # Archive name
-            "SBU": 1.3, # SBU (Compilation time)
+            "name": "xmlparser", # Name of the package
+            "version": "2.44", # Version of the package
+            "size": 2, # Size of the installed package (MB)
+            "archive": "", # Archive name
+            "SBU": 0.1, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
-            "next": "xmlparser", # Next package to install
+            "next": False, # Next package to install
             "after": False,
+            "before": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/perl-5.24.0.tar.bz2"
+                "https://install.morphux.org/packages/"
             ]
         }
         return self.config
 
-    def     before(self):
-        return self.e(["echo \"127.0.0.1 localhost $(hostname)\" > /etc/hosts"])
-
     def     configure(self):
-        os.environ["BUILD_ZLIB"] = "False"
-        os.environ["BUILD_BZIP2"] = 0
-        return self.e(["sh", "Configure", "-des",
-                "-Dprefix=/usr",
-                "-Dvendorprefix=/usr",
-                "-Dman1dir=/usr/share/man/man1",
-                "-Dman3dir=/usr/share/man/man3",
-                "-Dpager='/usr/bin/less -isR'",
-                "-Duseshrplib"
-            ])
+        return self.e(["perl", "Makefile.PL"])
 
     def     make(self):
         return self.e(["make", "-j", self.conf_lst["cpus"]])
