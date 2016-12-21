@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# attr_p2.py
-# Created: 19/12/2016
+# acl_p2.py
+# Created: 21/12/2016
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   Attr_P2:
+class   Acl_P2:
 
     conf_lst = {}
     e = False
@@ -33,28 +33,30 @@ class   Attr_P2:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "attr", # Name of the package
-            "version": "2.4.47", # Version of the package
-            "size": 3.3, # Size of the installed package (MB)
-            "archive": "attr-2.4.47.src.tar.gz", # Archive name
+            "name": "acl", # Name of the package
+            "version": "2.2.52", # Version of the package
+            "size": 4.8, # Size of the installed package (MB)
+            "archive": "", # Archive name
             "SBU": 0.1, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
-            "next": "acl", # Next package to install
+            "next": False, # Next package to install
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/attr-2.4.47.src.tar.gz"
+                "https://install.morphux.org/packages/"
             ]
         }
         return self.config
 
     def     before(self):
         self.e(["sed", "-i", "-e", "s|/@pkg_name@|&-@pkg_version@|", "include/builddefs.in"])
-        return self.e(["sed", "-i", "-e", '/SUBDIRS/s|man[25]||g', "man/Makefile"])
+        self.e(["sed -i 's:| sed.*::g' test/{sbits-restore,cp,misc}.test"], shell=True)
+        return self.e(["sed -i -e '/TABS-1;/a if (x > (TABS-1)) x = (TABS-1);libacl/__acl_to_any_text.c"], shell=True)
 
     def     configure(self):
         return self.e(["./configure",
                 "--prefix=/usr",
                 "--bindir=/bin",
-                "--disable-static"
+                "--disable-static",
+                "--libexecdir=/usr/lib"
             ])
 
     def     make(self):
@@ -62,9 +64,9 @@ class   Attr_P2:
 
     def     install(self):
         self.e(["make", "install", "install-dev", "install-lib"])
-        return self.e(["chmod", "-v", "755", "/usr/lib/libattr.so"])
+        return self.e(["chmod", "-v", "755", "/usr/lib/libacl.so"])
 
     def     after(self):
-        self.e(["mv -v /usr/lib/libattr.so.* /lib"], shell=True)
-        return self.e(["ln -sfv ../../lib/$(readlink /usr/lib/libattr.so) /usr/lib/libattr.so"], shell=True)
+        self.e(["mv -v /usr/lib/libacl.so.* /lib"], shell=True)
+        return self.e(["ln -sfv ../../lib/$(readlink /usr/lib/libacl.so) /usr/lib/libacl.so"], shell=True)
 
