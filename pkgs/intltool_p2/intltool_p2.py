@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# xmlparser_p2.py
+# intltool_p2.py
 # Created: 21/12/2016
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   Xmlparser_P2:
+class   Intltool_P2:
 
     conf_lst = {}
     e = False
@@ -33,23 +33,27 @@ class   Xmlparser_P2:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "xmlparser", # Name of the package
-            "version": "2.44", # Version of the package
-            "size": 2, # Size of the installed package (MB)
+            "name": "intltool", # Name of the package
+            "version": "0.51.0", # Version of the package
+            "size": 1.5, # Size of the installed package (MB)
             "archive": "", # Archive name
             "SBU": 0.1, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
-            "next": "intltool", # Next package to install
+            "next": False, # Next package to install
             "after": False,
-            "before": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
                 "https://install.morphux.org/packages/"
             ]
         }
         return self.config
 
+    def     before(self):
+        return self.e(["sed -i 's:\\\${:\\\$\\{:' intltool-update.in"], shell=True)
+
     def     configure(self):
-        return self.e(["perl", "Makefile.PL"])
+        return self.e(["./configure",
+                "--prefix=/usr"
+        ])
 
     def     make(self):
         return self.e(["make", "-j", self.conf_lst["cpus"]])
