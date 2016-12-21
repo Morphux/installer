@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# gettext_p2.py
-# Created: 09/12/2016
+# procpsng_p2.py
+# Created: 21/12/2016
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   Gettext_P2:
+class   Procpsng_P2:
 
     conf_lst = {}
     e = False
@@ -33,17 +33,17 @@ class   Gettext_P2:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "gettext", # Name of the package
-            "version": "0.19.8.1", # Version of the package
-            "size": 199, # Size of the installed package (MB)
-            "archive": "gettext-0.19.8.1.tar.xz", # Archive name
-            "SBU": 3.6, # SBU (Compilation time)
+            "name": "procpsng", # Name of the package
+            "version": "3.3.12", # Version of the package
+            "size": 14, # Size of the installed package (MB)
+            "archive": "", # Archive name
+            "SBU": 0.1, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
-            "next": "procpsng", # Next package to install
+            "next": False, # Next package to install
             "after": False,
             "before": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/gettext-0.19.8.1.tar.xz"
+                "https://install.morphux.org/packages/"
             ]
         }
         return self.config
@@ -52,7 +52,10 @@ class   Gettext_P2:
         return self.e(["./configure",
                 "--prefix=/usr",
                 "--disable-static",
-                "--docdir=/usr/share/doc/gettext-0.19.8.1"
+                "--exec-prefix=",
+                "--libdir=/usr/lib",
+                "--docdir=/usr/share/doc/procps-ng-3.3.12",
+                "--disable-kill"
         ], shell=True)
 
     def     make(self):
@@ -60,4 +63,5 @@ class   Gettext_P2:
 
     def     install(self):
         self.e(["make", "install"])
-        return self.e(["chmod", "-v", "0755", "/usr/lib/preloadable_libintl.so"])
+        self.e(["mv", "-v", "/usr/lib/libprocps.so.*", "/lib"], shell=True)
+        return self.e(["ln -sfv ../../lib/$(readlink /usr/lib/libprocps.so) /usr/lib/libprocps.so"], shell=True)
