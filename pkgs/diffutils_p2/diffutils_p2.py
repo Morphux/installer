@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# coreutils_p2.py
-# Created: 21/12/2016
+# diffutils_p2.py
+# Created: 08/12/2016
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   Coreutils_P2:
+class   Diffutils_P2:
 
     conf_lst = {}
     e = False
@@ -33,39 +33,30 @@ class   Coreutils_P2:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "coreutils", # Name of the package
-            "version": "8.25", # Version of the package
-            "size": 168, # Size of the installed package (MB)
-            "archive": "coreutils-8.25.tar.xz", # Archive name
-            "SBU": 2.6, # SBU (Compilation time)
+            "name": "diffutils", # Name of the package
+            "version": "3.5", # Version of the package
+            "size": 30, # Size of the installed package (MB)
+            "archive": "diffutils-3.5.tar.xz", # Archive name
+            "SBU": 0.4, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
             "next": False, # Next package to install
-            "after": "diffutils",
+            "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/coreutils-8.25.tar.xz"
+                "https://install.morphux.org/packages/diffutils-3.5.tar.xz"
             ]
         }
         return self.config
 
     def     before(self):
-        self.e(["patch", "-Np1", "-i", "../coreutils-8.25-i18n-2.patch"])
+        return self.e(["sed -i 's:= @mkdir_p@:= /bin/mkdir -p:' po/Makefile.in.in"], shell=True)
 
     def     configure(self):
-        os.environ["FORCE_UNSAFE_CONFIGURE"] = "1"
         return self.e(["./configure",
                 "--prefix=/usr",
-                "--enable-no-install-program=kill,uptime"
         ])
 
     def     make(self):
         return self.e(["make", "-j", self.conf_lst["cpus"]])
 
     def     install(self):
-        self.e(["make", "install"])
-        self.e(["mv -v /usr/bin/{cat,chgrp,chmod,chown,cp,date,dd,df,echo} /bin"], shell=True)
-        self.e(["mv -v /usr/bin/{false,ln,ls,mkdir,mknod,mv,pwd,rm} /bin"], shell=True)
-        self.e(["mv -v /usr/bin/{rmdir,stty,sync,true,uname} /bin"], shell=True)
-        self.e(["mv -v /usr/bin/chroot /usr/sbin"], shell=True)
-        self.e(["mv -v /usr/share/man/man1/chroot.1 /usr/share/man/man8/chroot.8"], shell=True)
-        self.e(["sed -i s/\"1\"/\"8\"/1 /usr/share/man/man8/chroot.8"], shell=True)
-        self.e(["mv -v /usr/bin/{head,sleep,nice,test,[} /bin"], shell=True)
+        return self.e(["make", "install"])
