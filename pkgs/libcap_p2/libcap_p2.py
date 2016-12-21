@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# acl_p2.py
+# libcap_p2.py
 # Created: 21/12/2016
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   Acl_P2:
+class   Libcap_P2:
 
     conf_lst = {}
     e = False
@@ -33,13 +33,14 @@ class   Acl_P2:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "acl", # Name of the package
-            "version": "2.2.52", # Version of the package
-            "size": 4.8, # Size of the installed package (MB)
+            "name": "libcap", # Name of the package
+            "version": "2.25", # Version of the package
+            "size": 1.3, # Size of the installed package (MB)
             "archive": "", # Archive name
             "SBU": 0.1, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
-            "next": "libcap", # Next package to install
+            "next": False, # Next package to install
+            "configure": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
                 "https://install.morphux.org/packages/"
             ]
@@ -47,26 +48,16 @@ class   Acl_P2:
         return self.config
 
     def     before(self):
-        self.e(["sed", "-i", "-e", "s|/@pkg_name@|&-@pkg_version@|", "include/builddefs.in"])
-        self.e(["sed -i 's:| sed.*::g' test/{sbits-restore,cp,misc}.test"], shell=True)
-        return self.e(["sed -i -e '/TABS-1;/a if (x > (TABS-1)) x = (TABS-1);libacl/__acl_to_any_text.c"], shell=True)
-
-    def     configure(self):
-        return self.e(["./configure",
-                "--prefix=/usr",
-                "--bindir=/bin",
-                "--disable-static",
-                "--libexecdir=/usr/lib"
-            ])
+        return self.e(["sed -i '/install.*STALIBNAME/d' libcap/Makefile"], shell=True)
 
     def     make(self):
         return self.e(["make", "-j", self.conf_lst["cpus"]])
 
     def     install(self):
-        self.e(["make", "install", "install-dev", "install-lib"])
-        return self.e(["chmod", "-v", "755", "/usr/lib/libacl.so"])
+        self.e(["make", "RAISE_SETFCAP=no", "prefix=/usr", "install"])
+        return self.e(["chmod", "-v", "755", "/usr/lib/libcap.so"])
 
     def     after(self):
-        self.e(["mv -v /usr/lib/libacl.so.* /lib"], shell=True)
-        return self.e(["ln -sfv ../../lib/$(readlink /usr/lib/libacl.so) /usr/lib/libacl.so"], shell=True)
+        self.e(["mv -v /usr/lib/libcap.so.* /lib"], shell=True)
+        return self.e(["ln -sfv ../../lib/$(readlink /usr/lib/libcap.so) /usr/lib/libcap.so"], shell=True)
 
