@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# intltool_p2.py
+# autoconf_p2.py
 # Created: 21/12/2016
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   Intltool_P2:
+class   Autoconf_P2:
 
     conf_lst = {}
     e = False
@@ -33,22 +33,20 @@ class   Intltool_P2:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "intltool", # Name of the package
-            "version": "0.51.0", # Version of the package
-            "size": 1.5, # Size of the installed package (MB)
+            "name": "autoconf", # Name of the package
+            "version": "2.69", # Version of the package
+            "size": 17.5, # Size of the installed package (MB)
             "archive": "", # Archive name
             "SBU": 0.1, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
-            "next": "autoconf", # Next package to install
+            "next": False, # Next package to install
             "after": False,
+            "before": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
                 "https://install.morphux.org/packages/"
             ]
         }
         return self.config
-
-    def     before(self):
-        return self.e(["sed -i 's:\\\${:\\\$\\{:' intltool-update.in"], shell=True)
 
     def     configure(self):
         return self.e(["./configure",
