@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# gperf_p2.py
+# expat_p2.py
 # Created: 21/12/2016
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   Gperf_P2:
+class   Expat_P2:
 
     conf_lst = {}
     e = False
@@ -33,13 +33,13 @@ class   Gperf_P2:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "gperf", # Name of the package
-            "version": "3.0.4", # Version of the package
-            "size": 5.4, # Size of the installed package (MB)
+            "name": "expat", # Name of the package
+            "version": "2.2.0", # Version of the package
+            "size": 6.1, # Size of the installed package (MB)
             "archive": "", # Archive name
             "SBU": 0.1, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
-            "next": "expat", # Next package to install
+            "next": False, # Next package to install
             "before": False,
             "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
@@ -51,7 +51,7 @@ class   Gperf_P2:
     def     configure(self):
         return self.e(["./configure",
                 "--prefix=/usr",
-                "--docdir=/usr/share/doc/gperf-3.0.4"
+                "--disable-static"
             ])
 
     def     make(self):
