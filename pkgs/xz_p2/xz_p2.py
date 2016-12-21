@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# automake_p2.py
+# xz_p2.py
 # Created: 21/12/2016
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   Automake_P2:
+class   Xz_P2:
 
     conf_lst = {}
     e = False
@@ -33,31 +33,35 @@ class   Automake_P2:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "automake", # Name of the package
-            "version": "1.15", # Version of the package
-            "size": 110, # Size of the installed package (MB)
-            "archive": "", # Archive name
-            "SBU": 0.1, # SBU (Compilation time)
+            "name": "xz", # Name of the package
+            "version": "5.2.2", # Version of the package
+            "size": 15, # Size of the installed package (MB)
+            "archive": "xz-5.2.2.tar.xz", # Archive name
+            "SBU": 0.2, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
-            "next": "xz", # Next package to install
+            "next": False, # Next package to install
             "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/"
+                "https://install.morphux.org/packages/xz-5.2.2.tar.xz"
             ]
         }
         return self.config
 
     def     before(self):
-        return self.e(["sed -i 's:/\\\${:/\\\$\\{:' bin/automake.in"], shell=True)
+        return self.e(["sed -e '/mf\.buffer = NULL/a next->coder->mf.size = 0;' -i src/liblzma/lz/lz_encoder.c"], shell=True)
 
     def     configure(self):
         return self.e(["./configure",
                 "--prefix=/usr",
-                "--docdir=/usr/share/doc/automake-1.15"
+                "--disable-static",
+                "--docdir=/usr/share/doc/xz-5.2.2"
         ])
 
     def     make(self):
         return self.e(["make", "-j", self.conf_lst["cpus"]])
 
     def     install(self):
-        return self.e(["make", "install"])
+        self.e(["make", "install"])
+        self.e(["mv -v /usr/bin/{lzma,unlzma,lzcat,xz,unxz,xzcat} /bin"], shell=True)
+        self.e(["mv -v /usr/lib/liblzma.so.* /lib"], shell=True)
+        return self.e(["ln -svf ../../lib/$(readlink /usr/lib/liblzma.so) /usr/lib/liblzma.so"], shell=True)
