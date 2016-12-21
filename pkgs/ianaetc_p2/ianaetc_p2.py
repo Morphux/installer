@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# psmisc_p2.py
+# ianaetc_p2.py
 # Created: 21/12/2016
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   Psmisc_P2:
+class   Ianaetc_P2:
 
     conf_lst = {}
     e = False
@@ -33,31 +33,24 @@ class   Psmisc_P2:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "psmisc", # Name of the package
-            "version": "22.21", # Version of the package
-            "size": 4, # Size of the installed package (MB)
+            "name": "iana-etc", # Name of the package
+            "version": "2.30", # Version of the package
+            "size": 2.3, # Size of the installed package (MB)
             "archive": "", # Archive name
             "SBU": 0.1, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
-            "next": "iana-etc", # Next package to install
+            "next": False, # Next package to install
             "before": False,
+            "after": False,
+            "configure": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
                 "https://install.morphux.org/packages/"
             ]
         }
         return self.config
 
-    def     configure(self):
-        return self.e(["./configure",
-                    "--prefix=/usr",
-        ])
-
     def     make(self):
         return self.e(["make", "-j", self.conf_lst["cpus"]])
 
     def     install(self):
         return self.e(["make", "install"])
-
-    def     after(self):
-        self.e(["mv", "-v", "/usr/bin/fuser", "/bin"])
-        return self.e(["mv", "-v", "/usr/bin/killall", "/bin"])
