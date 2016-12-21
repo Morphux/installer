@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# diffutils_p2.py
-# Created: 08/12/2016
+# gawk_p2.py
+# Created: 21/12/2016
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   Diffutils_P2:
+class   Gawk_P2:
 
     conf_lst = {}
     e = False
@@ -33,22 +33,20 @@ class   Diffutils_P2:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "diffutils", # Name of the package
-            "version": "3.5", # Version of the package
-            "size": 30, # Size of the installed package (MB)
-            "archive": "diffutils-3.5.tar.xz", # Archive name
-            "SBU": 0.4, # SBU (Compilation time)
+            "name": "gawk", # Name of the package
+            "version": "4.1.3", # Version of the package
+            "size": 35, # Size of the installed package (MB)
+            "archive": "gawk-4.1.3.tar.xz", # Archive name
+            "SBU": 0.3, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
-            "next": "gawk", # Next package to install
+            "next": False, # Next package to install
+            "before": False,
             "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/diffutils-3.5.tar.xz"
+                "https://install.morphux.org/packages/gawk-4.1.3.tar.xz"
             ]
         }
         return self.config
-
-    def     before(self):
-        return self.e(["sed -i 's:= @mkdir_p@:= /bin/mkdir -p:' po/Makefile.in.in"], shell=True)
 
     def     configure(self):
         return self.e(["./configure",
