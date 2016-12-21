@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# kmod_p2.py
-# Created: 21/12/2016
+# gettext_p2.py
+# Created: 09/12/2016
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   Kmod_P2:
+class   Gettext_P2:
 
     conf_lst = {}
     e = False
@@ -33,17 +33,17 @@ class   Kmod_P2:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "kmod", # Name of the package
-            "version": "23", # Version of the package
-            "size": 10.3, # Size of the installed package (MB)
-            "archive": "", # Archive name
-            "SBU": 0.1, # SBU (Compilation time)
+            "name": "gettext", # Name of the package
+            "version": "0.19.8.1", # Version of the package
+            "size": 199, # Size of the installed package (MB)
+            "archive": "gettext-0.19.8.1.tar.xz", # Archive name
+            "SBU": 3.6, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
-            "next": "gettext", # Next package to install
+            "next": False, # Next package to install
             "after": False,
             "before": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/"
+                "https://install.morphux.org/packages/gettext-0.19.8.1.tar.xz"
             ]
         }
         return self.config
@@ -51,19 +51,13 @@ class   Kmod_P2:
     def     configure(self):
         return self.e(["./configure",
                 "--prefix=/usr",
-                "--bindir=/bin",
-                "--sysconfdir=/etc",
-                "--with-rootlibdir=/lib",
-                "--with-xz",
-                "--with-zlib"
-        ])
+                "--disable-static",
+                "--docdir=/usr/share/doc/gettext-0.19.8.1"
+        ], shell=True)
 
     def     make(self):
         return self.e(["make", "-j", self.conf_lst["cpus"]])
 
     def     install(self):
         self.e(["make", "install"])
-        self.e(["for target in depmod insmod lsmod modinfo modprobe rmmod; do \
-        ln -sfv ../bin/kmod /sbin/$target\
-        done"], shell=True)
-        return self.e(["ln", "-sfv", "kmod", "/bin/lsmod"])
+        return self.e(["chmod", "-v", "0755", "/usr/lib/preloadable_libintl.so"])
