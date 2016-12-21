@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# m4_p2.py
+# bison_p2.py
 # Created: 21/12/2016
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   M4_P2:
+class   Bison_P2:
 
     conf_lst = {}
     e = False
@@ -33,17 +33,17 @@ class   M4_P2:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "m4", # Name of the package
-            "version": "1.4.17", # Version of the package
-            "size": 29, # Size of the installed package (MB)
-            "archive": "m4-1.4.17.tar.xz", # Archive name
-            "SBU": 0.4, # SBU (Compilation time)
+            "name": "bison", # Name of the package
+            "version": "3.0.4", # Version of the package
+            "size": 32, # Size of the installed package (MB)
+            "archive": "", # Archive name
+            "SBU": 0.3, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
-            "next": "bison", # Next package to install
+            "next": False, # Next package to install
             "before": False,
             "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/m4-1.4.17.tar.xz"
+                "https://install.morphux.org/packages/"
             ]
         }
         return self.config
