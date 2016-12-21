@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# inetutils_p2.py
+# perl_p2.py
 # Created: 21/12/2016
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   Inetutils_P2:
+class   Perl_P2:
 
     conf_lst = {}
     e = False
@@ -33,32 +33,33 @@ class   Inetutils_P2:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "inetutils", # Name of the package
-            "version": "1.9.4", # Version of the package
-            "size": 27, # Size of the installed package (MB)
-            "archive": "", # Archive name
-            "SBU": 0.4, # SBU (Compilation time)
+            "name": "perl", # Name of the package
+            "version": "5.24.0", # Version of the package
+            "size": 1.3, # Size of the installed package (MB)
+            "archive": "perl-5.24.0.tar.bz2", # Archive name
+            "SBU": 1.3, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
-            "next": "perl", # Next package to install
-            "before": False,
+            "next": "sed", # Next package to install
             "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/"
+                "https://install.morphux.org/packages/perl-5.24.0.tar.bz2"
             ]
         }
         return self.config
 
+    def     before(self):
+        return self.e(["echo \"127.0.0.1 localhost $(hostname)\" > /etc/hosts"])
+
     def     configure(self):
-        return self.e(["./configure",
-                "--prefix=/usr",
-                "--localstatedir=/var",
-                "--disable-logger",
-                "--disable-whois",
-                "--disable-rcp",
-                "--disable-rexec",
-                "--disable-rlogin",
-                "--disable-rsh",
-                "--disable-servers",
+        os.environ["BUILD_ZLIB"] = "False"
+        os.environ["BUILD_BZIP2"] = 0
+        return self.e(["sh", "Configure", "-des",
+                "-Dprefix=/usr",
+                "-Dvendorprefix=/usr",
+                "-Dman1dir=/usr/share/man/man1",
+                "-Dman3dir=/usr/share/man/man3",
+                "-Dpager='/usr/bin/less -isR'",
+                "-Duseshrplib"
             ])
 
     def     make(self):
@@ -66,7 +67,3 @@ class   Inetutils_P2:
 
     def     install(self):
         return self.e(["make", "install"])
-
-    def     after(self):
-        self.e(["mv -v /usr/bin/{hostname,ping,ping6,traceroute} /bin"], shell=True)
-        return self.e(["mv", "-v", "/usr/bin/ifconfig", "/sbin"])
