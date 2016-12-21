@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# gawk_p2.py
+# findutils_p2.py
 # Created: 21/12/2016
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   Gawk_P2:
+class   Findutils_P2:
 
     conf_lst = {}
     e = False
@@ -33,17 +33,16 @@ class   Gawk_P2:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "gawk", # Name of the package
-            "version": "4.1.3", # Version of the package
-            "size": 35, # Size of the installed package (MB)
-            "archive": "gawk-4.1.3.tar.xz", # Archive name
-            "SBU": 0.3, # SBU (Compilation time)
+            "name": "findutils", # Name of the package
+            "version": "4.6.0", # Version of the package
+            "size": 48, # Size of the installed package (MB)
+            "archive": "findutils-4.6.0.tar.gz", # Archive name
+            "SBU": 1.6, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
-            "next": "findutils", # Next package to install
+            "next": False, # Next package to install
             "before": False,
-            "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/gawk-4.1.3.tar.xz"
+                "https://install.morphux.org/packages/findutils-4.6.0.tar.gz"
             ]
         }
         return self.config
@@ -51,6 +50,7 @@ class   Gawk_P2:
     def     configure(self):
         return self.e(["./configure",
                 "--prefix=/usr",
+                "--localstatedir=/var/lib/locate"
         ])
 
     def     make(self):
@@ -58,3 +58,7 @@ class   Gawk_P2:
 
     def     install(self):
         return self.e(["make", "install"])
+
+    def     after(self):
+        self.e(["mv", "-v", "/usr/bin/find /bin"])
+        return self.e(["sed -i 's|find:=${BINDIR}|find:=/bin|' /usr/bin/updatedb"], shell=True)
