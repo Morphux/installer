@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# shadow_p2.py
+# psmisc_p2.py
 # Created: 21/12/2016
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   Shadow_P2:
+class   Psmisc_P2:
 
     conf_lst = {}
     e = False
@@ -33,31 +33,23 @@ class   Shadow_P2:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "shadow", # Name of the package
-            "version": "4.2.1", # Version of the package
-            "size": 42, # Size of the installed package (MB)
+            "name": "psmisc", # Name of the package
+            "version": "22.21", # Version of the package
+            "size": 4, # Size of the installed package (MB)
             "archive": "", # Archive name
-            "SBU": 0.2, # SBU (Compilation time)
+            "SBU": 0.1, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
-            "next": "psmisc", # Next package to install
+            "next": False, # Next package to install
+            "before": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
                 "https://install.morphux.org/packages/"
             ]
         }
         return self.config
 
-    def     before(self):
-        self.e(["sed -i 's/groups$(EXEEXT) //' src/Makefile.in"], shell=True)
-        self.e(["find man -name Makefile.in -exec sed -i 's/groups\.1 / /' {} \;"], shell=True)
-        self.e(["find man -name Makefile.in -exec sed -i 's/getspnam\.3 / /' {} \;"], shell=True)
-        self.e(["find man -name Makefile.in -exec sed -i 's/passwd\.5 / /' {} \;"], shell=True)
-        self.e(["sed -i -e 's@#ENCRYPT_METHOD DES@ENCRYPT_METHOD SHA512@' -e 's@/var/spool/mail@/var/mail@' etc/login.defs"], shell=True)
-        return self.e(["sed -i 's/1000/999/' etc/useradd"], shell=True)
-
     def     configure(self):
         return self.e(["./configure",
-                    "--sysconfdir=/etc",
-                    "--with-group-name-max-length=32"
+                    "--prefix=/usr",
         ])
 
     def     make(self):
@@ -67,6 +59,5 @@ class   Shadow_P2:
         return self.e(["make", "install"])
 
     def     after(self):
-        self.e(["mv", "-v", "/usr/bin/passwd", "/bin"])
-        self.e(["pwconv"])
-        return self.e(["grpconv"])
+        self.e(["mv", "-v", "/usr/bin/fuser", "/bin"])
+        return self.e(["mv", "-v", "/usr/bin/killall", "/bin"])
