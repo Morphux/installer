@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# libcap_p2.py
+# sed_p2.py
 # Created: 21/12/2016
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   Libcap_P2:
+class   Sed_P2:
 
     conf_lst = {}
     e = False
@@ -33,31 +33,30 @@ class   Libcap_P2:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "libcap", # Name of the package
-            "version": "2.25", # Version of the package
-            "size": 1.3, # Size of the installed package (MB)
-            "archive": "", # Archive name
-            "SBU": 0.1, # SBU (Compilation time)
+            "name": "sed", # Name of the package
+            "version": "4.2.2", # Version of the package
+            "size": 10, # Size of the installed package (MB)
+            "archive": "sed-4.2.2.tar.bz2", # Archive name
+            "SBU": 0.2, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
-            "next": "sed", # Next package to install
-            "configure": False,
+            "next": False, # Next package to install
+            "before": False,
+            "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/"
+                "https://install.morphux.org/packages/sed-4.2.2.tar.bz2"
             ]
         }
         return self.config
 
-    def     before(self):
-        return self.e(["sed -i '/install.*STALIBNAME/d' libcap/Makefile"], shell=True)
+    def     configure(self):
+        return self.e(["./configure",
+                "--prefix=/usr",
+                "--bindir=/bin",
+                "--htmldir=/usr/share/doc/sed-4.2.2"
+        ])
 
     def     make(self):
         return self.e(["make", "-j", self.conf_lst["cpus"]])
 
     def     install(self):
-        self.e(["make", "RAISE_SETFCAP=no", "prefix=/usr", "install"])
-        return self.e(["chmod", "-v", "755", "/usr/lib/libcap.so"])
-
-    def     after(self):
-        self.e(["mv -v /usr/lib/libcap.so.* /lib"], shell=True)
-        return self.e(["ln -sfv ../../lib/$(readlink /usr/lib/libcap.so) /usr/lib/libcap.so"], shell=True)
-
+        return self.e(["make", "install"])
