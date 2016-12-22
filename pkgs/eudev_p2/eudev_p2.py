@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# sysvinit_p2.py
+# eudev_p2.py
 # Created: 22/12/2016
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   Sysvinit_P2:
+class   Eudev_P2:
 
     conf_lst = {}
     e = False
@@ -33,15 +33,13 @@ class   Sysvinit_P2:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "sysvinit", # Name of the package
-            "version": "2.88dsf", # Version of the package
-            "size": 1.1, # Size of the installed package (MB)
+            "name": "eudev", # Name of the package
+            "version": "3.2", # Version of the package
+            "size": 77, # Size of the installed package (MB)
             "archive": "", # Archive name
-            "SBU": 0.1, # SBU (Compilation time)
+            "SBU": 0.4, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
-            "next": "eudev", # Next package to install
-            "configure": False,
-            "after": False,
+            "next": False, # Next package to install
             "urls": [ # Url to download the package. The first one must be morphux servers
                 "https://install.morphux.org/packages/"
             ]
@@ -49,10 +47,30 @@ class   Sysvinit_P2:
         return self.config
 
     def     before(self):
-        return self.e(["patch", "-Np1", "../sysvinit-2.88dsf-consolidated-1.patch"])
+        return self.e(["sed", "-r", "-i", "s|/usr(/bin/test)|\1|", "test/udev-test.pl"])
+
+    def     configure(self):
+        return self.e(["./configure",
+            "--prefix=/usr",
+            "--bindir=/sbin",
+            "--sbindir=/sbin",
+            "--libdir=/usr/lib",
+            "--sysconfdir=/etc",
+            "--libexecdir=/lib",
+            "--with-rootprefix=",
+            "--with-rootlibdir=/lib",
+            "--enable-manpages",
+            "--disable-static",
+            "--config-cache"
+        ])
 
     def     make(self):
-        return self.e(["make", "-C", "src", "-j", self.conf_lst["cpus"]])
+        return self.e(["LIBRARY_PATH=/tools/lib", "make", "-j", self.conf_lst["cpus"]])
 
     def     install(self):
-        return self.e(["make", "-C", "src", "install"])
+        return self.e(["make", "LD_LIBRARY_PATH=/tools/lib", "install"])
+
+    def     after(self):
+        self.e(["tar", "-xvf", "../udev-lfs-20140408.tar.bz2"])
+        self.e(["make", "-f", "udev-lfs-20140408/Makefile.lfs", "install"])
+        return self.e(["LD_LIBRARY_PATH=/tools/lib", "udevadm", "hwdb", "--update"])
