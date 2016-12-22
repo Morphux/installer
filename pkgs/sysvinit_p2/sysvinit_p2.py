@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# sysklogd_p2.py
+# sysvinit_p2.py
 # Created: 22/12/2016
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   Sysklogd_P2:
+class   Sysvinit_P2:
 
     conf_lst = {}
     e = False
@@ -33,13 +33,13 @@ class   Sysklogd_P2:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "sysklogd", # Name of the package
-            "version": "1.5.1", # Version of the package
-            "size": 0.6, # Size of the installed package (MB)
+            "name": "sysvinit", # Name of the package
+            "version": "2.88dsf", # Version of the package
+            "size": 1.1, # Size of the installed package (MB)
             "archive": "", # Archive name
             "SBU": 0.1, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
-            "next": "sysvinit", # Next package to install
+            "next": False, # Next package to install
             "configure": False,
             "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
@@ -49,11 +49,10 @@ class   Sysklogd_P2:
         return self.config
 
     def     before(self):
-        self.e(["sed", "-i", "/Error loading kernel symbols/{n;n;d}", "ksym_mod.c"])
-        return self.e(["sed", "-i", "s/union wait/int/", "syslogd.c"])
+        return self.e(["patch", "-Np1", "../sysvinit-2.88dsf-consolidated-1.patch"])
 
     def     make(self):
-        return self.e(["make", "-j", self.conf_lst["cpus"]])
+        return self.e(["make", "-C", "src", "-j", self.conf_lst["cpus"]])
 
     def     install(self):
-        return self.e(["make", "BINDIR=/sbin", "install"])
+        return self.e(["make", "-C", "src", "install"])
