@@ -769,7 +769,8 @@ class   Install:
             ("passwd", "etc/passwd"),
             ("group", "etc/group"),
             ("nsswitch.conf", "etc/nsswitch.conf"),
-            ("ld.so.conf", "etc/ld.so.conf")
+            ("ld.so.conf", "etc/ld.so.conf"),
+            ("syslog.conf", "etc/syslog.conf")
         }
 
         self.dlg.infobox("Creating defaultfiles...")
