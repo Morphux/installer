@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# gzip_p2.py
+# iproute_p2.py
 # Created: 22/12/2016
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   Gzip_P2:
+class   Iproute_P2:
 
     conf_lst = {}
     e = False
@@ -33,30 +33,29 @@ class   Gzip_P2:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "gzip", # Name of the package
-            "version": "1.8", # Version of the package
-            "size": 19, # Size of the installed package (MB)
+            "name": "iproute", # Name of the package
+            "version": "4.7.0", # Version of the package
+            "size": 11, # Size of the installed package (MB)
             "archive": "gzip-1.8.tar.xz", # Archive name
-            "SBU": 0.1, # SBU (Compilation time)
+            "SBU": 0.2, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
-            "next": "iproute", # Next package to install
-            "before": False,
+            "next": False, # Next package to install
+            "after": False,
+            "configure": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
                 "https://install.morphux.org/packages/gzip-1.8.tar.xz"
             ]
         }
         return self.config
 
-    def     configure(self):
-        return self.e(["./configure",
-                "--prefix=/usr",
-        ])
+    def     before(self):
+        self.e(["sed", "-i", "/ARPD/d", "Makefile"])
+        self.e(["sed", "-i", "s/arpd.8//", "man/man8/Makefile"])
+        self.e(["rm", "-v", "doc/arpd.sgml"])
+        return self.e(["sed", "-i", "s/m_ipt.o//", "Makefile"])
 
     def     make(self):
         return self.e(["make", "-j", self.conf_lst["cpus"]])
 
     def     install(self):
-        return self.e(["make", "install"])
-
-    def     after(self):
-        return self.e(["mv", "-v", "/usr/bin/gzip", "/bin"])
+        return self.e(["make", "DOCDIR=/usr/share/doc/iproute2-4.7.0", "install"])
