@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# eudev_p2.py
+# utillinux_p2.py
 # Created: 22/12/2016
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   Eudev_P2:
+class   Utillinux_P2:
 
     conf_lst = {}
     e = False
@@ -33,44 +33,42 @@ class   Eudev_P2:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "eudev", # Name of the package
-            "version": "3.2", # Version of the package
-            "size": 77, # Size of the installed package (MB)
-            "archive": "", # Archive name
-            "SBU": 0.4, # SBU (Compilation time)
+            "name": "util-linux", # Name of the package
+            "version": "2.28.1", # Version of the package
+            "size": 158, # Size of the installed package (MB)
+            "archive": "util-linux-2.28.1.tar.xz", # Archive name
+            "SBU": 1, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
-            "next": "util-linux", # Next package to install
+            "next": False, # Next package to install
+            "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/"
+                "https://install.morphux.org/packages/util-linux-2.28.1.tar.xz"
             ]
         }
         return self.config
 
     def     before(self):
-        return self.e(["sed", "-r", "-i", "s|/usr(/bin/test)|\1|", "test/udev-test.pl"])
+        return self.e(["mkdir", "-pv", "/var/lib/hwclock"])
 
     def     configure(self):
         return self.e(["./configure",
-            "--prefix=/usr",
-            "--bindir=/sbin",
-            "--sbindir=/sbin",
-            "--libdir=/usr/lib",
-            "--sysconfdir=/etc",
-            "--libexecdir=/lib",
-            "--with-rootprefix=",
-            "--with-rootlibdir=/lib",
-            "--enable-manpages",
+            "ADJTIME_PATH=/var/lib/hwclock/adjtime",
+            "--docdir=/usr/share/doc/util-linux-2.28.1",
+            "--disable-chfn-chsh",
+            "--disable-login",
+            "--disable-nologin",
+            "--disable-su",
+            "--disable-setpriv",
+            "--disable-runuser",
+            "--disable-pylibmount",
             "--disable-static",
-            "--config-cache"
+            "--without-python",
+            "--without-systemd",
+            "--without-systemdsystemunitdir"
         ])
 
     def     make(self):
-        return self.e(["LIBRARY_PATH=/tools/lib", "make", "-j", self.conf_lst["cpus"]])
+        return self.e(["make", "-j", self.conf_lst["cpus"]])
 
     def     install(self):
-        return self.e(["make", "LD_LIBRARY_PATH=/tools/lib", "install"])
-
-    def     after(self):
-        self.e(["tar", "-xvf", "../udev-lfs-20140408.tar.bz2"])
-        self.e(["make", "-f", "udev-lfs-20140408/Makefile.lfs", "install"])
-        return self.e(["LD_LIBRARY_PATH=/tools/lib", "udevadm", "hwdb", "--update"])
+        return self.e(["make", "install"])
