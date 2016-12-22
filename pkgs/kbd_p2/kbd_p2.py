@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# iproute_p2.py
+# kbd_p2.py
 # Created: 22/12/2016
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   Iproute_P2:
+class   Kbd_P2:
 
     conf_lst = {}
     e = False
@@ -33,15 +33,14 @@ class   Iproute_P2:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "iproute", # Name of the package
-            "version": "4.7.0", # Version of the package
-            "size": 11, # Size of the installed package (MB)
+            "name": "kbd", # Name of the package
+            "version": "2.0.3", # Version of the package
+            "size": 29, # Size of the installed package (MB)
             "archive": "", # Archive name
-            "SBU": 0.2, # SBU (Compilation time)
+            "SBU": 0.1, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
             "next": False, # Next package to install
-            "after": "kbd",
-            "configure": False,
+            "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
                 "https://install.morphux.org/packages/"
             ]
@@ -49,10 +48,15 @@ class   Iproute_P2:
         return self.config
 
     def     before(self):
-        self.e(["sed", "-i", "/ARPD/d", "Makefile"])
-        self.e(["sed", "-i", "s/arpd.8//", "man/man8/Makefile"])
-        self.e(["rm", "-v", "doc/arpd.sgml"])
-        return self.e(["sed", "-i", "s/m_ipt.o//", "Makefile"])
+        self.e(["patch", "-Np1", "-i", "../kbd-2.0.3-backspace-1.patch"])
+        self.e(["sed", "-i", "s/\(RESIZECONS_PROGS=\)yes/\1no/g", "configure"])
+        return self.e(["sed", "-i", "s/resizecons.8 //", "docs/man/man8/Makefile.in"])
+
+    def     configure(self):
+        return self.e(["PKG_CONFIG_PATH=/tools/lib/pkgconfig", "./configure",
+            "--prefix=/usr",
+            "--disable-vlock"
+        ])
 
     def     make(self):
         return self.e(["make", "-j", self.conf_lst["cpus"]])
