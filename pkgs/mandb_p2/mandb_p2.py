@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# utillinux_p2.py
-# Created: 22/12/2016
+# mandb_p2.py
+# Created: 23/12/2016
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   Utillinux_P2:
+class   Mandb_P2:
 
     conf_lst = {}
     e = False
@@ -33,38 +33,29 @@ class   Utillinux_P2:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "util-linux", # Name of the package
-            "version": "2.28.1", # Version of the package
-            "size": 158, # Size of the installed package (MB)
-            "archive": "util-linux-2.28.1.tar.xz", # Archive name
-            "SBU": 1, # SBU (Compilation time)
+            "name": "man-db", # Name of the package
+            "version": "2.7.5", # Version of the package
+            "size": 30, # Size of the installed package (MB)
+            "archive": "", # Archive name
+            "SBU": 0.4, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
-            "next": "man-db", # Next package to install
-            "after": False,
+            "next": False, # Next package to install
+            "before": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/util-linux-2.28.1.tar.xz"
+                "https://install.morphux.org/packages/"
             ]
         }
         return self.config
 
-    def     before(self):
-        return self.e(["mkdir", "-pv", "/var/lib/hwclock"])
-
     def     configure(self):
         return self.e(["./configure",
-            "ADJTIME_PATH=/var/lib/hwclock/adjtime",
-            "--docdir=/usr/share/doc/util-linux-2.28.1",
-            "--disable-chfn-chsh",
-            "--disable-login",
-            "--disable-nologin",
-            "--disable-su",
-            "--disable-setpriv",
-            "--disable-runuser",
-            "--disable-pylibmount",
-            "--disable-static",
-            "--without-python",
-            "--without-systemd",
-            "--without-systemdsystemunitdir"
+            "--prefix=/usr",
+            "--docdir=/usr/share/doc/man-db-2.7.5",
+            "--sysconfdir=/etc",
+            "--disable-setuid",
+            "--with-browser=/usr/bin/lynx",
+            "--with-vgrind=/usr/bin/vgrind",
+            "--with-grap=/usr/bin/grap"
         ])
 
     def     make(self):
@@ -72,3 +63,6 @@ class   Utillinux_P2:
 
     def     install(self):
         return self.e(["make", "install"])
+
+    def     after(self):
+        return self.e(["sed", "-i", "s:man root:root root:g", "/usr/lib/tmpfiles.d/man-db.conf"])
