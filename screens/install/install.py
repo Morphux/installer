@@ -770,7 +770,9 @@ class   Install:
             ("group", "etc/group"),
             ("nsswitch.conf", "etc/nsswitch.conf"),
             ("ld.so.conf", "etc/ld.so.conf"),
-            ("syslog.conf", "etc/syslog.conf")
+            ("syslog.conf", "etc/syslog.conf"),
+            ("vimrc", "etc/vimrc"),
+            ("motd", "etc/motd")
         }
 
         self.dlg.infobox("Creating defaultfiles...")

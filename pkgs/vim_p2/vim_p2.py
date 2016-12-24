@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# texinfo_p2.py
+# vim_p2.py
 # Created: 24/12/2016
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   Texinfo_P2:
+class   Vim_P2:
 
     conf_lst = {}
     e = False
@@ -33,25 +33,25 @@ class   Texinfo_P2:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "texinfo", # Name of the package
-            "version": "6.1", # Version of the package
-            "size": 108, # Size of the installed package (MB)
-            "archive": "texinfo-6.1.tar.xz", # Archive name
-            "SBU": 0.5, # SBU (Compilation time)
+            "name": "vim", # Name of the package
+            "version": "7.4", # Version of the package
+            "size": 109, # Size of the installed package (MB)
+            "archive": "", # Archive name
+            "SBU": 1, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
-            "next": "vim", # Next package to install
-            "before": False,
-            "after": False,
+            "next": False, # Next package to install
             "urls": [ # Url to download the package. The first one must be morphux servers
                 "https://install.morphux.org/packages/texinfo-6.1.tar.xz"
             ]
         }
         return self.config
 
+    def     before(self):
+        return self.e(["echo '#define SYS_VIMRC_FILE \"/etc/vimrc\"' >> src/feature.h"], shell=True)
+
     def     configure(self):
         return self.e(["./configure",
                 "--prefix=/usr",
-                "--disable-static"
         ])
 
     def     make(self):
@@ -59,3 +59,7 @@ class   Texinfo_P2:
 
     def     install(self):
         return self.e(["make", "install"])
+
+    def     after(self):
+        self.e(["ln", "-sv", "vim", "/usr/bin/vi"])
+        return self.e(["ln", "-sv", "../vim/vim74/doc", "/usr/share/doc/vim-7.4"])
