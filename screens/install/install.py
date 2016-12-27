@@ -112,6 +112,7 @@ class   Install:
         self.mount()
 
         self.pkg_download(self.pkgs)
+        self.get_patches()
 
         # If the installation require a 2-Phase install
         if "BIN_INSTALL" not in self.conf_lst["config"] or \
@@ -487,7 +488,6 @@ class   Install:
             line = line.strip("\n").split(" ")
             self.checksums[line[1]] = line[0]
 
-
     # This function launch the install of packages in lst, by compilation
     # lst is an object of all the packages with the name in key and a list
     # in value. The list is format like: [config_object, class_object]
@@ -794,3 +794,35 @@ class   Install:
         self.exec(["mount", "-vt", "sysfs", "sysfs", self.mnt_point + "/sys"])
         self.exec(["mount", "-vt", "tmpfs", "tmpfs", self.mnt_point + "/run"])
 
+    # This function download all the needed patches, and the archives not 
+    # specificied in package configuration
+    def     get_patches(self):
+        # Patch files
+        files = [
+            "bash-4.3.30-upstream_fixes-3.patch",
+            "sysvinit-2.88dsf-consolidated-1.patch",
+            "readline-6.3-upstream_fixes-3.patch",
+            "kbd-2.0.3-backspace-1.patch",
+            "glibc-2.24-fhs-1.patch",
+            "bzip2-1.0.6-install_docs-1.patch",
+            "coreutils-8.25-i18n-2.patch",
+            "bc-1.06.95-memory_leak-1.patch"
+        ]
+        base_url = "https://install.morphux.org/patches/"
+        patch_content = ""
+
+        # Get all the patches
+        self.dlg.infobox("Getting patches...")
+        for f in files:
+            urlretrieve(base_url + f, self.arch_dir + f)
+
+        # Check integrity of the patches against sums
+        self.dlg.infobox("Checking integrity of patches...")
+        for f in files:
+            with open(self.arch_dir + f, "rb") as fd:
+                patch_content = fd.read()
+            patch_sum = self.exec(["md5sum"], input=bytes(patch_content))[0].decode()
+            patch_sum = arch_sum.split(" ")[0]
+            if (patch_sum != self.checksums[f]):
+                self.dlg.msgbox("The integrity of patch "+ f +" is wrong ! Aborting ...")
+                sys.exit(1)
