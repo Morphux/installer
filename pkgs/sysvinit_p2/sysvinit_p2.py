@@ -36,14 +36,14 @@ class   Sysvinit_P2:
             "name": "sysvinit", # Name of the package
             "version": "2.88dsf", # Version of the package
             "size": 1.1, # Size of the installed package (MB)
-            "archive": "", # Archive name
+            "archive": "sysvinit-2.88dsf.tar.bz2", # Archive name
             "SBU": 0.1, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
             "next": "eudev", # Next package to install
             "configure": False,
             "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/"
+                "https://install.morphux.org/packages/sysvinit-2.88dsf.tar.bz2"
             ]
         }
         return self.config
