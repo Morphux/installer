@@ -36,12 +36,12 @@ class   Vim_P2:
             "name": "vim", # Name of the package
             "version": "7.4", # Version of the package
             "size": 109, # Size of the installed package (MB)
-            "archive": "", # Archive name
+            "archive": "vim-7.4.tar.bz2", # Archive name
             "SBU": 1, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
             "next": False, # Next package to install
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/texinfo-6.1.tar.xz"
+                "https://install.morphux.org/packages/vim-7.4.tar.bz2"
             ]
         }
         return self.config
