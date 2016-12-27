@@ -36,14 +36,14 @@ class   Less_P2:
             "name": "less", # Name of the package
             "version": "481", # Version of the package
             "size": 3.5, # Size of the installed package (MB)
-            "archive": "", # Archive name
+            "archive": "less-481.tar.gz", # Archive name
             "SBU": 0.1, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
             "next": "gzip", # Next package to install
             "before": False,
             "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/"
+                "https://install.morphux.org/packages/less-481.tar.gz"
             ]
         }
         return self.config
