@@ -36,13 +36,13 @@ class   Bc_P2:
             "name": "bc", # Name of the package
             "version": "1.06.95", # Version of the package
             "size": 3.6, # Size of the installed package (MB)
-            "archive": "", # Archive name
+            "archive": "bc-1.06.95.tar.bz2", # Archive name
             "SBU": 0.1, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
             "next": "libtool", # Next package to install
             "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/"
+                "https://install.morphux.org/packages/bc-1.06.95.tar.bz2"
             ]
         }
         return self.config
