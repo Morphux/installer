@@ -36,12 +36,12 @@ class   Shadow_P2:
             "name": "shadow", # Name of the package
             "version": "4.2.1", # Version of the package
             "size": 42, # Size of the installed package (MB)
-            "archive": "", # Archive name
+            "archive": "shadow-4.2.1.tar.xz", # Archive name
             "SBU": 0.2, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
             "next": "psmisc", # Next package to install
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/"
+                "https://install.morphux.org/packages/shadow-4.2.1.tar.xz"
             ]
         }
         return self.config
