@@ -36,12 +36,12 @@ class   Eudev_P2:
             "name": "eudev", # Name of the package
             "version": "3.2", # Version of the package
             "size": 77, # Size of the installed package (MB)
-            "archive": "", # Archive name
+            "archive": "eudev-3.2.tar.gz", # Archive name
             "SBU": 0.4, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
             "next": "util-linux", # Next package to install
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/"
+                "https://install.morphux.org/packages/eudev-3.2.tar.gz"
             ]
         }
         return self.config
