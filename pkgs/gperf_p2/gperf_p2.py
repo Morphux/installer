@@ -36,14 +36,14 @@ class   Gperf_P2:
             "name": "gperf", # Name of the package
             "version": "3.0.4", # Version of the package
             "size": 5.4, # Size of the installed package (MB)
-            "archive": "", # Archive name
+            "archive": "gperf-3.0.4.tar.gz", # Archive name
             "SBU": 0.1, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
             "next": "expat", # Next package to install
             "before": False,
             "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/"
+                "https://install.morphux.org/packages/gperf-3.0.4.tar.gz"
             ]
         }
         return self.config
