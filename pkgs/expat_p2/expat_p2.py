@@ -36,14 +36,14 @@ class   Expat_P2:
             "name": "expat", # Name of the package
             "version": "2.2.0", # Version of the package
             "size": 6.1, # Size of the installed package (MB)
-            "archive": "", # Archive name
+            "archive": "expat-2.2.0.tar.bz2", # Archive name
             "SBU": 0.1, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
             "next": "inetutils", # Next package to install
             "before": False,
             "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/"
+                "https://install.morphux.org/packages/expat-2.2.0.tar.bz2"
             ]
         }
         return self.config
