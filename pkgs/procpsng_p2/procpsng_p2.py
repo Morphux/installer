@@ -36,14 +36,14 @@ class   Procpsng_P2:
             "name": "procpsng", # Name of the package
             "version": "3.3.12", # Version of the package
             "size": 14, # Size of the installed package (MB)
-            "archive": "", # Archive name
+            "archive": "procps-ng-3.3.12.tar.xz", # Archive name
             "SBU": 0.1, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
             "next": "e2fsprogs", # Next package to install
             "after": False,
             "before": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/"
+                "https://install.morphux.org/packages/procps-ng-3.3.12.tar.xz"
             ]
         }
         return self.config
