@@ -259,6 +259,13 @@ class   Install:
             out = p.communicate(input=input)[0]
         else:
             out = p.communicate()[0]
+
+        # Comment the following condition to turn off strict debug
+        if p.returncode != 0:
+            self.dlg.msgbox("ERROR in the command: "+ ' '.join(args) + "\nPress Enter too see log.")
+            self.dlg.scrollbox(out[0].decode())
+            sys.exit(1)
+
         return out, p.returncode
 
     # Function that mount the partitions for install
