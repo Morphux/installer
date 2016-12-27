@@ -36,14 +36,14 @@ class   Sysklogd_P2:
             "name": "sysklogd", # Name of the package
             "version": "1.5.1", # Version of the package
             "size": 0.6, # Size of the installed package (MB)
-            "archive": "", # Archive name
+            "archive": "sysklogd-1.5.1.tar.gz", # Archive name
             "SBU": 0.1, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
             "next": "sysvinit", # Next package to install
             "configure": False,
             "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/"
+                "https://install.morphux.org/packages/sysklogd-1.5.1.tar.gz"
             ]
         }
         return self.config
