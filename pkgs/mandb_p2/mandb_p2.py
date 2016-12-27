@@ -36,13 +36,13 @@ class   Mandb_P2:
             "name": "man-db", # Name of the package
             "version": "2.7.5", # Version of the package
             "size": 30, # Size of the installed package (MB)
-            "archive": "", # Archive name
+            "archive": "man-db-2.7.5.tar.xz", # Archive name
             "SBU": 0.4, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
             "next": "tar", # Next package to install
             "before": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/"
+                "https://install.morphux.org/packages/man-db-2.7.5.tar.xz"
             ]
         }
         return self.config
