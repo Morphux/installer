@@ -36,13 +36,13 @@ class   E2Fsprogs_P2:
             "name": "e2fsprogs", # Name of the package
             "version": "1.43.1", # Version of the package
             "size": 54, # Size of the installed package (MB)
-            "archive": "", # Archive name
+            "archive": "e2fsprogs-1.43.1.tar.gz", # Archive name
             "SBU": 2.1, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
             "next": "coreutils", # Next package to install
             "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/"
+                "https://install.morphux.org/packages/e2fsprogs-1.43.1.tar.gz"
             ]
         }
         return self.config
