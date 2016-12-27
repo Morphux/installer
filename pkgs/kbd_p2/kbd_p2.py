@@ -36,13 +36,13 @@ class   Kbd_P2:
             "name": "kbd", # Name of the package
             "version": "2.0.3", # Version of the package
             "size": 29, # Size of the installed package (MB)
-            "archive": "", # Archive name
+            "archive": "kbd-2.0.3.tar.xz", # Archive name
             "SBU": 0.1, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
             "next": "libpipeline", # Next package to install
             "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/"
+                "https://install.morphux.org/packages/kbd-2.0.3.tar.xz"
             ]
         }
         return self.config
