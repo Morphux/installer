@@ -36,14 +36,14 @@ class   Libtool_P2:
             "name": "libtool", # Name of the package
             "version": "2.4.6", # Version of the package
             "size": 43, # Size of the installed package (MB)
-            "archive": "", # Archive name
+            "archive": "libtool-2.4.6.tar.xz", # Archive name
             "SBU": 2, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
             "next": "gdbm", # Next package to install
             "before": False,
             "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/"
+                "https://install.morphux.org/packages/libtool-2.4.6.tar.xz"
             ]
         }
         return self.config
