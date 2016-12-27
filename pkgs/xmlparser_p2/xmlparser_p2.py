@@ -36,14 +36,14 @@ class   Xmlparser_P2:
             "name": "xmlparser", # Name of the package
             "version": "2.44", # Version of the package
             "size": 2, # Size of the installed package (MB)
-            "archive": "", # Archive name
+            "archive": "XML-Parser-2.44.tar.gz", # Archive name
             "SBU": 0.1, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
             "next": "intltool", # Next package to install
             "after": False,
             "before": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/"
+                "https://install.morphux.org/packages/XML-Parser-2.44.tar.gz"
             ]
         }
         return self.config
