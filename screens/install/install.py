@@ -337,6 +337,8 @@ class   Install:
         # Change package directory
         self.arch_dir = "/packages";
         self.mnt_point = "/"
+        self.total_sbus = total_sbus
+        self.current_time = time.time()
         self.def_install = self.mnt_point + "/.install"
         self.in_install = 1
         self.install(pkg_phase_2, "linux-headers")
