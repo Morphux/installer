@@ -36,7 +36,7 @@ class   Ianaetc_P2:
             "name": "iana-etc", # Name of the package
             "version": "2.30", # Version of the package
             "size": 2.3, # Size of the installed package (MB)
-            "archive": "", # Archive name
+            "archive": "iana-etc-2.30.tar.bz2", # Archive name
             "SBU": 0.1, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
             "next": "m4", # Next package to install
@@ -44,7 +44,7 @@ class   Ianaetc_P2:
             "after": False,
             "configure": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/"
+                "https://install.morphux.org/packages/iana-etc-2.30.tar.bz2"
             ]
         }
         return self.config
