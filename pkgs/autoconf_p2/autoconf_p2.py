@@ -36,14 +36,14 @@ class   Autoconf_P2:
             "name": "autoconf", # Name of the package
             "version": "2.69", # Version of the package
             "size": 17.5, # Size of the installed package (MB)
-            "archive": "", # Archive name
+            "archive": "autoconf-2.69.tar.xz", # Archive name
             "SBU": 0.1, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
             "next": "automake", # Next package to install
             "after": False,
             "before": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/"
+                "https://install.morphux.org/packages/autoconf-2.69.tar.xz"
             ]
         }
         return self.config
