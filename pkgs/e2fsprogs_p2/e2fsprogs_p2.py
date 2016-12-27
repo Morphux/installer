@@ -22,7 +22,7 @@
 
 import      os
 
-class   E2fsprogs_P2:
+class   E2Fsprogs_P2:
 
     conf_lst = {}
     e = False
