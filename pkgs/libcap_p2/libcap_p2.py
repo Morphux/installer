@@ -36,13 +36,13 @@ class   Libcap_P2:
             "name": "libcap", # Name of the package
             "version": "2.25", # Version of the package
             "size": 1.3, # Size of the installed package (MB)
-            "archive": "", # Archive name
+            "archive": "libcap-2.25.tar.xz", # Archive name
             "SBU": 0.1, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
             "next": "sed", # Next package to install
             "configure": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/"
+                "https://install.morphux.org/packages/libcap-2.25.tar.xz"
             ]
         }
         return self.config
