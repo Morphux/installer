@@ -36,14 +36,14 @@ class   Groff_P2:
             "name": "groff", # Name of the package
             "version": "1.22.3", # Version of the package
             "size": 82, # Size of the installed package (MB)
-            "archive": "", # Archive name
+            "archive": "groff-1.22.3.tar.gz", # Archive name
             "SBU": 0.5, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
             "next": "grub", # Next package to install
             "before": False,
             "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/"
+                "https://install.morphux.org/packages/groff-1.22.3.tar.gz"
             ]
         }
         return self.config
