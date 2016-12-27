@@ -36,12 +36,12 @@ class   Readline_P2:
             "name": "readline", # Name of the package
             "version": "6.3", # Version of the package
             "size": 14, # Size of the installed package (MB)
-            "archive": "", # Archive name
+            "archive": "readline-6.3.tar.gz", # Archive name
             "SBU": 0.1, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
             "next": "bash", # Next package to install
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/"
+                "https://install.morphux.org/packages/readline-6.3.tar.gz"
             ]
         }
         return self.config
