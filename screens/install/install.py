@@ -708,10 +708,10 @@ class   Install:
                     path + "usr/{,local/}{bin,include,lib,sbin,src}"
         ], shell=True)
         self.exec(["mkdir", "-pv",
-                    path + "usr{,local/}share/{color,dict,doc,info,locale,man}"
+                    path + "usr/{,local/}share/{color,dict,doc,info,locale,man}"
         ], shell=True)
         self.exec(["mkdir", "-pv",
-                    path + "usr{,local/}share/{misc,terminfo,zoneinfo}"
+                    path + "usr/{,local/}share/{misc,terminfo,zoneinfo}"
         ], shell=True)
         self.exec(["mkdir", "-pv",
                     path + "usr/libexec"
