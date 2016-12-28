@@ -98,8 +98,8 @@ class   Install:
         if os.path.isdir(self.mnt_point):
             self.dlg.infobox("Cleaning "+ self.mnt_point +" repository...",
                 width=50, height=3)
-            self.exec(["umount", "-R", self.mnt_point])
-            self.exec(["rm", "-rf", self.mnt_point])
+            self.exec(["umount", "-R", self.mnt_point], ignore=True)
+            self.exec(["rm", "-rf", self.mnt_point], ignore=True)
 
         # If partitionning is needed, do it
         if "partitionning.disk.format" in self.conf_lst:
@@ -112,6 +112,7 @@ class   Install:
         self.mount()
 
         self.pkg_download(self.pkgs)
+        self.get_patches()
 
         # If the installation require a 2-Phase install
         if "BIN_INSTALL" not in self.conf_lst["config"] or \
@@ -129,6 +130,9 @@ class   Install:
             self.links()
             self.phase_2_install()
 
+        if "KEEP_SRC" not in self.conf_lst["config"] or \
+            ("KEEP_SRC" in self.conf_lst["config"] and self.conf_lst["config"]["KEEP_SRC"] == False):
+            self.clean_all()
         self.dlg.msgbox("The installation is finished. Hit 'Enter' to close this dialog and reboot.", title="Success !")
         # Need reboot here
         sys.exit(1)
@@ -239,7 +243,7 @@ class   Install:
                     self.exec(["mkfs", "-t", "ext2", p["part"]])
                 # If it's swap
                 elif (p["flag"] == "Swap"):
-                    self.exec(["mkswap", p["part"]])
+                    self.exec(["mkswap", p["part"]], ignore=True)
                 # Everything else, except Grub partition, that does not need
                 # formatting
                 else:
@@ -249,7 +253,7 @@ class   Install:
     # args is the list of bin + arguments (['ls', '-la'])
     # Note that this function automatically hide the output of the command.
     # Return the output of the command, bytes format
-    def     exec(self, args, input=False, shell=False):
+    def     exec(self, args, input=False, shell=False, ignore=False):
         if shell == True:
             p = Popen(' '.join(args), stdin=PIPE, stdout=PIPE, stderr=STDOUT, shell=True, env=os.environ)
         else:
@@ -258,6 +262,18 @@ class   Install:
             out = p.communicate(input=input)[0]
         else:
             out = p.communicate()[0]
+
+        # Comment the following condition to turn off strict debug
+        if p.returncode != 0 and ignore == False:
+            tmp = self.in_install
+            self.in_install = 0
+            self.dlg.msgbox("ERROR in the command: "+ ' '.join(args) + "\nPress Enter too see log.")
+            self.dlg.scrollbox(out.decode())
+            # If we were in installation, resume the progress bar
+            if tmp == 1:
+                self.in_install = 1
+                self.async_progress_bar()
+
         return out, p.returncode
 
     # Function that mount the partitions for install
@@ -282,7 +298,7 @@ class   Install:
                 self.dlg.infobox("Mounting "+ p["flag"]+ " partition...",
                 width=50, height=3)
                 if p["flag"] == "Swap":
-                    self.exec(["/sbin/swapon", "-v", p["part"]])
+                    self.exec(["/sbin/swapon", "-v", p["part"]], ignore=True)
                 elif p["flag"] == "Boot":
                     # Create the directory, then mount it
                     self.exec(["mkdir", "-pv", self.mnt_point + "/boot"])
@@ -319,6 +335,7 @@ class   Install:
         self.in_install = 1
         self.install(pkg_phase_1, "binutils")
         self.in_install = 0
+        self.clean_install(pkg_phase_1)
 
     # This function launch the phase-2 full installation
     def     phase_2_install(self):
@@ -334,6 +351,8 @@ class   Install:
                 pkg_phase_2[pkg[1]["name"]] = pkg
 
         self.inst_title = "Phase 2: Installation"
+        # Untar all the phase 2 packages
+        self.untar_all(pkg_phase_2)
         # Change package directory
         self.arch_dir = "/packages";
         self.mnt_point = "/"
@@ -486,7 +505,6 @@ class   Install:
         for line in content:
             line = line.strip("\n").split(" ")
             self.checksums[line[1]] = line[0]
-
 
     # This function launch the install of packages in lst, by compilation
     # lst is an object of all the packages with the name in key and a list
@@ -793,3 +811,48 @@ class   Install:
         self.exec(["mount", "-vt", "sysfs", "sysfs", self.mnt_point + "/sys"])
         self.exec(["mount", "-vt", "tmpfs", "tmpfs", self.mnt_point + "/run"])
 
+    # This function download all the needed patches, and the archives not 
+    # specificied in package configuration
+    def     get_patches(self):
+        # Patch files
+        files = [
+            "bash-4.3.30-upstream_fixes-3.patch",
+            "sysvinit-2.88dsf-consolidated-1.patch",
+            "readline-6.3-upstream_fixes-3.patch",
+            "kbd-2.0.3-backspace-1.patch",
+            "glibc-2.24-fhs-1.patch",
+            "bzip2-1.0.6-install_docs-1.patch",
+            "coreutils-8.25-i18n-2.patch",
+            "bc-1.06.95-memory_leak-1.patch"
+        ]
+        base_url = "https://install.morphux.org/patches/"
+        patch_content = ""
+
+        # Get all the patches
+        self.dlg.infobox("Getting patches...")
+        for f in files:
+            urlretrieve(base_url + f, self.arch_dir + f)
+
+        # Check integrity of the patches against sums
+        self.dlg.infobox("Checking integrity of patches...")
+        for f in files:
+            with open(self.arch_dir + f, "rb") as fd:
+                patch_content = fd.read()
+            patch_sum = self.exec(["md5sum"], input=bytes(patch_content))[0].decode()
+            patch_sum = patch_sum.split(" ")[0]
+            if (patch_sum != self.checksums[f]):
+                self.dlg.msgbox("The integrity of patch "+ f +" is wrong ! Aborting ...")
+                sys.exit(1)
+
+    # This function clean all the uncompressed install, sources, and patches
+    def     clean_install(self, packages):
+        self.dlg.infobox("Cleaning installation...")
+        for name, pkg in packages.items():
+            if type(pkg[1]["archive"] == type(False)):
+                continue
+            self.exec(["rm", "-rf", self.arch_dir + pkg[1]["name"] + "-" + pkg[1]["version"]])
+
+    # This function clean all the installation traces
+    def     clean_all(self):
+        self.exec(["rm", "-rf", "/tools"])
+        self.exec(["rm", "-rf", "/packages"])
