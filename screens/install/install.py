@@ -263,7 +263,7 @@ class   Install:
         # Comment the following condition to turn off strict debug
         if p.returncode != 0:
             self.dlg.msgbox("ERROR in the command: "+ ' '.join(args) + "\nPress Enter too see log.")
-            self.dlg.scrollbox(out[0].decode())
+            self.dlg.scrollbox(out.decode())
             sys.exit(1)
 
         return out, p.returncode
