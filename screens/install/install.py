@@ -130,6 +130,9 @@ class   Install:
             self.links()
             self.phase_2_install()
 
+        if "KEEP_SRC" not in self.conf_lst["config"] or \
+            ("KEEP_SRC" in self.conf_lst["config"] and self.conf_lst["config"]["KEEP_SRC"] == False):
+        self.clean_all()
         self.dlg.msgbox("The installation is finished. Hit 'Enter' to close this dialog and reboot.", title="Success !")
         # Need reboot here
         sys.exit(1)
@@ -842,10 +845,15 @@ class   Install:
                 self.dlg.msgbox("The integrity of patch "+ f +" is wrong ! Aborting ...")
                 sys.exit(1)
 
-    # This clean all the uncompressed install, sources, and patches
+    # This function clean all the uncompressed install, sources, and patches
     def     clean_install(self, packages):
         self.dlg.infobox("Cleaning installation...")
         for name, pkg in packages.items();
             if type(pkg[1]["archive"] == type(False)):
                 continue
             self.exec(["rm", "-rf", self.arch_dir + pkg[1]["name"] + "-" + pkg[1]["version"]])
+
+    # This function clean all the installation traces
+    def     clean_all(self):
+        self.exec(["rm", "-rf", "/tools"])
+        self.exec(["rm", "-rf", "/packages"])
