@@ -351,11 +351,13 @@ class   Install:
                 pkg_phase_2[pkg[1]["name"]] = pkg
 
         self.inst_title = "Phase 2: Installation"
-        # Untar all the phase 2 packages
-        self.untar_all(pkg_phase_2)
+
         # Change package directory
         self.arch_dir = "/packages";
         self.mnt_point = "/"
+
+        # Untar all the phase 2 packages
+        self.untar_all(pkg_phase_2)
         self.total_sbus = total_sbus
         self.current_time = time.time()
         self.def_install = self.mnt_point + "/.install"
