@@ -829,7 +829,7 @@ class   Install:
             with open(self.arch_dir + f, "rb") as fd:
                 patch_content = fd.read()
             patch_sum = self.exec(["md5sum"], input=bytes(patch_content))[0].decode()
-            patch_sum = arch_sum.split(" ")[0]
+            patch_sum = patch_sum.split(" ")[0]
             if (patch_sum != self.checksums[f]):
                 self.dlg.msgbox("The integrity of patch "+ f +" is wrong ! Aborting ...")
                 sys.exit(1)
