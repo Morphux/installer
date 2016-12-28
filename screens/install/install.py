@@ -262,10 +262,14 @@ class   Install:
 
         # Comment the following condition to turn off strict debug
         if p.returncode != 0 and ignore == False:
+            tmp = self.in_install
             self.in_install = 0
             self.dlg.msgbox("ERROR in the command: "+ ' '.join(args) + "\nPress Enter too see log.")
             self.dlg.scrollbox(out.decode())
-            self.in_install = 1
+            # If we were in installation, resume the progress bar
+            if tmp == 1:
+                self.in_install = 1
+                self.async_progress_bar()
 
         return out, p.returncode
 
