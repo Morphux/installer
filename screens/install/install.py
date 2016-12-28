@@ -240,7 +240,7 @@ class   Install:
                     self.exec(["mkfs", "-t", "ext2", p["part"]])
                 # If it's swap
                 elif (p["flag"] == "Swap"):
-                    self.exec(["mkswap", p["part"]])
+                    self.exec(["mkswap", p["part"]], ignore=True)
                 # Everything else, except Grub partition, that does not need
                 # formatting
                 else:
