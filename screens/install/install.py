@@ -98,8 +98,8 @@ class   Install:
         if os.path.isdir(self.mnt_point):
             self.dlg.infobox("Cleaning "+ self.mnt_point +" repository...",
                 width=50, height=3)
-            self.exec(["umount", "-R", self.mnt_point])
-            self.exec(["rm", "-rf", self.mnt_point])
+            self.exec(["umount", "-R", self.mnt_point], ignore=True)
+            self.exec(["rm", "-rf", self.mnt_point], ignore=True)
 
         # If partitionning is needed, do it
         if "partitionning.disk.format" in self.conf_lst:
@@ -250,7 +250,7 @@ class   Install:
     # args is the list of bin + arguments (['ls', '-la'])
     # Note that this function automatically hide the output of the command.
     # Return the output of the command, bytes format
-    def     exec(self, args, input=False, shell=False):
+    def     exec(self, args, input=False, shell=False, ignore=False):
         if shell == True:
             p = Popen(' '.join(args), stdin=PIPE, stdout=PIPE, stderr=STDOUT, shell=True, env=os.environ)
         else:
@@ -261,7 +261,7 @@ class   Install:
             out = p.communicate()[0]
 
         # Comment the following condition to turn off strict debug
-        if p.returncode != 0:
+        if p.returncode != 0 and ignore == False:
             self.dlg.msgbox("ERROR in the command: "+ ' '.join(args) + "\nPress Enter too see log.")
             self.dlg.scrollbox(out.decode())
             sys.exit(1)
@@ -290,7 +290,7 @@ class   Install:
                 self.dlg.infobox("Mounting "+ p["flag"]+ " partition...",
                 width=50, height=3)
                 if p["flag"] == "Swap":
-                    self.exec(["/sbin/swapon", "-v", p["part"]])
+                    self.exec(["/sbin/swapon", "-v", p["part"]], ignore=True)
                 elif p["flag"] == "Boot":
                     # Create the directory, then mount it
                     self.exec(["mkdir", "-pv", self.mnt_point + "/boot"])
