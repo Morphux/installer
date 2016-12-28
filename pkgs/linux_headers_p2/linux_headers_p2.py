@@ -57,6 +57,5 @@ class   Linux_Headers_P2:
         return self.e(["make", "INSTALL_HDR_PATH=dest", "headers_install", "-j", self.conf_lst["cpus"]])
 
     def     after(self):
-        self.e(["find", "dest/include",
-            "( -name .install -o -name ...install.cmd)", "-delete"], shell=True)
+        self.e(["find dest/include \( -name .install -o -name ..install.cmd \) -delete"], shell=True)
         return self.e(["cp", "-rvf", "dest/include/*", "/tools/include"], shell=True)
