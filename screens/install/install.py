@@ -328,6 +328,7 @@ class   Install:
         self.in_install = 1
         self.install(pkg_phase_1, "binutils")
         self.in_install = 0
+        self.clean_install(pkg_phase_1)
 
     # This function launch the phase-2 full installation
     def     phase_2_install(self):
@@ -834,3 +835,11 @@ class   Install:
             if (patch_sum != self.checksums[f]):
                 self.dlg.msgbox("The integrity of patch "+ f +" is wrong ! Aborting ...")
                 sys.exit(1)
+
+    # This clean all the uncompressed install, sources, and patches
+    def     clean_install(self, packages):
+        self.dlg.infobox("Cleaning installation...")
+        for name, pkg in packages.items();
+            if type(pkg[1]["archive"] == type(False)):
+                continue
+            self.exec(["rm", "-rf", self.arch_dir + pkg[1]["name"] + "-" + pkg[1]["version"]])
