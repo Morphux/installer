@@ -47,7 +47,7 @@ class   Glibc_P2:
         return self.config
 
     def     before(self):
-        self.e(["patch", "-Np1", "-i", "../glibc-2.24-fhs-1.patch"])
+        self.e(["patch", "-Np1", "-i", "../glibc-2.24-fhs-1.patch"], ignore=True)
         res = self.e(["mkdir", "-vp", "build"])
         os.chdir("build")
         return res
