@@ -848,7 +848,7 @@ class   Install:
     def     clean_install(self, packages):
         self.dlg.infobox("Cleaning installation...")
         for name, pkg in packages.items():
-            if type(pkg[1]["archive"] == type(False)):
+            if type(pkg[1]["archive"]) == type(False):
                 continue
             self.exec(["rm", "-rf", self.arch_dir + pkg[1]["name"] + "-" + pkg[1]["version"]])
 
