@@ -103,7 +103,7 @@ class   Glibc_P2:
         self.e(["tar", "xf", "../../tzdata2016f.tar.gz"])
         self.e(["mkdir", "-pv", zoneinfo + "/{posix,right}"], shell=True)
 
-        self.e(["./morphux_tzdata.sh"])
+        self.e(["bash", "morphux_tzdata.sh", zoneinfo])
         self.e(["cp", "-v", "zone.tab", "zone1970.tab", "iso3166.tab", zoneinfo])
         self.e(["zic", "-d", zoneinfo, "-p", "America/New_York"])
         self.e(["mkdir", "-pv", "/etc/ld.so.conf.d"])
