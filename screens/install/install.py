@@ -598,7 +598,7 @@ class   Install:
                 pkg = False
             installed += 1
 
-        self.install = 0
+        self.in_install = 0
         # Install is done, we removing the install progress file
         os.remove(self.def_install)
         return 0

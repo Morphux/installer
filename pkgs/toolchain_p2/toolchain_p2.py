@@ -53,6 +53,6 @@ class   Toolchain_P2:
 
     def     before(self):
         self.e(["mv", "-v", "/tools/bin/ld", "/tools/bin/ld-old"])
-        self.e(["mv -v /tools/$(uname -m)-pc-linux-gnu/bin/{ld,ld-old}"], shell=True)
+        self.e(["mv -v /tools/$(uname -m)-pc-linux-gnu/bin/{ld,ld-old}"], shell=True, ignore=True)
         self.e(["mv", "-v", "/tools/bin/{ld-new,ld}"], shell=True)
-        return self.e(["ln", "-sv", "/tools/bin/ld", "/tools/$(uname -m)-pc-linux-gnu/bin/ld"])
+        return self.e(["ln", "-sv", "/tools/bin/ld", "/tools/$(uname -m)-pc-linux-gnu/bin/ld"], shell=True)
