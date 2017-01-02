@@ -49,7 +49,7 @@ class   Gcc_P2:
     def     before(self):
         self.e(["mkdir", "-pv", "build"])
         os.chdir("build")
-        return 0, ""
+        return "", 0
 
     def     configure(self):
         return self.e(["../configure",
