@@ -58,4 +58,4 @@ class   Linux_Headers_P2:
 
     def     after(self):
         self.e(["find dest/include \( -name .install -o -name ..install.cmd \) -delete"], shell=True)
-        return self.e(["cp", "-rvf", "dest/include/*", "/tools/include"], shell=True)
+        return self.e(["cp", "-rvf", "dest/include/*", "/usr/include"], shell=True)
