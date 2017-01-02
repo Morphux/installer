@@ -42,7 +42,7 @@ class   Zlib_P2:
             "next": "file", # Next package to install
             "before": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packageszlib-1.2.8.tar.xz"
+                "https://install.morphux.org/packages/zlib-1.2.8.tar.xz"
             ]
         }
         return self.config

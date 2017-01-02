@@ -130,10 +130,10 @@ class   Install:
             self.links()
             self.phase_2_install()
 
-        #if "KEEP_SRC" not in self.conf_lst["config"] or \
+#        if "KEEP_SRC" not in self.conf_lst["config"] or \
             #("KEEP_SRC" in self.conf_lst["config"] and self.conf_lst["config"]["KEEP_SRC"] == False):
             #self.clean_all()
-        self.dlg.msgbox("The installation is finished. Hit 'Enter' to close this dialog and reboot.", title="Success !")
+        #self.dlg.msgbox("The installation is finished. Hit 'Enter' to close this dialog and reboot.", title="Success !")
         # Need reboot here
         sys.exit(1)
 

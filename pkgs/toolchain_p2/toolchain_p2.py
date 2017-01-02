@@ -39,7 +39,7 @@ class   Toolchain_P2:
             "archive": "tzdata2016f.tar.gz", # Archive name
             "SBU": 0, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
-            "next": "zlib_p2", # Next package to install
+            "next": "zlib", # Next package to install
             "configure": False,
             "make": False,
             "install": False,
