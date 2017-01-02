@@ -47,6 +47,9 @@ class   Gcc_P2:
         return self.config
 
     def     before(self):
+        # Needed symbolic link for gcc sanitizer
+        self.e(["ln", "-s", "/tools/bin/cpp", "/lib/cpp"])
+
         self.e(["mkdir", "-pv", "build"])
         os.chdir("build")
         return "", 0
