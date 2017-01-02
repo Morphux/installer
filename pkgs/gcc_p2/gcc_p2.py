@@ -52,13 +52,13 @@ class   Gcc_P2:
         return "", 0
 
     def     configure(self):
-        return self.e(["../configure",
+        return self.e(["SED=sed ../configure",
                     "--prefix=/usr",
                     "--enable-languages=c,c++",
                     "--disable-multilib",
                     "--disable-bootstrap",
                     "--with-system-zlib"
-                ])
+                ], shell=True)
 
     def     make(self):
         return self.e(["make", "-j", self.conf_lst["cpus"]])
