@@ -34,7 +34,7 @@ class   Toolchain_P2:
         self.root_dir = root_dir
         self.config = {
             "name": "toolchain", # Name of the package
-            "version": "0", # Version of the package
+            "version": "", # Version of the package
             "size": 0, # Size of the installed package (MB)
             "archive": "tzdata2016f.tar.gz", # Archive name
             "SBU": 0, # SBU (Compilation time)
