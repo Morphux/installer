@@ -56,10 +56,7 @@ class   Gmp_P2:
         ])
 
     def     make(self):
-        # Some warnings on make about setlocale, we can't return the actual
-        # return code of make
-        self.e(["make", "-j", self.conf_lst["cpus"]])
-        return "", 0
+        return self.e(["make", "-j", self.conf_lst["cpus"]])
 
     def     install(self):
         return self.e(["make", "install"])
