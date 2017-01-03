@@ -67,7 +67,7 @@ class   Ncurses_P2:
         return self.e(["make", "install"])
 
     def     after(self):
-        self.e(["mv", "-v", "/usr/lib/libncurses.so.6*", "/lib"], shell=True)
+        self.e(["mv", "-v", "/usr/lib/libncursesw.so.6*", "/lib"], shell=True)
         self.e(["ln -sfv ../../lib/$(readlink /usr/lib/libncursesw.so) /usr/lib/libncursesw.so"], shell=True)
         self.e([
             "for lib in ncurses form panel \
@@ -82,5 +82,5 @@ menu ; do \
         ], shell=True)
         self.e(["rm", "-vf", "/usr/lib/libcursesw.so"])
         self.e(["echo", "'INPUT(-lncursesw)'", ">", "/usr/lib/libcursesw.so"], shell=True)
-        self.e(["ln", "-sfv", "libncurses.so", "/usr/lib/libcurses.so"])
+        return self.e(["ln", "-sfv", "libncurses.so", "/usr/lib/libcurses.so"])
 
