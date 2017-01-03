@@ -50,6 +50,7 @@ class   Mpfr_P2:
 
     def     configure(self):
         return self.e(["./configure",
+            "--prefix=/usr",
             "--disable-static",
             "--enable-thread-safe",
             "--docdir=/usr/share/doc/mpfr-3.1.4"
