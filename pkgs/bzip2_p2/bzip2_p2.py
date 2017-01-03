@@ -65,6 +65,6 @@ class   Bzip2_P2:
         self.e(["cp", "-v", "bzip2-shared", "/bin/bzip2"])
         self.e(["cp", "-av", "libbz2.so.*", "/lib"], shell=True)
         self.e(["ln", "-sv", "../../lib/libbz2.so.1.0", "/usr/lib/libbz2.so"])
-        self.e(["rm", "-v", "/usr/bin/{bunzip2,bzcat,bzip2}"], shell=True)
+        self.e(["rm", "-v", "/usr/bin/{bunzip2,bzcat,bzip2}"], shell=True, ignore=True)
         self.e(["ln", "-sv", "bzip2", "/bin/bunzip2"])
         return self.e(["ln", "-sv", "bzip2", "/bin/bzcat"])
