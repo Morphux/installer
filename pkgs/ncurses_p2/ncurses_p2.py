@@ -69,17 +69,7 @@ class   Ncurses_P2:
     def     after(self):
         self.e(["mv", "-v", "/usr/lib/libncursesw.so.6*", "/lib"], shell=True)
         self.e(["ln -sfv ../../lib/$(readlink /usr/lib/libncursesw.so) /usr/lib/libncursesw.so"], shell=True)
-        self.e([
-            "for lib in ncurses form panel \
-rm -vf \
-echo 'INPUT(-l${lib}w)' > \
-ln -sfv ${lib}w.pc \
-done \
-menu ; do \
-/usr/lib/lib${lib}.so \
-/usr/lib/lib${lib}.so \
-/usr/lib/pkgconfig/${lib}.pc"
-        ], shell=True)
+        self.e(["bash", "morphux_patch.sh"])
         self.e(["rm", "-vf", "/usr/lib/libcursesw.so"])
         self.e(["echo", "'INPUT(-lncursesw)'", ">", "/usr/lib/libcursesw.so"], shell=True)
         return self.e(["ln", "-sfv", "libncurses.so", "/usr/lib/libcurses.so"])
