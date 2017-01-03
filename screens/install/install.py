@@ -770,7 +770,7 @@ class   Install:
         self.exec(["ln", "-sv", "/tools/bin/{bash,cat,echo,pwd,stty}", "/bin"], shell=True)
         self.exec(["ln", "-sv", "/tools/bin/perl", "/usr/bin"])
         self.exec(["ln", "-sv", "/tools/lib/libgcc_s.so{,.1}", "/usr/lib"], shell=True)
-        self.exec(["ln", "-sv", "", "/tools/lib/libstdc++.so{,.6}", "/usr/lib"], shell=True)
+        self.exec(["ln", "-sv", "/tools/lib/libstdc++.so{,.6}", "/usr/lib"], shell=True)
         self.exec(["sed 's/tools/usr/' /tools/lib/libstdc++.la > /usr/lib/libstdc++.la"], shell=True)
         self.exec(["ln", "-sv", "/proc/self/mounts", "/etc/mtab"])
 
