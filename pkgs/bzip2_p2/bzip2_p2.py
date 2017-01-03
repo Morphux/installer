@@ -39,7 +39,7 @@ class   Bzip2_P2:
             "archive": "bzip2-1.0.6.tar.gz", # Archive name
             "SBU": 0.1, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
-            "next": "pkgconfig", # Next package to install
+            "next": "pkg-config", # Next package to install
             "urls": [ # Url to download the package. The first one must be morphux servers
                 "https://install.morphux.org/packages/bzip2-1.0.6.tar.gz"
             ]

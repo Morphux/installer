@@ -33,7 +33,7 @@ class   Pkgconfig_P2:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "pkgconfig", # Name of the package
+            "name": "pkg-config", # Name of the package
             "version": "0.29.1", # Version of the package
             "size": 28, # Size of the installed package (MB)
             "archive": "pkg-config-0.29.1.tar.gz", # Archive name
