@@ -77,4 +77,4 @@ class   Gcc_P2:
             "../../libexec/gcc/$(gcc -dumpmachine)/6.2.0/liblto_plugin.so",
             "/usr/lib/bfd-plugins/"], shell=True)
         self.e(["mkdir", "-pv", "/usr/share/gdb/auto-load/usr/lib/"])
-        self.e(["mv", "-v", "/usr/lib/*gdb.py", "/usr/share/gdb/auto-load/usr/lib"], shell=True)
+        return self.e(["mv", "-v", "/usr/lib/*gdb.py", "/usr/share/gdb/auto-load/usr/lib"], shell=True)
