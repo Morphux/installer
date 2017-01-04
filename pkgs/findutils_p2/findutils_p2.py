@@ -60,5 +60,5 @@ class   Findutils_P2:
         return self.e(["make", "install"])
 
     def     after(self):
-        self.e(["mv", "-v", "/usr/bin/find /bin"])
+        self.e(["mv", "-v", "/usr/bin/find", "/bin"])
         return self.e(["sed -i 's|find:=${BINDIR}|find:=/bin|' /usr/bin/updatedb"], shell=True)
