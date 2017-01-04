@@ -64,4 +64,7 @@ class   Bash_P2:
         return self.e(["make", "install"])
 
     def     after(self):
-        return self.e(["mv", "-vf", "/usr/bin/bash", "/bin"])
+        if "MERGE_USR" in self.conf_lst["config"] and self.conf_lst["config"]["MERGE_USR"] != True:
+            return self.e(["mv", "-vf", "/usr/bin/bash", "/bin"])
+        else:
+            return "", 0
