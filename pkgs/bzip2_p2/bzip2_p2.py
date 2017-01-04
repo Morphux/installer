@@ -48,7 +48,6 @@ class   Bzip2_P2:
 
     def     before(self):
         self.e(["patch", "-Np1", "-i", "../bzip2-1.0.6-install_docs-1.patch"])
-        self.e(["sed -i 's@\(ln -s -f \)$(PREFIX)/bin/@\1@' Makefile"], shell=True)
         return self.e(["sed -i 's@(PREFIX)/man@(PREFIX)/share/man@g' Makefile"], shell=True)
 
     def     configure(self):
