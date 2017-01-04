@@ -59,5 +59,8 @@ class   Psmisc_P2:
         return self.e(["make", "install"])
 
     def     after(self):
-        self.e(["mv", "-v", "/usr/bin/fuser", "/bin"])
-        return self.e(["mv", "-v", "/usr/bin/killall", "/bin"])
+        if "MERGE_USR" in self.conf_lst["config"] and self.conf_lst["config"]["MERGE_USR"] != True:
+            self.e(["mv", "-v", "/usr/bin/fuser", "/bin"])
+            return self.e(["mv", "-v", "/usr/bin/killall", "/bin"])
+        else:
+            return "", 0
