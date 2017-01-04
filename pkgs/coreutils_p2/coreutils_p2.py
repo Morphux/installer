@@ -39,8 +39,8 @@ class   Coreutils_P2:
             "archive": "coreutils-8.25.tar.xz", # Archive name
             "SBU": 2.6, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
-            "next": False, # Next package to install
-            "after": "diffutils",
+            "next": "diffutils", # Next package to install
+            "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
                 "https://install.morphux.org/packages/coreutils-8.25.tar.xz"
             ]
