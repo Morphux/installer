@@ -59,7 +59,7 @@ class   Bzip2_P2:
         return self.e(["make", "-j", self.conf_lst["cpus"]])
 
     def     install(self):
-        return self.e(["make", "PREFIX=/usr" "install"])
+        return self.e(["make", "PREFIX=/usr", "install"])
 
     def     after(self):
         self.e(["cp", "-v", "bzip2-shared", "/bin/bzip2"])
