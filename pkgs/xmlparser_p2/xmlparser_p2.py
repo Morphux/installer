@@ -41,12 +41,16 @@ class   Xmlparser_P2:
             "tmp_install": False, # Is this package part of the temporary install
             "next": "intltool", # Next package to install
             "after": False,
-            "before": False,
+            "chdir": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
                 "https://install.morphux.org/packages/XML-Parser-2.44.tar.gz"
             ]
         }
         return self.config
+
+    def     before(self):
+        os.chdir("XML-Parser-2.44")
+        return "", 0
 
     def     configure(self):
         return self.e(["perl", "Makefile.PL"])
