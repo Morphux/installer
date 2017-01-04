@@ -39,7 +39,7 @@ class   Gzip_P2:
             "archive": "gzip-1.8.tar.xz", # Archive name
             "SBU": 0.1, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
-            "next": "iproute", # Next package to install
+            "next": "iproute2", # Next package to install
             "before": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
                 "https://install.morphux.org/packages/gzip-1.8.tar.xz"

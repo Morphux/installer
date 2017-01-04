@@ -33,7 +33,7 @@ class   Iproute_P2:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "iproute", # Name of the package
+            "name": "iproute2", # Name of the package
             "version": "4.7.0", # Version of the package
             "size": 11, # Size of the installed package (MB)
             "archive": "iproute2-4.7.0.tar.xz", # Archive name
