@@ -33,7 +33,7 @@ class   Procpsng_P2:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "procpsng", # Name of the package
+            "name": "procps-ng", # Name of the package
             "version": "3.3.12", # Version of the package
             "size": 14, # Size of the installed package (MB)
             "archive": "procps-ng-3.3.12.tar.xz", # Archive name

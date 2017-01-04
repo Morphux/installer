@@ -39,7 +39,7 @@ class   Gettext_P2:
             "archive": "gettext-0.19.8.1.tar.xz", # Archive name
             "SBU": 3.6, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
-            "next": "procpsng", # Next package to install
+            "next": "procps-ng", # Next package to install
             "after": False,
             "before": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
