@@ -63,7 +63,10 @@ class   Kmod_P2:
 
     def     install(self):
         self.e(["make", "install"])
-        self.e(["for target in depmod insmod lsmod modinfo modprobe rmmod; do \
-        ln -sfv ../bin/kmod /sbin/$target\
-        done"], shell=True)
+        self.e(["ln", "-sfv", "../bin/kmod", "/sbin/depmod"])
+        self.e(["ln", "-sfv", "../bin/kmod", "/sbin/insmod"])
+        self.e(["ln", "-sfv", "../bin/kmod", "/sbin/lsmod"])
+        self.e(["ln", "-sfv", "../bin/kmod", "/sbin/modinfo"])
+        self.e(["ln", "-sfv", "../bin/kmod", "/sbin/modprobe"])
+        self.e(["ln", "-sfv", "../bin/kmod", "/sbin/rmmod"])
         return self.e(["ln", "-sfv", "kmod", "/bin/lsmod"])
