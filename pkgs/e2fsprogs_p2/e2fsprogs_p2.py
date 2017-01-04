@@ -57,7 +57,7 @@ class   E2Fsprogs_P2:
         os.environ["LIBS"] = "-L/tools/lib"
         os.environ["CFLAGS"] = "-I/tools/include"
         os.environ["PKG_CONFIG_PATH"] = "/tools/lib/pkgconfig"
-        return self.e(["./configure",
+        return self.e(["../configure",
                 "--prefix=/usr",
                 "--bindir=/bin",
                 "--with-root-prefix=''",
