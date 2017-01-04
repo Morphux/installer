@@ -48,7 +48,7 @@ class   Perl_P2:
         return self.config
 
     def     before(self):
-        return self.e(["echo \"127.0.0.1 localhost $(hostname)\" > /etc/hosts"])
+        return self.e(["echo \"127.0.0.1 localhost $(hostname)\" > /etc/hosts"], shell=True)
 
     def     configure(self):
         os.environ["BUILD_ZLIB"] = "False"
