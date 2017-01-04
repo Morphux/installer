@@ -825,7 +825,8 @@ class   Install:
             "glibc-2.24-fhs-1.patch",
             "bzip2-1.0.6-install_docs-1.patch",
             "coreutils-8.25-i18n-2.patch",
-            "bc-1.06.95-memory_leak-1.patch"
+            "bc-1.06.95-memory_leak-1.patch",
+            "inetutils-1.9.4.patch"
         ]
         base_url = "https://install.morphux.org/patches/"
         patch_content = ""
