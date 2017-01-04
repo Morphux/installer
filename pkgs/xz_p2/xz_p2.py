@@ -62,6 +62,7 @@ class   Xz_P2:
 
     def     install(self):
         self.e(["make", "install"])
-        self.e(["mv -v /usr/bin/{lzma,unlzma,lzcat,xz,unxz,xzcat} /bin"], shell=True)
+        if "MERGE_USR" in self.conf_lst["config"] and self.conf_lst["config"]["MERGE_USR"] != True:
+            self.e(["mv -v /usr/bin/{lzma,unlzma,lzcat,xz,unxz,xzcat} /bin"], shell=True)
         self.e(["mv -v /usr/lib/liblzma.so.* /lib"], shell=True)
         return self.e(["ln -svf ../../lib/$(readlink /usr/lib/liblzma.so) /usr/lib/liblzma.so"], shell=True)
