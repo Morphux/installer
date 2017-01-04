@@ -48,7 +48,7 @@ class   Coreutils_P2:
         return self.config
 
     def     before(self):
-        self.e(["patch", "-Np1", "-i", "../coreutils-8.25-i18n-2.patch"])
+        return self.e(["patch", "-Np1", "-i", "../coreutils-8.25-i18n-2.patch"])
 
     def     configure(self):
         os.environ["FORCE_UNSAFE_CONFIGURE"] = "1"
@@ -62,10 +62,11 @@ class   Coreutils_P2:
 
     def     install(self):
         self.e(["make", "install"])
-        self.e(["mv -v /usr/bin/{cat,chgrp,chmod,chown,cp,date,dd,df,echo} /bin"], shell=True)
-        self.e(["mv -v /usr/bin/{false,ln,ls,mkdir,mknod,mv,pwd,rm} /bin"], shell=True)
-        self.e(["mv -v /usr/bin/{rmdir,stty,sync,true,uname} /bin"], shell=True)
-        self.e(["mv -v /usr/bin/chroot /usr/sbin"], shell=True)
+        if "MERGE_USR" in self.conf_lst["config"] and self.conf_lst["config"]["MERGE_USR"] != True:
+            self.e(["mv -v /usr/bin/{cat,chgrp,chmod,chown,cp,date,dd,df,echo} /bin"], shell=True)
+            self.e(["mv -v /usr/bin/{false,ln,ls,mkdir,mknod,mv,pwd,rm} /bin"], shell=True)
+            self.e(["mv -v /usr/bin/{rmdir,stty,sync,true,uname} /bin"], shell=True)
+            self.e(["mv -v /usr/bin/chroot /usr/sbin"], shell=True)
+            self.e(["mv -v /usr/bin/{head,sleep,nice,test,[} /bin"], shell=True)
         self.e(["mv -v /usr/share/man/man1/chroot.1 /usr/share/man/man8/chroot.8"], shell=True)
-        self.e(["sed -i s/\"1\"/\"8\"/1 /usr/share/man/man8/chroot.8"], shell=True)
-        self.e(["mv -v /usr/bin/{head,sleep,nice,test,[} /bin"], shell=True)
+        return self.e(["sed -i s/\"1\"/\"8\"/1 /usr/share/man/man8/chroot.8"], shell=True)
