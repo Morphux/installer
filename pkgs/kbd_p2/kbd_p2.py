@@ -56,7 +56,7 @@ class   Kbd_P2:
         return self.e(["PKG_CONFIG_PATH=/tools/lib/pkgconfig", "./configure",
             "--prefix=/usr",
             "--disable-vlock"
-        ])
+        ], shell=True)
 
     def     make(self):
         return self.e(["make", "-j", self.conf_lst["cpus"]])
