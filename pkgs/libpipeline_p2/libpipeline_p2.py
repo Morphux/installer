@@ -51,7 +51,7 @@ class   Libpipeline_P2:
     def     configure(self):
         return self.e(["PKG_CONFIG_PATH=/tools/lib/pkgconfig", "./configure",
             "--prefix=/usr"
-        ])
+        ], shell=True)
 
     def     make(self):
         return self.e(["make", "-j", self.conf_lst["cpus"]])
