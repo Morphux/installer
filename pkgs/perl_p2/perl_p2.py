@@ -52,7 +52,7 @@ class   Perl_P2:
 
     def     configure(self):
         os.environ["BUILD_ZLIB"] = "False"
-        os.environ["BUILD_BZIP2"] = 0
+        os.environ["BUILD_BZIP2"] = "0"
         return self.e(["sh", "Configure", "-des",
                 "-Dprefix=/usr",
                 "-Dvendorprefix=/usr",
