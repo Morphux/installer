@@ -40,6 +40,7 @@ class   Ncurses_P2:
             "SBU": 0.4, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
             "next": "attr", # Next package to install
+            "after": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
                 "https://install.morphux.org/packages/ncurses-6.0.tar.gz"
             ]
@@ -65,12 +66,3 @@ class   Ncurses_P2:
 
     def     install(self):
         return self.e(["make", "install"])
-
-    def     after(self):
-        self.e(["mv", "-v", "/usr/lib/libncursesw.so.6*", "/lib"], shell=True)
-        self.e(["ln -sfv ../../lib/$(readlink /usr/lib/libncursesw.so) /usr/lib/libncursesw.so"], shell=True)
-        self.e(["bash", "morphux_patch.sh"])
-        self.e(["rm", "-vf", "/usr/lib/libcursesw.so"])
-        self.e(["echo", "'INPUT(-lncursesw)'", ">", "/usr/lib/libcursesw.so"], shell=True)
-        return self.e(["ln", "-sfv", "libncurses.so", "/usr/lib/libcurses.so"])
-
