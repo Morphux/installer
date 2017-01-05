@@ -439,11 +439,12 @@ class   Install:
                 # TODO: Handle exception from retrieving
                 while dl_ok == 0:
                     # Update the progress bar
-                    self.dlg.gauge_update(int((to_dl * 100) / dl_len),
-                        "Getting "+ conf["archive"]+ "... ("+ str(to_dl) +"/"+
-                        str(dl_len) +")", True)
-                    urlretrieve(conf["urls"][i], self.arch_dir + conf["archive"])
-                    i += 1
+                    while i < len(conf["urls"]):
+                        self.dlg.gauge_update(int((to_dl * 100) / dl_len),
+                            "Getting "+ conf["archive"]+ "... ("+ str(to_dl) +"/"+
+                            str(dl_len) +")", True)
+                        urlretrieve(conf["urls"][i], self.arch_dir + conf["archive"])
+                        i += 1
                     dl_ok = 1
             to_dl += 1
         # Stop the progress bar
