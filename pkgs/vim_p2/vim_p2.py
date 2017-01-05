@@ -40,6 +40,7 @@ class   Vim_P2:
             "SBU": 1, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
             "next": False, # Next package to install
+            "chdir": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
                 "https://install.morphux.org/packages/vim-7.4.tar.bz2"
             ]
@@ -47,6 +48,7 @@ class   Vim_P2:
         return self.config
 
     def     before(self):
+        os.chdir("vim74")
         return self.e(["echo '#define SYS_VIMRC_FILE \"/etc/vimrc\"' >> src/feature.h"], shell=True)
 
     def     configure(self):
