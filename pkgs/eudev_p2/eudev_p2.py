@@ -41,7 +41,8 @@ class   Eudev_P2:
             "tmp_install": False, # Is this package part of the temporary install
             "next": "util-linux", # Next package to install
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/eudev-3.2.tar.gz"
+                "https://install.morphux.org/packages/eudev-3.2.tar.gz",
+                "https://install.morphux.org/packages/udev-lfs-20140408.tar.bz2"
             ]
         }
         return self.config
