@@ -443,7 +443,7 @@ class   Install:
                         self.dlg.gauge_update(int((to_dl * 100) / dl_len),
                             "Getting "+ conf["archive"]+ "... ("+ str(to_dl) +"/"+
                             str(dl_len) +")", True)
-                        urlretrieve(conf["urls"][i], self.arch_dir + conf["archive"])
+                        urlretrieve(conf["urls"][i], self.arch_dir + conf["urls"][i].split("/")[-1])
                         i += 1
                     dl_ok = 1
             to_dl += 1
