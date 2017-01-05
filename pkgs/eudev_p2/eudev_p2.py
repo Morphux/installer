@@ -74,4 +74,4 @@ class   Eudev_P2:
     def     after(self):
         self.e(["tar", "-xvf", "../udev-lfs-20140408.tar.bz2"])
         self.e(["make", "-f", "udev-lfs-20140408/Makefile.lfs", "install"])
-        return self.e(["LD_LIBRARY_PATH=/tools/lib", "udevadm", "hwdb", "--update"])
+        return self.e(["LD_LIBRARY_PATH=/tools/lib", "udevadm", "hwdb", "--update"], shell=True)
