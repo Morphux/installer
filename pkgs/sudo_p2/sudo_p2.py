@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# vim_p2.py
-# Created: 24/12/2016
+# sudo_p2.py
+# Created: 05/01/2017
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   Vim_P2:
+class   Sudo_P2:
 
     conf_lst = {}
     e = False
@@ -33,27 +33,29 @@ class   Vim_P2:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "vim", # Name of the package
-            "version": "7.4", # Version of the package
-            "size": 109, # Size of the installed package (MB)
-            "archive": "vim-7.4.tar.bz2", # Archive name
-            "SBU": 1, # SBU (Compilation time)
+            "name": "sudo", # Name of the package", # Version of the package
+            "version": "1.8.19p1", # Version of the package
+            "size": 29, # Size of the installed package (MB)
+            "archive": "sudo-1.8.19p1.tar.gz", # Archive name
+            "SBU": 0.4, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
-            "next": "sudo", # Next package to install
-            "chdir": False,
+            "next": False, # Next package to install
+            "before": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/vim-7.4.tar.bz2"
+                "https://install.morphux.org/packages/sudo-1.8.19p1.tar.gz"
             ]
         }
         return self.config
 
-    def     before(self):
-        os.chdir("vim74")
-        return self.e(["echo '#define SYS_VIMRC_FILE \"/etc/vimrc\"' >> src/feature.h"], shell=True)
-
     def     configure(self):
         return self.e(["./configure",
                 "--prefix=/usr",
+                "--libexecdir=/usr/lib",
+                "--with-secure-path",
+                "--with-all-insults",
+                "--with-env-editor",
+                "--docdir=/usr/share/doc/sudo-1.8.19p",
+                "--with-passprompt=\"[sudo] password for %p\""
         ])
 
     def     make(self):
@@ -63,5 +65,4 @@ class   Vim_P2:
         return self.e(["make", "install"])
 
     def     after(self):
-        self.e(["ln", "-sv", "vim", "/usr/bin/vi"])
-        return self.e(["ln", "-sv", "../vim/vim74/doc", "/usr/share/doc/vim-7.4"])
+        return self.e(["ln", "-sfv", "libsudo_util.so.0.0.0", "/usr/lib/sudo/libsudo_util.so.0"])
