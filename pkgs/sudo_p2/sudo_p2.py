@@ -55,7 +55,7 @@ class   Sudo_P2:
                 "--with-all-insults",
                 "--with-env-editor",
                 "--docdir=/usr/share/doc/sudo-1.8.19p",
-                "--with-passprompt=\"[sudo] password for %p\""
+                "--with-passprompt=[sudo] password for %p"
         ])
 
     def     make(self):
