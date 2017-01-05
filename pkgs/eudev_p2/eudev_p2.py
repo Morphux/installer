@@ -65,7 +65,7 @@ class   Eudev_P2:
         ])
 
     def     make(self):
-        return self.e(["LIBRARY_PATH=/tools/lib", "make", "-j", self.conf_lst["cpus"]])
+        return self.e(["LIBRARY_PATH=/tools/lib", "make", "-j", self.conf_lst["cpus"]], shell=True)
 
     def     install(self):
         return self.e(["make", "LD_LIBRARY_PATH=/tools/lib", "install"])
