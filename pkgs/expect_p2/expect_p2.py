@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# sudo_p2.py
-# Created: 05/01/2017
+# expect_p2.py
+# Created: 06/01/2017
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   Sudo_P2:
+class   Expect_P2:
 
     conf_lst = {}
     e = False
@@ -33,16 +33,17 @@ class   Sudo_P2:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "sudo", # Name of the package", # Version of the package
-            "version": "1.8.19p1", # Version of the package
-            "size": 29, # Size of the installed package (MB)
-            "archive": "sudo-1.8.19p1.tar.gz", # Archive name
-            "SBU": 0.4, # SBU (Compilation time)
+            "name": "expect", # Name of the package
+            "version": "5.45", # Version of the package
+            "size": 4.1, # Size of the installed package (MB)
+            "archive": "expect5.45.tar.gz", # Archive name
+            "SBU": 0.2, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
-            "next": "expect", # Next package to install
+            "next": False, # Next package to install
+            "chdir": False,
             "before": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/sudo-1.8.19p1.tar.gz"
+                "https://install.morphux.org/packages/expect5.45.tar.gz"
             ]
         }
         return self.config
@@ -50,19 +51,17 @@ class   Sudo_P2:
     def     configure(self):
         return self.e(["./configure",
                 "--prefix=/usr",
-                "--libexecdir=/usr/lib",
-                "--with-secure-path",
-                "--with-all-insults",
-                "--with-env-editor",
-                "--docdir=/usr/share/doc/sudo-1.8.19p",
-                "--with-passprompt=[sudo] password for %p"
-        ])
+                "--with-tcl=/usr/lib",
+                "--enable-shared",
+                "--mandir=/usr/share/man",
+                "--with-tclinclude=/usr/include"
+            ])
 
     def     make(self):
         return self.e(["make", "-j", self.conf_lst["cpus"]])
 
     def     install(self):
-        return self.e(["make", "install"])
+        return self.e(["make", "install"], shell=True)
 
     def     after(self):
-        return self.e(["ln", "-sfv", "libsudo_util.so.0.0.0", "/usr/lib/sudo/libsudo_util.so.0"])
+        return self.e(["ln", "-svf", "expect5.45/libexpect5.45.so", "/usr/lib"])
