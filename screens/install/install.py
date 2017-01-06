@@ -861,11 +861,13 @@ class   Install:
 
     # This function clean all the installation traces
     def     clean_all(self):
+        self.dlg.infobox("Cleaning tools ...")
         self.exec(["rm", "-rf", "/tools"])
         self.exec(["rm", "-rf", "/tmp/*"], shell=True)
 
     # This function strip installed binaries
     def     strip_binaries(self):
+        self.dlg.infobox("Stripping binaries ...")
         self.e(["/tools/bin/find /usr/lib -type f -name \*.a -exec /tools/bin/strip --strip-debug {} ';'"], shell=True, ignore=True)
         self.e(["/tools/bin/find /lib /usr/lib -type f -name \*.so* -exec /tools/bin/strip --strip-unneeded {} ';'"], shell=True, ignore=True)
         self.e(["/tools/bin/find /{bin,sbin} /usr/{bin,sbin,libexec} -type f -exec /tools/bin/strip --strip-all {} ';'"], shell=True, ignore=True)
