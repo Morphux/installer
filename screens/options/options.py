@@ -45,7 +45,8 @@ class   Options:
         ("MERGE_USR", "Build the system with symbolic links between /{bin,sbin} and /usr", 1),
         ("TEST", "Make all the tests possibles on packages", 0),
         ("FAKE_ROOT", "Build and install the packages in a fakeroot", 0),
-        ("BUILD_LIVECD", "Build the live-cd with the installed packages.", 0)
+        ("BUILD_LIVECD", "Build the live-cd with the installed packages.", 0),
+        ("STRIP_BIN", "Remove debyg symbols from binaries", 1)
     ]
 
 ##

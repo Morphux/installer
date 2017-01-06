@@ -130,10 +130,13 @@ class   Install:
             self.links()
             self.phase_2_install()
 
-#        if "KEEP_SRC" not in self.conf_lst["config"] or \
-            #("KEEP_SRC" in self.conf_lst["config"] and self.conf_lst["config"]["KEEP_SRC"] == False):
-            #self.clean_all()
-        #self.dlg.msgbox("The installation is finished. Hit 'Enter' to close this dialog and reboot.", title="Success !")
+        if "STRIP_BIN" in self.conf_lst["config"] and self.conf_lst["config"]["STRIP_BIN"] == True:
+            self.strip_binaries()
+
+        if "KEEP_SRC" not in self.conf_lst["config"] or ("KEEP_SRC" in self.conf_lst["config"] and self.conf_lst["config"]["KEEP_SRC"] == False):
+            self.clean_all()
+
+        self.dlg.msgbox("The installation is finished. Hit 'Enter' to close this dialog and reboot.", title="Success !")
         # Need reboot here
         sys.exit(1)
 
@@ -859,4 +862,10 @@ class   Install:
     # This function clean all the installation traces
     def     clean_all(self):
         self.exec(["rm", "-rf", "/tools"])
-        self.exec(["rm", "-rf", "/packages"])
+        self.exec(["rm", "-rf", "/tmp/*"], shell=True)
+
+    # This function strip installed binaries
+    def     strip_binaries(self):
+        self.e(["/tools/bin/find /usr/lib -type f -name \*.a -exec /tools/bin/strip --strip-debug {} ';'"], shell=True, ignore=True)
+        self.e(["/tools/bin/find /lib /usr/lib -type f -name \*.so* -exec /tools/bin/strip --strip-unneeded {} ';'"], shell=True, ignore=True)
+        self.e(["/tools/bin/find /{bin,sbin} /usr/{bin,sbin,libexec} -type f -exec /tools/bin/strip --strip-all {} ';'"], shell=True, ignore=True)
