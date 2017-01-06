@@ -864,10 +864,17 @@ class   Install:
         self.dlg.infobox("Cleaning tools ...")
         self.exec(["rm", "-rf", "/tools"])
         self.exec(["rm", "-rf", "/tmp/*"], shell=True)
+        self.exec(["rm", "-f", "/usr/lib/lib{bfd,opcodes}.a"], shell=True)
+        self.exec(["rm", "-f", "/usr/lib/lib{com_err,e2p,ext2fs,ss}.a"], shell=True)
+        self.exec(["rm", "-f", "/usr/lib/libbz2.a"])
+        self.exec(["rm", "-f", "/usr/lib/libltdl.a"])
+        self.exec(["rm", "-f", "/usr/lib/libfl.a"])
+        self.exec(["rm", "-f", "/usr/lib/libfl_pic.a"])
+        self.exec(["rm", "-f", "/usr/lib/libz.a"])
 
     # This function strip installed binaries
     def     strip_binaries(self):
         self.dlg.infobox("Stripping binaries ...")
-        self.e(["/tools/bin/find /usr/lib -type f -name \*.a -exec /tools/bin/strip --strip-debug {} ';'"], shell=True, ignore=True)
-        self.e(["/tools/bin/find /lib /usr/lib -type f -name \*.so* -exec /tools/bin/strip --strip-unneeded {} ';'"], shell=True, ignore=True)
+        self.exec(["/tools/bin/find /usr/lib -type f -name \*.a -exec /tools/bin/strip --strip-debug {} ';'"], shell=True, ignore=True)
+        self.exec(["/tools/bin/find /lib /usr/lib -type f -name \*.so* -exec /tools/bin/strip --strip-unneeded {} ';'"], shell=True, ignore=True)
         self.e(["/tools/bin/find /{bin,sbin} /usr/{bin,sbin,libexec} -type f -exec /tools/bin/strip --strip-all {} ';'"], shell=True, ignore=True)
