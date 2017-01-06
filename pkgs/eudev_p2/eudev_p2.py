@@ -42,7 +42,8 @@ class   Eudev_P2:
             "next": "util-linux", # Next package to install
             "urls": [ # Url to download the package. The first one must be morphux servers
                 "https://install.morphux.org/packages/eudev-3.2.tar.gz",
-                "https://install.morphux.org/packages/udev-lfs-20140408.tar.bz2"
+                "https://install.morphux.org/packages/udev-lfs-20140408.tar.bz2",
+                "https://install.morphux.org/packages/lfs-bootscripts-20150222.tar.bz2"
             ]
         }
         return self.config

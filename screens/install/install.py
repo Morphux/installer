@@ -136,6 +136,7 @@ class   Install:
         if "KEEP_SRC" not in self.conf_lst["config"] or ("KEEP_SRC" in self.conf_lst["config"] and self.conf_lst["config"]["KEEP_SRC"] == False):
             self.clean_all()
 
+        self.install_bootscripts()
         self.dlg.msgbox("The installation is finished. Hit 'Enter' to close this dialog and reboot.", title="Success !")
         # Need reboot here
         sys.exit(1)
@@ -877,4 +878,11 @@ class   Install:
         self.dlg.infobox("Stripping binaries ...")
         self.exec(["/tools/bin/find /usr/lib -type f -name \*.a -exec /tools/bin/strip --strip-debug {} ';'"], shell=True, ignore=True)
         self.exec(["/tools/bin/find /lib /usr/lib -type f -name \*.so* -exec /tools/bin/strip --strip-unneeded {} ';'"], shell=True, ignore=True)
-        self.e(["/tools/bin/find /{bin,sbin} /usr/{bin,sbin,libexec} -type f -exec /tools/bin/strip --strip-all {} ';'"], shell=True, ignore=True)
+
+
+    def     install_bootscripts(self):
+       self.dlg.infobox("Installing boot scripts ...")
+       os.chdir("/packages")
+       self.exec(["tar", "xf", "lfs-bootscripts-20150222.tar.bz2"])
+       os.chdir("lfs-bootscripts-20150222")
+       self.exec(["make", "install"])
