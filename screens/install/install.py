@@ -880,6 +880,7 @@ class   Install:
         self.exec(["/tools/bin/find /lib /usr/lib -type f -name \*.so* -exec /tools/bin/strip --strip-unneeded {} ';'"], shell=True, ignore=True)
 
 
+    # This function install bootscripts provided by the LFS community
     def     install_bootscripts(self):
        self.dlg.infobox("Installing boot scripts ...")
        os.chdir("/packages")
