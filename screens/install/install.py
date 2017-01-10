@@ -801,7 +801,8 @@ class   Install:
             ("syslog.conf", "etc/syslog.conf"),
             ("vimrc", "etc/vimrc"),
             ("motd", "etc/motd"),
-            ("inittab", "etc/inittab")
+            ("inittab", "etc/inittab"),
+            ("clock", "etc/sysconfig/clock")
         }
 
         self.dlg.infobox("Creating defaultfiles...")
