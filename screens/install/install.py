@@ -136,6 +136,8 @@ class   Install:
         if "KEEP_SRC" not in self.conf_lst["config"] or ("KEEP_SRC" in self.conf_lst["config"] and self.conf_lst["config"]["KEEP_SRC"] == False):
             self.clean_all()
 
+        self.config_network()
+
         self.install_bootscripts()
         self.dlg.msgbox("The installation is finished. Hit 'Enter' to close this dialog and reboot.", title="Success !")
         # Need reboot here
@@ -887,3 +889,41 @@ class   Install:
        self.exec(["tar", "xf", "lfs-bootscripts-20150222.tar.bz2"])
        os.chdir("lfs-bootscripts-20150222")
        self.exec(["make", "install"])
+
+    # This function generate network config files
+    def     config_network(self):
+        # Interface options
+        if type(self.conf_lst["network"]) == type(string) and 
+            self.conf_lst["network"] == "DHCP":
+            print("Do DHCP stuff")
+        else if type(self.conf_lst["network"]) != type(False):
+            with open("/etc/sysconfig/ifconfig.eth0", "w+") as fd:
+                fd.write("ONBOOT=yes\n")
+                fd.write("IFACE=eth0\n")
+                fd.write("SERVICE=ipv4-static")
+                fd.write("IP=" + self.conf_lst["network"]["IP"] + "\n")
+                fd.write("GATEWAY=" + self.conf_lst["network"]["GW"] + "\n")
+                fd.write("PREFIX=" self.conf_lst["network"]["NM"])
+                fd.close()
+
+        # DNS configuration
+        with open("/etc/resolv.conf") as fd:
+            fd.write("domain " + self.conf_lst["hostname"] + "\n")
+            if type(self.conf_lst["network"]) == type({}):
+                for dns in self.conf_lst["network"]["DNS"],split(","):
+                    fd.write("nameserver "+ dns + "\n")
+            else:
+                fd.write("nameserver 8.8.8.8\n")
+                fd.write("nameserver 4.4.4.4\n")
+            fd.close()
+
+        # Hostname
+        with open("/etc/hostname") as fd:
+            fd.write(self.conf_lst["hostname"])
+            fd.close()
+
+        # Hosts
+        with open("/etc/hosts") as fd:
+            fd.write("127.0.0.1 localhost")
+            fd.close()
+
