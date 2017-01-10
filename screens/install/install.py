@@ -800,7 +800,8 @@ class   Install:
             ("ld.so.conf", "etc/ld.so.conf"),
             ("syslog.conf", "etc/syslog.conf"),
             ("vimrc", "etc/vimrc"),
-            ("motd", "etc/motd")
+            ("motd", "etc/motd"),
+            ("inittab", "etc/inittab")
         }
 
         self.dlg.infobox("Creating defaultfiles...")
