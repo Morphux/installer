@@ -139,6 +139,7 @@ class   Install:
         self.config_network()
         self.install_bootscripts()
         self.fstab()
+        self.grub()
 
         self.dlg.msgbox("The installation is finished. Hit 'Enter' to close this dialog and reboot.", title="Success !")
         # Need reboot here
@@ -962,4 +963,20 @@ class   Install:
             fd.write("devpts  /dev/pts  devpts  gid=5,mode=620         0     0")
             fd.write("tmpfs   /run      tmpfs   defaults               0     0")
             fd.write("devtmpfs /dev     devtmpfs mode=0755,nosuid      0     0")
+            fd.close()
+
+    # This function install grub to the system
+    def     grub(self):
+        self.dlg.infobox("Installing grub...")
+        layout = self.conf_lst["partitionning.layout"]
+        root = [p for p in layout if p["flag"] == "Root"]
+
+        self.e(["grub-install", self.conf_lst["partitionning.disk"]])
+        with open("/boot/grub/grub.cfg", "w+") as fd:
+            fd.write("# Begin /boot/grub/grub.cfg\n")
+            fd.write("set default=0\n")
+            fd.write("set timeout=5\n\n")
+            fd.write("menuentry \"Morphux, GNU/Linux 4.7.2\" {\n")
+            fd.write("   linux /boot/vmlinuz-4.7.2-morphux root="+ root["part"] +" ro net.ifnames=0\n")
+            fd.write("}")
             fd.close()
