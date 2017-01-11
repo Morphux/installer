@@ -137,8 +137,9 @@ class   Install:
             self.clean_all()
 
         self.config_network()
-
         self.install_bootscripts()
+        self.fstab()
+
         self.dlg.msgbox("The installation is finished. Hit 'Enter' to close this dialog and reboot.", title="Success !")
         # Need reboot here
         sys.exit(1)
@@ -913,7 +914,7 @@ class   Install:
                 fd.close()
 
         # DNS configuration
-        with open("/etc/resolv.conf") as fd:
+        with open("/etc/resolv.conf", "w+") as fd:
             fd.write("domain " + self.conf_lst["hostname"] + "\n")
             if type(self.conf_lst["network"]) == type({}):
                 for dns in self.conf_lst["network"]["DNS"],split(","):
@@ -924,12 +925,37 @@ class   Install:
             fd.close()
 
         # Hostname
-        with open("/etc/hostname") as fd:
+        with open("/etc/hostname", "w+") as fd:
             fd.write(self.conf_lst["hostname"])
             fd.close()
 
         # Hosts
-        with open("/etc/hosts") as fd:
+        with open("/etc/hosts", "w+") as fd:
             fd.write("127.0.0.1 localhost")
             fd.close()
 
+    # This function generate a /etc/fstab based on partitionning configuration
+    def     fstab(self):
+        layout = self.conf_lst["partitionning.layout"]
+
+        with open("/etc/fstab", "w+") as fd:
+            # Partitionning configuration
+            for p in layout:
+                if p["flag"] == "Root":
+                    fd.write(p["part"] + "    /    ext4    defaults    1    1")
+                elif p["flag"] == "Boot":
+                    fd.write(p["part"] + "    /boot    ext2     defaults    1    1")
+                elif p["flag"] == "Home":
+                    fd.write(p["part"] + "    /home    ext4     defaults    1    1")
+                elif p["flag"] == "Swap":
+                    fd.write(p["part"] + "    swap     swap     pri=1       0     0")
+                elif p["flag"] == "Tmp":
+                    fd.write(p["part"] + "    /tmp     ext4     defaults    1     1")
+
+            # Default fstab entries
+            fd.write("proc    /proc     proc    nosuid,noexec,nodev    0     0")
+            fd.write("sysfs   /sys      sysfs   nosuid,noexec,nodev    0     0")
+            fd.write("devpts  /dev/pts  devpts  gid=5,mode=620         0     0")
+            fd.write("tmpfs   /run      tmpfs   defaults               0     0")
+            fd.write("devtmpfs /dev     devtmpfs mode=0755,nosuid      0     0")
+            fd.close()
