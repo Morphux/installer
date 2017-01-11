@@ -802,7 +802,8 @@ class   Install:
             ("vimrc", "etc/vimrc"),
             ("motd", "etc/motd"),
             ("inittab", "etc/inittab"),
-            ("clock", "etc/sysconfig/clock")
+            ("clock", "etc/sysconfig/clock"),
+            ("rc.site", "etc/sysconfig/rc.site")
         }
 
         self.dlg.infobox("Creating defaultfiles...")
