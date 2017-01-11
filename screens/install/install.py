@@ -909,7 +909,13 @@ class   Install:
         # Interface options
         if type(self.conf_lst["network"]) == type(string) and 
             self.conf_lst["network"] == "DHCP":
-            print("Do DHCP stuff")
+            with open("/etc/sysconfig/ifconfig.eth0", "w+") as fd:
+                fd.write("ONBOOT=yes\n")
+                fd.write("IFACE=eth0\n")
+                fd.write("SERVICE=\"dhcpd\"\n")
+                fd.write("DHCP_START=\"-b -q\"\n")
+                fd.write("DHCP_STOP=\"-k\"\n")
+                fd.close()
         else if type(self.conf_lst["network"]) != type(False):
             with open("/etc/sysconfig/ifconfig.eth0", "w+") as fd:
                 fd.write("ONBOOT=yes\n")
