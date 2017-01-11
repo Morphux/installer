@@ -803,7 +803,8 @@ class   Install:
             ("motd", "etc/motd"),
             ("inittab", "etc/inittab"),
             ("clock", "etc/sysconfig/clock"),
-            ("rc.site", "etc/sysconfig/rc.site")
+            ("rc.site", "etc/sysconfig/rc.site"),
+            ("profile", "etc/profile")
         }
 
         self.dlg.infobox("Creating defaultfiles...")
