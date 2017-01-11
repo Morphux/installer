@@ -917,7 +917,7 @@ class   Install:
                 fd.write("SERVICE=ipv4-static")
                 fd.write("IP=" + self.conf_lst["network"]["IP"] + "\n")
                 fd.write("GATEWAY=" + self.conf_lst["network"]["GW"] + "\n")
-                fd.write("PREFIX=" self.conf_lst["network"]["NM"])
+                fd.write("PREFIX=" self.conf_lst["network"]["NM"] + "\n")
                 fd.close()
 
         # DNS configuration
@@ -938,7 +938,7 @@ class   Install:
 
         # Hosts
         with open("/etc/hosts", "w+") as fd:
-            fd.write("127.0.0.1 localhost")
+            fd.write("127.0.0.1 localhost\n")
             fd.close()
 
     # This function generate a /etc/fstab based on partitionning configuration
@@ -950,22 +950,22 @@ class   Install:
             # Partitionning configuration
             for p in layout:
                 if p["flag"] == "Root":
-                    fd.write(p["part"] + "    /    ext4    defaults    1    1")
+                    fd.write(p["part"] + "    /    ext4    defaults    1    1\n")
                 elif p["flag"] == "Boot":
-                    fd.write(p["part"] + "    /boot    ext2     defaults    1    1")
+                    fd.write(p["part"] + "    /boot    ext2     defaults    1    1\n")
                 elif p["flag"] == "Home":
-                    fd.write(p["part"] + "    /home    ext4     defaults    1    1")
+                    fd.write(p["part"] + "    /home    ext4     defaults    1    1\n")
                 elif p["flag"] == "Swap":
-                    fd.write(p["part"] + "    swap     swap     pri=1       0     0")
+                    fd.write(p["part"] + "    swap     swap     pri=1       0     0\n")
                 elif p["flag"] == "Tmp":
-                    fd.write(p["part"] + "    /tmp     ext4     defaults    1     1")
+                    fd.write(p["part"] + "    /tmp     ext4     defaults    1     1\n")
 
             # Default fstab entries
-            fd.write("proc    /proc     proc    nosuid,noexec,nodev    0     0")
-            fd.write("sysfs   /sys      sysfs   nosuid,noexec,nodev    0     0")
-            fd.write("devpts  /dev/pts  devpts  gid=5,mode=620         0     0")
-            fd.write("tmpfs   /run      tmpfs   defaults               0     0")
-            fd.write("devtmpfs /dev     devtmpfs mode=0755,nosuid      0     0")
+            fd.write("proc    /proc     proc    nosuid,noexec,nodev    0     0\n")
+            fd.write("sysfs   /sys      sysfs   nosuid,noexec,nodev    0     0\n")
+            fd.write("devpts  /dev/pts  devpts  gid=5,mode=620         0     0\n")
+            fd.write("tmpfs   /run      tmpfs   defaults               0     0\n")
+            fd.write("devtmpfs /dev     devtmpfs mode=0755,nosuid      0     0\n")
             fd.close()
 
     # This function install grub to the system
@@ -981,7 +981,7 @@ class   Install:
             fd.write("set timeout=5\n\n")
             fd.write("menuentry \"Morphux, GNU/Linux 4.7.2\" {\n")
             fd.write("   linux /boot/vmlinuz-4.7.2-morphux root="+ root["part"] +" ro net.ifnames=0\n")
-            fd.write("}")
+            fd.write("}\n")
             fd.close()
 
     # This function clean the entire system
