@@ -899,6 +899,7 @@ class   Install:
 
     # This function generate network config files
     def     config_network(self):
+        self.dlg.infobox("Configuring network...")
         # Interface options
         if type(self.conf_lst["network"]) == type(string) and 
             self.conf_lst["network"] == "DHCP":
@@ -938,6 +939,7 @@ class   Install:
     def     fstab(self):
         layout = self.conf_lst["partitionning.layout"]
 
+        self.dlg.infobox("Generating /etc/fstab file...")
         with open("/etc/fstab", "w+") as fd:
             # Partitionning configuration
             for p in layout:
