@@ -174,10 +174,13 @@ class   Install:
             # Calling the init function of each package
             config = klass.init(self.conf_lst, self.exec, self.mnt_point)
             # Saving the configuration of the object
-            if config["tmp_install"]:
-                self.pkgs[config["name"]] = [klass, config]
+            if "tmp_install" in config:
+                if config["tmp_install"]:
+                    self.pkgs[config["name"]] = [klass, config]
+                else:
+                    self.pkgs[config["name"] + "_phase_2"] = [klass, config]
             else:
-                self.pkgs[config["name"] + "_phase_2"] = [klass, config]
+                self.pkgs[config["name"] + "_opt"] = [klass, config]
             print("\tDone !")
 
     # Function that format disk and create new partitions
@@ -373,6 +376,10 @@ class   Install:
         self.def_install = self.mnt_point + "/.install"
         self.in_install = 1
         self.install(pkg_phase_2, "linux-headers")
+
+        # Install optionnals packages
+        if (type(self.conf_lst["network"]) == type("") and self.conf_lst["network"] == "DHCP"):
+            self.install({"dhcpd_opt": self.pkgs["dhcpd_opt"]}, "dhcpd_opt")
         self.in_install = 0
 
     # This function take an object of packages, check if the sources are there.
