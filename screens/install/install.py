@@ -64,6 +64,7 @@ class   Install:
     def init(self, dialog, config_list):
         self.dlg = dialog
         self.conf_lst = config_list
+        self.real_root = os.open("/", os.O_RDONLY)
         self.config = {
             "id": 6,
             "name": "Install"
@@ -140,6 +141,7 @@ class   Install:
         self.install_bootscripts()
         self.fstab()
         self.grub()
+        self.final_clean()
 
         self.dlg.msgbox("The installation is finished. Hit 'Enter' to close this dialog and reboot.", title="Success !")
         # Need reboot here
@@ -981,3 +983,16 @@ class   Install:
             fd.write("   linux /boot/vmlinuz-4.7.2-morphux root="+ root["part"] +" ro net.ifnames=0\n")
             fd.write("}")
             fd.close()
+
+    # This function clean the entire system
+    def     final_clean(self):
+        self.dlg.infobox("Cleaning system...")
+        self.e(["rm", "-rf", "/packages"])
+
+        # Exiting chroot
+        os.fchdir(self.real_root)
+        os.chroot(".")
+        self.mnt_point = "/mnt/morphux"
+
+        # Umount every partition
+        self.e(["umount", "-R", self.mnt_point])
