@@ -807,10 +807,12 @@ class   Install:
             ("rc.site", "etc/sysconfig/rc.site"),
             ("profile", "etc/profile"),
             ("inputrc", "etc/inputrc"),
-            ("shells", "etc/shells")
+            ("shells", "etc/shells"),
+            ("usb.conf", "etc/modprobe.d/usb.conf")
         }
 
         self.dlg.infobox("Creating defaultfiles...")
+        self.exec(["install", "-v", "-m755", "-d", "/etc/modprobe.d"])
         for f in files:
             shutil.copyfile(directory + f[0], path + f[1])
 
