@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# expect_p2.py
-# Created: 06/01/2017
+# linux_p2.py
+# Created: 11/01/2017
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   Expect_P2:
+class   Linux_P2:
 
     conf_lst = {}
     e = False
@@ -33,35 +33,35 @@ class   Expect_P2:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "expect", # Name of the package
-            "version": "5.45", # Version of the package
-            "size": 4.1, # Size of the installed package (MB)
-            "archive": "expect5.45.tar.gz", # Archive name
-            "SBU": 0.2, # SBU (Compilation time)
+            "name": "linux", # Name of the package
+            "version": "4.7.2", # Version of the package
+            "size": 700, # Size of the installed package (MB)
+            "archive": "linux-4.7.2.tar.xz", # Archive name
+            "SBU": 6, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
-            "next": "linux", # Next package to install
-            "chdir": False,
-            "before": False,
+            "next": False, # Next package to install
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/expect5.45.tar.gz"
+                "https://install.morphux.org/packages/linux-4.7.2.tar.xz"
             ]
         }
         return self.config
 
+    def     before(self):
+        return self.e(["make", "mrproper"])
+
     def     configure(self):
-        return self.e(["./configure",
-                "--prefix=/usr",
-                "--with-tcl=/usr/lib",
-                "--enable-shared",
-                "--mandir=/usr/share/man",
-                "--with-tclinclude=/usr/include"
-            ])
+        return self.e(["make", "defconfig"])
 
     def     make(self):
         return self.e(["make", "-j", self.conf_lst["cpus"]])
 
     def     install(self):
-        return self.e(["make", "install"], shell=True)
+        if self.conf_lst["arch"] == "x86_64" or self.conf_lst["arch"] == "x86_32":
+            self.e(["cp", "-v", "arch/x86/boot/bzImage", "/boot/vmlinuz-4.7.2-morphux"])
+        self.e(["cp", "-v", "System.map", "/boot/System.map-4.7.2"])
+        return self.e(["cp", "-v", ".config", "/boot/config-4.7.2"])
 
     def     after(self):
-        return self.e(["ln", "-svf", "expect5.45/libexpect5.45.so", "/usr/lib"])
+        self.e(["make", "modules_install"])
+        self.e(["cp", "-rfv", "../linux-4.7.2", "/usr/src/linux-4.7.2"])
+        return self.e(["ln", "-sv", "/usr/src/linux-4.7.2", "/usr/src/linux-current"])
