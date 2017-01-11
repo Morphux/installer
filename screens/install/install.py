@@ -805,7 +805,8 @@ class   Install:
             ("clock", "etc/sysconfig/clock"),
             ("rc.site", "etc/sysconfig/rc.site"),
             ("profile", "etc/profile"),
-            ("inputrc", "etc/inputrc")
+            ("inputrc", "etc/inputrc"),
+            ("shells", "etc/shells")
         }
 
         self.dlg.infobox("Creating defaultfiles...")
