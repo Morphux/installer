@@ -995,7 +995,7 @@ class   Install:
     def     grub(self):
         print("Installing grub...")
         layout = self.conf_lst["partitionning.layout"]
-        root = [p for p in layout if p["flag"] == "Root"]
+        root = [p for p in layout if p["flag"] == "Root"][0]
 
         self.exec(["grub-install", self.conf_lst["partitionning.disk"]])
         with open("/boot/grub/grub.cfg", "w+") as fd:
@@ -1010,7 +1010,7 @@ class   Install:
     # This function clean the entire system
     def     final_clean(self):
         print("Cleaning system...")
-        self.e(["rm", "-rf", "/packages"])
+        self.exec(["rm", "-rf", "/packages"])
 
         # Exiting chroot
         os.fchdir(self.real_root)
