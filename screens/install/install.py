@@ -143,7 +143,7 @@ class   Install:
         self.grub()
         self.final_clean()
 
-        self.dlg.msgbox("The installation is finished. Hit 'Enter' to close this dialog and reboot.", title="Success !")
+        print("The installation is finished. Rebooting ...")
         # Need reboot here
         sys.exit(1)
 
@@ -885,7 +885,8 @@ class   Install:
 
     # This function clean all the installation traces
     def     clean_all(self):
-        self.dlg.infobox("Cleaning tools ...")
+        print("No more dialog binary, entering text mode.")
+        print("Cleaning install...")
         self.exec(["rm", "-f", "/bin/sh"])
         self.exec(["ln", "-sv", "/bin/bash", "/bin/sh"])
         self.exec(["rm", "-rf", "/tools"])
@@ -900,14 +901,14 @@ class   Install:
 
     # This function strip installed binaries
     def     strip_binaries(self):
-        self.dlg.infobox("Stripping binaries ...")
+        print("Stripping binaries ...")
         self.exec(["/tools/bin/find /usr/lib -type f -name \*.a -exec /tools/bin/strip --strip-debug {} ';'"], shell=True, ignore=True)
         self.exec(["/tools/bin/find /lib /usr/lib -type f -name \*.so* -exec /tools/bin/strip --strip-unneeded {} ';'"], shell=True, ignore=True)
 
 
     # This function install bootscripts provided by the LFS community
     def     install_bootscripts(self):
-       self.dlg.infobox("Installing boot scripts ...")
+       print("Installing boot scripts ...")
        os.chdir("/packages")
        self.exec(["tar", "xf", "lfs-bootscripts-20150222.tar.bz2"])
        os.chdir("lfs-bootscripts-20150222")
@@ -915,7 +916,7 @@ class   Install:
 
     # This function generate network config files
     def     config_network(self):
-        self.dlg.infobox("Configuring network...")
+        print("Configuring network...")
         # Interface options
         if type(self.conf_lst["network"]) == type(string) and \
             self.conf_lst["network"] == "DHCP":
@@ -961,7 +962,7 @@ class   Install:
     def     fstab(self):
         layout = self.conf_lst["partitionning.layout"]
 
-        self.dlg.infobox("Generating /etc/fstab file...")
+        print("Generating /etc/fstab file...")
         with open("/etc/fstab", "w+") as fd:
             # Partitionning configuration
             for p in layout:
@@ -986,7 +987,7 @@ class   Install:
 
     # This function install grub to the system
     def     grub(self):
-        self.dlg.infobox("Installing grub...")
+        print("Installing grub...")
         layout = self.conf_lst["partitionning.layout"]
         root = [p for p in layout if p["flag"] == "Root"]
 
@@ -1002,7 +1003,7 @@ class   Install:
 
     # This function clean the entire system
     def     final_clean(self):
-        self.dlg.infobox("Cleaning system...")
+        print("Cleaning system...")
         self.e(["rm", "-rf", "/packages"])
 
         # Exiting chroot
