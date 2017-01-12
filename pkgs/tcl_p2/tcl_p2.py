@@ -37,14 +37,14 @@ class   Tcl_P2:
             "name": "tcl", # Name of the package
             "version": "8.6.6", # Version of the package
             "size": 9.1, # Size of the installed package (MB)
-            "archive": "tcl-core8.6.6-src.tar.gz", # Archive name
+            "archive": "tcl8.6.6-src.tar.gz", # Archive name
             "SBU": 1, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
             "next": "expect", # Next package to install
             "chdir": False,
             "before": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/tcl-core8.6.6-src.tar.gz"
+                "https://install.morphux.org/packages/tcl8.6.6-src.tar.gz"
             ]
         }
         return self.config
