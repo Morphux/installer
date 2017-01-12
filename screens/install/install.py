@@ -778,6 +778,7 @@ class   Install:
         ], shell=True)
         self.exec(["mkdir", "-pv", path + "usr/local/games"])
         self.exec(["mkdir", "-pv", path + "usr/share/games"])
+        self.exec(["mkdir", "-pv", path + "etc/modprobe.d"])
 
         if "MERGE_USR" in self.conf_lst["config"] and self.conf_lst["config"]["MERGE_USR"] == True:
             # Removing previously created directories
