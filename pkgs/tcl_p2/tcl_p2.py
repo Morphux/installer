@@ -66,9 +66,9 @@ class   Tcl_P2:
         return self.e(["make", "-j", self.conf_lst["cpus"]])
 
     def     install(self):
-        self.e(['sed -e "s#$SRCDIR/unix#/usr/lib#" -e "s#$SRCDIR#/usr/include#" -i tclConfig.sh'], shell=True)
-        self.e(['sed -e "s#$SRCDIR/unix/pkgs/tdbc1.0.4#/usr/lib/tdbc1.0.4#" -e "s#$SRCDIR/pkgs/tdbc1.0.4/generic#/usr/include#" -e "s#$SRCDIR/pkgs/tdbc1.0.4/library#/usr/lib/tcl8.6#" -e "s#$SRCDIR/pkgs/tdbc1.0.4#/usr/include#" -i pkgs/tdbc1.0.4/tdbcConfig.sh '], shell=True)
-        self.e(['sed -e "s#$SRCDIR/unix/pkgs/itcl4.0.5#/usr/lib/itcl4.0.5#" -e "s#$SRCDIR/pkgs/itcl4.0.5/generic#/usr/include#" -e "s#$SRCDIR/pkgs/itcl4.0.5#/usr/include#" -i pkgs/itcl4.0.5/itclConfig.sh'], shell=True)
+        self.e(['sed', '-e', 's#$SRCDIR/unix#/usr/lib#', '-e', 's#$SRCDIR#/usr/include#', '-i', 'tclConfig.sh'], shell=True)
+        self.e(['sed', '-e', 's#$SRCDIR/unix/pkgs/tdbc1.0.4#/usr/lib/tdbc1.0.4#', '-e', 's#$SRCDIR/pkgs/tdbc1.0.4/generic#/usr/include#', '-e', 's#$SRCDIR/pkgs/tdbc1.0.4/library#/usr/lib/tcl8.6#', '-e', 's#$SRCDIR/pkgs/tdbc1.0.4#/usr/include#', '-i', 'pkgs/tdbc1.0.4/tdbcConfig.sh'], shell=True)
+        self.e(['sed', '-e', 's#$SRCDIR/unix/pkgs/itcl4.0.5#/usr/lib/itcl4.0.5#', '-e', 's#$SRCDIR/pkgs/itcl4.0.5/generic#/usr/include#', '-e', 's#$SRCDIR/pkgs/itcl4.0.5#/usr/include#', '-i', 'pkgs/itcl4.0.5/itclConfig.sh'], shell=True)
         self.e(["make", "install"])
         return self.e(["make", "install-private-headers"])
 
