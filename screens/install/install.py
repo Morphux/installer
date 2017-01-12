@@ -991,7 +991,7 @@ class   Install:
         layout = self.conf_lst["partitionning.layout"]
         root = [p for p in layout if p["flag"] == "Root"]
 
-        self.e(["grub-install", self.conf_lst["partitionning.disk"]])
+        self.exec(["grub-install", self.conf_lst["partitionning.disk"]])
         with open("/boot/grub/grub.cfg", "w+") as fd:
             fd.write("# Begin /boot/grub/grub.cfg\n")
             fd.write("set default=0\n")
