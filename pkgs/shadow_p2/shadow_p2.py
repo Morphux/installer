@@ -67,6 +67,7 @@ class   Shadow_P2:
         return self.e(["make", "install"])
 
     def     after(self):
-        self.e(["mv", "-v", "/usr/bin/passwd", "/bin"])
+        if "MERGE_USR" in self.conf_lst["config"] and self.conf_lst["config"]["MERGE_USR"] != True:
+            self.e(["mv", "-v", "/usr/bin/passwd", "/bin"])
         self.e(["pwconv"])
         return self.e(["grpconv"])
