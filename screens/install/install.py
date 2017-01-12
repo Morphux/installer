@@ -918,7 +918,7 @@ class   Install:
     def     config_network(self):
         print("Configuring network...")
         # Interface options
-        if type(self.conf_lst["network"]) == type(string) and \
+        if type(self.conf_lst["network"]) == type(str) and \
             self.conf_lst["network"] == "DHCP":
             with open("/etc/sysconfig/ifconfig.eth0", "w+") as fd:
                 fd.write("ONBOOT=yes\n")
