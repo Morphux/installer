@@ -334,7 +334,7 @@ class   Install:
 
         # Look for the phase 1 packages
         for name, pkg in self.pkgs.items():
-            if pkg[1]["tmp_install"] == True:
+            if "tmp_install" in pkg[1] and pkg[1]["tmp_install"] == True:
                 total_size += pkg[1]["size"]
                 total_sbus += pkg[1]["SBU"]
                 pkg_phase_1[name] = pkg
@@ -358,7 +358,7 @@ class   Install:
 
         # Look for phase 2 package
         for name, pkg in self.pkgs.items():
-            if pkg[1]["tmp_install"] == False:
+            if "tmp_install" in pkg[1] and pkg[1]["tmp_install"] == False:
                 total_size += pkg[1]["size"]
                 total_sbus += pkg[1]["SBU"]
                 pkg_phase_2[pkg[1]["name"]] = pkg
@@ -610,7 +610,7 @@ class   Install:
 
             self.update_install_file(pkg[1])
             self.global_progress_bar(reset=True)
-            if pkg[1]["next"] in lst:
+            if "next" in pkg[1] and pkg[1]["next"] in lst:
                 pkg = lst[pkg[1]["next"]]
             else:
                 pkg = False
