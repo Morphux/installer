@@ -50,7 +50,7 @@ class   Tcl_P2:
 
     def     configure(self):
         os.chdir("tcl8.6.6")
-        os.environ["SRCDIR"] = os.environ["PWD"]
+        os.environ["SRCDIR"] = os.getcwd()
         os.chdir("unix")
         if (self.conf_lst["arch"] == "x86_64"):
             arg = "--enable-64bit"
