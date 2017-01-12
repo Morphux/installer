@@ -66,5 +66,5 @@ class   Bzip2_P2:
         self.e(["ln", "-sv", "../../lib/libbz2.so.1.0", "/usr/lib/libbz2.so"])
         if "MERGE_USR" in self.conf_lst["config"] and self.conf_lst["config"]["MERGE_USR"] != True:
             self.e(["rm", "-v", "/usr/bin/{bunzip2,bzcat,bzip2}"], shell=True, ignore=True)
-        self.e(["ln", "-sv", "bzip2", "/bin/bunzip2"])
-        return self.e(["ln", "-sv", "bzip2", "/bin/bzcat"])
+            self.e(["ln", "-sv", "bzip2", "/bin/bunzip2"])
+            return self.e(["ln", "-sv", "bzip2", "/bin/bzcat"])
