@@ -49,6 +49,7 @@ class   Expect_P2:
         return self.config
 
     def     configure(self):
+        os.chdir("expect5.45")
         return self.e(["./configure",
                 "--prefix=/usr",
                 "--with-tcl=/usr/lib",
