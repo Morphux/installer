@@ -918,7 +918,7 @@ class   Install:
     def     config_network(self):
         print("Configuring network...")
         # Interface options
-        if type(self.conf_lst["network"]) == type(str) and \
+        if type(self.conf_lst["network"]) == type("") and \
             self.conf_lst["network"] == "DHCP":
             with open("/etc/sysconfig/ifconfig.eth0", "w+") as fd:
                 fd.write("ONBOOT=yes\n")
@@ -939,7 +939,7 @@ class   Install:
 
         # DNS configuration
         with open("/etc/resolv.conf", "w+") as fd:
-            fd.write("domain " + self.conf_lst["hostname"] + "\n")
+            fd.write("domain " + self.conf_lst["system.hostname"] + "\n")
             if type(self.conf_lst["network"]) == type({}):
                 for dns in self.conf_lst["network"]["DNS"],split(","):
                     fd.write("nameserver "+ dns + "\n")
@@ -950,7 +950,7 @@ class   Install:
 
         # Hostname
         with open("/etc/hostname", "w+") as fd:
-            fd.write(self.conf_lst["hostname"])
+            fd.write(self.conf_lst["system.hostname"])
             fd.close()
 
         # Hosts
