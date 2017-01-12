@@ -131,6 +131,8 @@ class   Install:
             self.links()
             self.phase_2_install()
 
+        self.install_bootscripts()
+        self.opt_install()
         if "STRIP_BIN" in self.conf_lst["config"] and self.conf_lst["config"]["STRIP_BIN"] == True:
             self.strip_binaries()
 
@@ -138,7 +140,6 @@ class   Install:
             self.clean_all()
 
         self.config_network()
-        self.install_bootscripts()
         self.fstab()
         self.grub()
         self.final_clean()
@@ -377,8 +378,13 @@ class   Install:
         self.in_install = 1
         self.install(pkg_phase_2, "linux-headers")
 
+        self.in_install = 0
+
+    def     opt_install(self):
         # Install optionnals packages
         self.inst_title = "Optionnal Packages"
+
+        self.in_install = 1
         if (type(self.conf_lst["network"]) == type("") and self.conf_lst["network"] == "DHCP"):
             self.install({"dhcpcd": self.pkgs["dhcpcd_opt"]}, "dhcpcd")
         self.in_install = 0
@@ -991,7 +997,7 @@ class   Install:
         layout = self.conf_lst["partitionning.layout"]
         root = [p for p in layout if p["flag"] == "Root"]
 
-        self.e(["grub-install", self.conf_lst["partitionning.disk"]])
+        self.exec(["grub-install", self.conf_lst["partitionning.disk"]])
         with open("/boot/grub/grub.cfg", "w+") as fd:
             fd.write("# Begin /boot/grub/grub.cfg\n")
             fd.write("set default=0\n")
