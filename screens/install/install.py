@@ -886,6 +886,8 @@ class   Install:
     # This function clean all the installation traces
     def     clean_all(self):
         self.dlg.infobox("Cleaning tools ...")
+        self.exec(["rm", "-f", "/bin/sh"])
+        self.exec(["ln", "-sv", "/bin/bash", "/bin/sh"])
         self.exec(["rm", "-rf", "/tools"])
         self.exec(["rm", "-rf", "/tmp/*"], shell=True)
         self.exec(["rm", "-f", "/usr/lib/lib{bfd,opcodes}.a"], shell=True)
