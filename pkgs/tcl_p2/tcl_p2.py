@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# sudo_p2.py
-# Created: 05/01/2017
+# tcl_p2.py
+# Created: 12/01/2017
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   Sudo_P2:
+class   Tcl_P2:
 
     conf_lst = {}
     e = False
@@ -33,36 +33,45 @@ class   Sudo_P2:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "sudo", # Name of the package", # Version of the package
-            "version": "1.8.19p1", # Version of the package
-            "size": 29, # Size of the installed package (MB)
-            "archive": "sudo-1.8.19p1.tar.gz", # Archive name
-            "SBU": 0.4, # SBU (Compilation time)
+            "name": "tcl", # Name of the package
+            "version": "8.6.6", # Version of the package
+            "size": 9.1, # Size of the installed package (MB)
+            "archive": "tcl-core8.6.6-src.tar.gz", # Archive name
+            "SBU": 1, # SBU (Compilation time)
             "tmp_install": False, # Is this package part of the temporary install
-            "next": "tcl", # Next package to install
+            "next": "expect", # Next package to install
+            "chdir": False,
             "before": False,
             "urls": [ # Url to download the package. The first one must be morphux servers
-                "https://install.morphux.org/packages/sudo-1.8.19p1.tar.gz"
+                "https://install.morphux.org/packages/tcl-core8.6.6-src.tar.gz"
             ]
         }
         return self.config
 
     def     configure(self):
+        os.chdir("tcl8.6.6")
+        os.environ["SRCDIR"] = os.environ["PWD"]
+        os.chdir("unix")
+        if (self.conf_lst["arch"] == "x86_64"):
+            arg = "--enable-64bit"
+        else:
+            arg = ""
         return self.e(["./configure",
                 "--prefix=/usr",
-                "--libexecdir=/usr/lib",
-                "--with-secure-path",
-                "--with-all-insults",
-                "--with-env-editor",
-                "--docdir=/usr/share/doc/sudo-1.8.19p",
-                "--with-passprompt=[sudo] password for %p"
-        ])
+                "--mandir=/usr/share/man",
+                arg
+            ])
 
     def     make(self):
         return self.e(["make", "-j", self.conf_lst["cpus"]])
 
     def     install(self):
-        return self.e(["make", "install"])
+        self.e(['sed -e "s#$SRCDIR/unix#/usr/lib#" -e "s#$SRCDIR#/usr/include#" -i tclConfig.sh'], shell=True)
+        self.e(['sed -e "s#$SRCDIR/unix/pkgs/tdbc1.0.4#/usr/lib/tdbc1.0.4#" -e "s#$SRCDIR/pkgs/tdbc1.0.4/generic#/usr/include#" -e "s#$SRCDIR/pkgs/tdbc1.0.4/library#/usr/lib/tcl8.6#" -e "s#$SRCDIR/pkgs/tdbc1.0.4#/usr/include#" -i pkgs/tdbc1.0.4/tdbcConfig.sh '], shell=True)
+        self.e(['sed -e "s#$SRCDIR/unix/pkgs/itcl4.0.5#/usr/lib/itcl4.0.5#" -e "s#$SRCDIR/pkgs/itcl4.0.5/generic#/usr/include#" -e "s#$SRCDIR/pkgs/itcl4.0.5#/usr/include#" -i pkgs/itcl4.0.5/itclConfig.sh'], shell=True)
+        self.e(["make", "install"])
+        return self.e(["make", "install-private-headers"])
 
     def     after(self):
-        return self.e(["ln", "-sfv", "libsudo_util.so.0.0.0", "/usr/lib/sudo/libsudo_util.so.0"])
+        self.e(["ln", "-vsf", "tclsh8.6", "/usr/bin/tclsh"])
+        return self.e(["chmod", "-v", "755", "/usr/lib/libtcl8.6.so"])
