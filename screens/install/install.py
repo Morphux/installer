@@ -827,7 +827,7 @@ class   Install:
             ("inputrc", "etc/inputrc"),
             ("shells", "etc/shells"),
             ("usb.conf", "etc/modprobe.d/usb.conf"),
-            ("lsb-realease", "etc/lsb-release")
+            ("lsb-release", "etc/lsb-release")
         }
 
         self.dlg.infobox("Creating defaultfiles...")
