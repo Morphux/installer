@@ -1018,4 +1018,4 @@ class   Install:
         self.mnt_point = "/mnt/morphux"
 
         # Umount every partition
-        self.e(["umount", "-R", self.mnt_point])
+        self.exec(["umount", "-R", self.mnt_point])
