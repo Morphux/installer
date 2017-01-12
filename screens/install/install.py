@@ -378,8 +378,9 @@ class   Install:
         self.install(pkg_phase_2, "linux-headers")
 
         # Install optionnals packages
+        self.inst_title = "Optionnal Packages"
         if (type(self.conf_lst["network"]) == type("") and self.conf_lst["network"] == "DHCP"):
-            self.install({"dhcpd_opt": self.pkgs["dhcpd_opt"]}, "dhcpd_opt")
+            self.install({"dhcpcd": self.pkgs["dhcpcd_opt"]}, "dhcpcd")
         self.in_install = 0
 
     # This function take an object of packages, check if the sources are there.

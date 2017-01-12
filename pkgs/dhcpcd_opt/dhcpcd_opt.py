@@ -15,14 +15,14 @@
 ################################################################################
 
 ##
-# dhcpd_opt.py
+# dhcpcd_opt.py
 # Created: 11/01/2017
 # By: Louis Solofrizzo <louis@morphux.org>
 ##
 
 import      os
 
-class   Dhcpd_Opt:
+class   Dhcpcd_Opt:
 
     conf_lst = {}
     e = False
@@ -33,7 +33,7 @@ class   Dhcpd_Opt:
         self.e = ex
         self.root_dir = root_dir
         self.config = {
-            "name": "dhcpd", # Name of the package
+            "name": "dhcpcd", # Name of the package
             "version": "6.11.3", # Version of the package
             "size": 2.7, # Size of the installed package (MB)
             "archive": "dhcpcd-6.11.3.tar.xz", # Archive name
@@ -48,8 +48,8 @@ class   Dhcpd_Opt:
 
     def     configure(self):
         return self.e(["./configure",
-                    "--libexecdir=/lib/dhcpd",
-                    "--dbdir=/var/lib/dhcpd"
+                    "--libexecdir=/lib/dhcpcd",
+                    "--dbdir=/var/lib/dhcpcd"
         ])
 
     def     make(self):
@@ -59,4 +59,4 @@ class   Dhcpd_Opt:
         return self.e(["make", "install"])
 
     def     after(self):
-        return self.e(["install", "-m", "755", "sysv/services/dhcpd", "/lib/services"])
+        return self.e(["install", "-m", "755", "sysv/services/dhcpcd", "/lib/services"])
