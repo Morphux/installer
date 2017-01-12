@@ -914,7 +914,7 @@ class   Install:
     def     config_network(self):
         self.dlg.infobox("Configuring network...")
         # Interface options
-        if type(self.conf_lst["network"]) == type(string) and 
+        if type(self.conf_lst["network"]) == type(string) and \
             self.conf_lst["network"] == "DHCP":
             with open("/etc/sysconfig/ifconfig.eth0", "w+") as fd:
                 fd.write("ONBOOT=yes\n")
@@ -923,14 +923,14 @@ class   Install:
                 fd.write("DHCP_START=\"-b -q\"\n")
                 fd.write("DHCP_STOP=\"-k\"\n")
                 fd.close()
-        else if type(self.conf_lst["network"]) != type(False):
+        elif type(self.conf_lst["network"]) != type(False):
             with open("/etc/sysconfig/ifconfig.eth0", "w+") as fd:
                 fd.write("ONBOOT=yes\n")
                 fd.write("IFACE=eth0\n")
                 fd.write("SERVICE=ipv4-static")
                 fd.write("IP=" + self.conf_lst["network"]["IP"] + "\n")
                 fd.write("GATEWAY=" + self.conf_lst["network"]["GW"] + "\n")
-                fd.write("PREFIX=" self.conf_lst["network"]["NM"] + "\n")
+                fd.write("PREFIX="+ self.conf_lst["network"]["NM"] + "\n")
                 fd.close()
 
         # DNS configuration
