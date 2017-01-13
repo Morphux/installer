@@ -771,8 +771,8 @@ class   Install:
             self.exec(["ln", "-sv", "lib", path + "usr/local/lib64"])
 
         self.exec(["mkdir", "-v", path + "var/{log,mail,spool}"], shell=True)
-        self.exec(["ln", "-sv", path + "run", path + "var/run"])
-        self.exec(["ln", "-sv", path + "run/lock", path + "var/lock"])
+        self.exec(["ln", "-sv", path + "run", "/var/run"])
+        self.exec(["ln", "-sv", path + "run/lock", "/var/lock"])
         self.exec(["mkdir", "-pv",
                     path + "var/{opt,cache,lib/{color,misc,locate},local}"
         ], shell=True)
