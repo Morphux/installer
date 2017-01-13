@@ -930,7 +930,7 @@ class   Install:
             with open("/etc/sysconfig/ifconfig.eth0", "w+") as fd:
                 fd.write("ONBOOT=yes\n")
                 fd.write("IFACE=eth0\n")
-                fd.write("SERVICE=\"dhcpd\"\n")
+                fd.write("SERVICE=\"dhcpcd\"\n")
                 fd.write("DHCP_START=\"-b -q\"\n")
                 fd.write("DHCP_STOP=\"-k\"\n")
                 fd.close()
