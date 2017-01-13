@@ -60,6 +60,7 @@ class   Linux_P2:
 
         if self.conf_lst["arch"] in x86_archs:
             self.e(["cp", "-v", "arch/x86/boot/bzImage", "/boot/vmlinuz-4.7.2-morphux"])
+        self.e(["ln", "-sv", "/boot/vmlinuz-4.7.2", "/boot/vmlinuz-current"])
         self.e(["cp", "-v", "System.map", "/boot/System.map-4.7.2"])
         return self.e(["cp", "-v", ".config", "/boot/config-4.7.2"])
 

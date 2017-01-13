@@ -1004,7 +1004,7 @@ class   Install:
             fd.write("set default=0\n")
             fd.write("set timeout=5\n\n")
             fd.write("menuentry \"Morphux, GNU/Linux 4.7.2\" {\n")
-            fd.write("   linux /boot/vmlinuz-4.7.2-morphux root="+ root["part"] +" ro net.ifnames=0\n")
+            fd.write("   linux /vmlinuz-current root="+ root["part"] +" ro net.ifnames=0\n")
             fd.write("}\n")
             fd.close()
 
