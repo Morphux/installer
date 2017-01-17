@@ -839,7 +839,7 @@ class   Install:
     # /dev, /proc, /sys, /run
     def     mnt_kfs(self):
         self.dlg.infobox("Mounting kernel file systems")
-        self.exec(["mkdir", "-pv", self.mnt_point + "/{dev,proc,sys,run}"], shell=True)
+        self.exec(["mkdir", "-pv", self.mnt_point + "{dev,proc,sys,run}"], shell=True)
         self.exec(["mknod", "-m", "600", self.mnt_point + "/dev/console", "c", "5", "1"])
         self.exec(["mknod", "-m", "660", self.mnt_point + "/dev/null", "c", "1", "3"])
         self.exec(["mount", "-v", "--bind", "/dev", self.mnt_point + "/dev"])
